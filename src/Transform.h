@@ -3,8 +3,8 @@
 
 #include "Common.h"
 
-#define RadToDeg 57.2957795130823
-#define DegToRad 0.01745329251994
+#define RadToDeg 57.2957795130823f
+#define DegToRad 0.01745329251994f
 
 class Transform
 {
@@ -23,13 +23,10 @@ public:
 
 	void Reset();
 
-	glm::vec3 LocalPosition();
 	glm::vec3 WorldPosition();
 	glm::vec3 GetRotation();
 	void LookAt(glm::vec3 targetPosition);
-
-	glm::mat4 GetWorldMatrix();
-
+	
 	glm::vec3 Up();
 	glm::vec3 Right();
 	glm::vec3 Forward();
@@ -37,14 +34,11 @@ public:
 	glm::mat4 operator*(glm::mat4 const&);
 	glm::mat4 operator*(Transform &);
 	
-		
-protected:
-	glm::mat4 GetLocalMatrix();
-	
+	glm::mat4 GetModelMatrix();
+
 private:
 
 	glm::mat4 m_Transform = glm::mat4(), m_Scale;
-	Transform* m_ParentTransform = NULL;
 	std::vector<Transform*> m_ChildTransforms;
 		
 };
@@ -134,32 +128,26 @@ inline  glm::vec3 Transform::GetScale()
 	return glm::vec3(m_Scale * glm::vec4(1,1,1,0));
 }
 
-
-inline glm::vec3 Transform::LocalPosition()
-{
-	return glm::vec3(GetLocalMatrix() * glm::vec4(0,0,0,1));
-}
-
 inline glm::vec3 Transform::WorldPosition()
 {
-	return glm::vec3(GetWorldMatrix() * glm::vec4(0,0,0,1));;
+	return glm::vec3(GetModelMatrix() * glm::vec4(0, 0, 0, 1));;
 }
 
 inline glm::vec3 Transform::Forward() 
 {
-	glm::vec4 forward = GetWorldMatrix() * glm::vec4(0,0,-1,0);
+	glm::vec4 forward = GetModelMatrix() * glm::vec4(0, 0, -1, 0);
 	return glm::vec3(forward);
 }
 
 inline glm::vec3 Transform::Right() 
 {
-	glm::vec4 right = GetWorldMatrix() * glm::vec4(1,0,0,0);
+	glm::vec4 right = GetModelMatrix() * glm::vec4(1, 0, 0, 0);
 	return glm::vec3(right);
 }
 
 inline glm::vec3 Transform::Up()
 {
-	glm::vec4 up = GetWorldMatrix() * glm::vec4(0,1,0,0);
+	glm::vec4 up = GetModelMatrix() * glm::vec4(0, 1, 0, 0);
 	return glm::vec3(up);
 }
 
@@ -193,33 +181,22 @@ inline glm::vec3 Transform::GetRotation()
 	return glm::vec3(thetaX,thetaY,thetaZ);
 }
 
-inline glm::mat4 Transform::GetLocalMatrix()
+inline glm::mat4 Transform::GetModelMatrix()
 {
 	return m_Transform * m_Scale;
 }
 
-inline glm::mat4 Transform::GetWorldMatrix()
-{
-	glm::mat4 m = m_Transform * m_Scale;
-	if(m_ParentTransform)
-	{
-		m = m * m_ParentTransform->GetWorldMatrix();
-	}
-
-	return m;
-}
-
 inline void Transform::LookAt(glm::vec3 targetPosition)
 {
-	m_Transform = glm::lookAt(LocalPosition(),targetPosition,glm::vec3(0,1,0));
+	m_Transform = glm::lookAt(WorldPosition(),targetPosition,glm::vec3(0,1,0));
 }
 
 inline glm::mat4 Transform::operator*(glm::mat4 const& m)
 {
-	return GetLocalMatrix() * m;
+	return GetModelMatrix() * m;
 }
 
 inline glm::mat4 Transform::operator*(Transform &m)
 {
-	return GetLocalMatrix() * m.GetLocalMatrix();
+	return GetModelMatrix() * m.GetModelMatrix();
 }

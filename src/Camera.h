@@ -28,6 +28,16 @@ public:
 	NOWORK_API void SetFov(float);
 	NOWORK_API Transform* GetTransform() { return &m_Transform; }
 
+	NOWORK_API float GetClipNear() const;
+	NOWORK_API void SetClipNear(float);
+
+	NOWORK_API float GetClipFar() const;
+	NOWORK_API void SetClipFar(float);
+
+	NOWORK_API bool IsOrthographic() const;
+	NOWORK_API void SetOrthographic(bool);
+
+
 	void Update();
 
 private:
@@ -40,7 +50,6 @@ private:
 	bool m_IsOrthographic;
 	float m_TargetPoint;
 
-	glm::vec3 m_UpVector;
 	glm::vec3 m_ClearColor;
 
 	ClearFlags m_ClearFlag;

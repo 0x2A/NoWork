@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Framework.h"
+#include "Renderer.h"
 
 //Base game interface
 class GameBase
@@ -14,4 +15,5 @@ public:
 
 protected:
 	NoWork* m_Framework;
+	Renderer* m_Renderer;
 };

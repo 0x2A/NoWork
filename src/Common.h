@@ -24,6 +24,7 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 //online include gl3w and glfw3 if we are in NoWork context
 #ifdef _NOWORK_INTERNAL_
@@ -34,3 +35,5 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+

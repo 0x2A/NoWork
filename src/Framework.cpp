@@ -4,6 +4,7 @@
 #include "EventHandler.h"
 #include "Game.h"
 #include "Log.h"
+#include "Shader.h"
 
 NoWork::NoWork()
 {
@@ -111,22 +112,29 @@ void NoWork::Run()
 	}
 
 	//Initialize the game
-	m_GameHandle->m_Framework = this;
-	m_GameHandle->Init();
+	m_Loading = true;
+	m_LoadingThread = std::thread(&NoWork::ContentLoaderFunc, this);
 
 	while (!glfwWindowShouldClose(m_Window))
 	{
 		Input::Update();
 
-		Update();
-
-		m_GameHandle->OnRender();
+		if (m_Loading)
+		{
+			LOG_DEBUG("loading...");//TODO: Show loading text or something like this
+		}
+		else
+		{
+			Update();
+			m_GameHandle->OnRender();
+		}
 
 		glfwSwapBuffers(m_Window);
 		glfwPollEvents();
 	}
 
 	m_GameHandle->OnShutdown();
+	m_LoadingThread.join();
 }
 
 
@@ -140,4 +148,15 @@ void NoWork::Update()
 void NoWork::Exit()
 {
 	glfwSetWindowShouldClose(m_Window, true);
+}
+
+void NoWork::ContentLoaderFunc()
+{
+	m_GameHandle->m_Framework = this;
+	m_GameHandle->m_Renderer = m_Renderer;
+	m_GameHandle->Init();
+
+	Shader::InitializeDefaultShaders();
+
+	m_Loading = false;
 }

@@ -9,7 +9,6 @@ m_Renderer(renderer), m_Fov(fov), m_ClipNear(clipNear), m_ClipFar(clipFar), m_Is
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	m_ViewMatrix = m_ViewProjectionMatrix = glm::mat4();
-	m_UpVector = glm::vec3(0, 1, 0);
 
 	BuildProjectionMatrix();
 }
@@ -27,9 +26,50 @@ void Camera::Update()
 	glm::vec3 pos = m_Transform.WorldPosition();
 	glm::vec3 forward = m_Transform.Forward();
 
-	m_ViewMatrix = m_Transform.GetWorldMatrix();
+	m_ViewMatrix = m_Transform.GetModelMatrix();
 
 	BuildProjectionMatrix();
 	m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 
 }
+
+ float Camera::GetFov() const
+{
+	 return m_Fov;
+}
+
+ void Camera::SetFov(float fov)
+{
+	 m_Fov = fov;
+}
+
+ float Camera::GetClipNear() const
+{
+	 return m_ClipNear;
+}
+
+ void Camera::SetClipNear(float cn)
+{
+	 m_ClipNear = cn;
+}
+
+ float Camera::GetClipFar() const
+{
+	 return m_ClipFar;
+}
+
+ void Camera::SetClipFar(float cf)
+{
+	 m_ClipFar = cf;
+}
+
+ bool Camera::IsOrthographic() const
+{
+	 return m_IsOrthographic;
+}
+
+ void Camera::SetOrthographic(bool o)
+{
+	 m_IsOrthographic = o;
+}
+

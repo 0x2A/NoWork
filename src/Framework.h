@@ -50,6 +50,8 @@ private:
 	void Update();
 	bool ExtensionAvailable(std::string name);
 
+	void ContentLoaderFunc();
+
 	GLFWwindow* m_Window = NULL;
 	void *m_GlContext;
 
@@ -58,5 +60,7 @@ private:
 	bool m_CoreProfileOnly = false;
 	unsigned char m_OpenGLMajorVersion = 1, m_OpenGLMinorVersion = 0;
 	Renderer* m_Renderer;
-	//EventHandler * m_EventHandler;
+
+	bool m_Loading = false;
+	std::thread m_LoadingThread;
 };
