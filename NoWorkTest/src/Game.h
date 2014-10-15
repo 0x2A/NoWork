@@ -3,7 +3,7 @@
 
 class MyGame : public GameBase
 {
-
+public:
 
 	virtual void Init();
 
@@ -12,5 +12,9 @@ class MyGame : public GameBase
 	virtual void OnRender();
 
 	virtual void OnShutdown();
+
+
+	//Bound to escape key, used to exit the game when escape pressed
+	void static Exit(void* data);
 
 };

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Common.h"
-
-//#include "EventHandler.h"
+#include "Renderer.h"
 
 namespace Window
 {
@@ -48,6 +47,7 @@ public:
 
 private:
 
+	void Update();
 	bool ExtensionAvailable(std::string name);
 
 	GLFWwindow* m_Window = NULL;
@@ -57,5 +57,6 @@ private:
 	long m_WindowFlags;
 	bool m_CoreProfileOnly = false;
 	unsigned char m_OpenGLMajorVersion = 1, m_OpenGLMinorVersion = 0;
+	Renderer* m_Renderer;
 	//EventHandler * m_EventHandler;
 };

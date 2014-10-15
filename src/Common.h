@@ -10,6 +10,15 @@
 #define NOWORK_API   __declspec( dllimport ) 
 #endif
 
+#ifdef _WIN32
+#define SHARED(x) \
+	__pragma(data_seg(".shared"))\
+	x; \
+	__pragma(data_seg())
+#else
+//TODO
+#endif
+
 #include <string>
 #include <unordered_map>
 #include <map>
@@ -21,3 +30,7 @@
 #include <GL/gl3w.h>
 #include <glfw/glfw3.h>
 #endif
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/transform.hpp"

@@ -41,12 +41,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(SolutionDir)dep\NoWork\dep;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(SolutionDir)dep\NoWork\dep;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -86,19 +86,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\dep\gl3w\src\gl3w.c" />
+    <ClCompile Include="..\src\Camera.cpp" />
     <ClCompile Include="..\src\EventHandler.cpp" />
     <ClCompile Include="..\src\Framework.cpp" />
     <ClCompile Include="..\src\Input.cpp" />
     <ClCompile Include="..\src\Log.cpp" />
+    <ClCompile Include="..\src\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\Common.h" />
     <ClInclude Include="..\src\EventHandler.h" />
     <ClInclude Include="..\src\Framework.h" />
     <ClInclude Include="..\src\Game.h" />
+    <ClInclude Include="..\src\glm\glm.hpp" />
     <ClInclude Include="..\src\Input.h" />
     <ClInclude Include="..\src\Log.h" />
     <ClInclude Include="..\src\NoWork.h" />
+    <ClInclude Include="..\src\Renderer.h" />
+    <ClInclude Include="..\src\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -6,7 +6,7 @@
 std::unordered_map<long, void*> Input::m_KeyHandlersArgs;
 std::unordered_map<long, Input::KeyHandler> Input::m_KeyHandlers;
 std::unordered_map<long, bool> Input::m_KeyStates;
-GLFWwindow* Input::m_Window;
+SHARED(GLFWwindow* Input::m_Window);
 
 
 void Input::Init(GLFWwindow* window)

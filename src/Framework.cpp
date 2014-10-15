@@ -23,7 +23,8 @@ NoWork::NoWork()
 
 NoWork::~NoWork()
 {
-
+	delete m_Renderer;
+	m_Renderer = 0;
 	glfwDestroyWindow(m_Window);
 	glfwTerminate();
 }
@@ -83,6 +84,9 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 		glDebugMessageCallbackARB(EventHandler::GLErrorCallback, NULL);
 		glEnable(GL_DEBUG_OUTPUT);
 	}
+
+
+	m_Renderer = new Renderer(m_Window);
 	
 	return true;
 }
@@ -114,7 +118,8 @@ void NoWork::Run()
 	{
 		Input::Update();
 
-		m_GameHandle->OnUpdate(0);
+		Update();
+
 		m_GameHandle->OnRender();
 
 		glfwSwapBuffers(m_Window);
@@ -122,6 +127,14 @@ void NoWork::Run()
 	}
 
 	m_GameHandle->OnShutdown();
+}
+
+
+void NoWork::Update()
+{
+	m_GameHandle->OnUpdate(0);
+
+	m_Renderer->Update();
 }
 
 void NoWork::Exit()
