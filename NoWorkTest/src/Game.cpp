@@ -39,12 +39,16 @@ void MyGame::OnLoadContent()
 	
 	//and move it a bit backwards, so we can see it
 	testmesh->GetTransform()->Translate(0, 0, -5);
+	i = 0;
+	translatemat = testmesh->GetTransform()->GetModelMatrix();
 }
 
 void MyGame::OnUpdate(double deltaTime)
 {
 	//let it rotate around
-	testmesh->GetTransform()->Rotate(0, 0.15f, 0);
+	glm::mat4 test = translatemat;
+	test += rotationQuaternion::getRM(0.015 * ++i, 0, 1, 0);
+	testmesh->GetTransform()->SetModelMatrix(test);
 }
 
 void MyGame::OnRender()

@@ -23,8 +23,8 @@ Mesh* Mesh::Create(Renderer* renderer, const std::vector<Vertex>& vertices, cons
 	mesh->m_Vertices = vertices;
 	mesh->m_Renderer = renderer;
 	mesh->m_Faces = faces;
-	mesh->m_NumIndices = faces.size() * 3;
-	mesh->m_NumVertices = vertices.size();
+	mesh->m_NumIndices = (unsigned int)faces.size() * 3;
+	mesh->m_NumVertices = (unsigned int)vertices.size();
 
 	if (mesh->m_Faces.size() == 0 && calculateNormals || mesh->m_Faces.size() > 0)
 		mesh->CalculateNormals();
@@ -46,7 +46,7 @@ NOWORK_API Mesh* Mesh::Create(Renderer* renderer, const std::vector<Vertex>& ver
 	mesh->m_Vertices = vertices;
 	mesh->m_Renderer = renderer;
 	mesh->m_NumIndices = 0;
-	mesh->m_NumVertices = vertices.size();
+	mesh->m_NumVertices = (unsigned int)vertices.size();
 
 	if (!mesh->CreateVBO())
 	{
