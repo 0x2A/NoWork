@@ -18,7 +18,7 @@ namespace Window
 	} Flags;
 }
 
-class GLFWwindow;
+struct GLFWwindow;
 class GameBase;
 class NoWork
 {

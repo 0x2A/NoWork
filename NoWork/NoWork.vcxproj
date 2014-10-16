@@ -91,6 +91,7 @@
     <ClCompile Include="..\src\Framework.cpp" />
     <ClCompile Include="..\src\Input.cpp" />
     <ClCompile Include="..\src\Log.cpp" />
+    <ClCompile Include="..\src\Quaternion.cpp" />
     <ClCompile Include="..\src\Renderer.cpp" />
     <ClCompile Include="..\src\Shader.cpp" />
   </ItemGroup>
@@ -104,6 +105,7 @@
     <ClInclude Include="..\src\Input.h" />
     <ClInclude Include="..\src\Log.h" />
     <ClInclude Include="..\src\NoWork.h" />
+    <ClInclude Include="..\src\Quaternion.h" />
     <ClInclude Include="..\src\Renderer.h" />
     <ClInclude Include="..\src\Shader.h" />
     <ClInclude Include="..\src\Transform.h" />

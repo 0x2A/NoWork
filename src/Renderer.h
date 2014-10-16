@@ -3,7 +3,7 @@
 #include "Common.h"
 #include "Camera.h"
 
-class GLFWwindow;
+struct GLFWwindow;
 class Renderer
 {
 public:

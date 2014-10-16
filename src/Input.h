@@ -125,7 +125,7 @@
 #define 	KEY_MENU   348
 #define 	KEY_LAST   KEY_MENU
 
-class GLFWwindow;
+struct GLFWwindow;
 class Input
 {
 	typedef void(*KeyHandler)(void* params);

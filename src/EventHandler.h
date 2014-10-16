@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-class GLFWwindow;
+struct GLFWwindow;
 class EventHandler
 {
 public:

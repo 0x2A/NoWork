@@ -89,6 +89,17 @@ quaternion quaternion::conjugate()
 	return tmp;
 }
 
+glm::mat4 quaternion::getRM()
+{
+	glm::mat4 rm;
+	rm = glm::mat4(
+		1 - 2 * mc * mc - 2 * md * md, 2 * mb * mc - 2 * md * ma, 2 * mb * md + 2 * mc * ma, 0,
+		2 * mb*mc + 2 * md*ma, 1 - 2 * mb*mb - 2 * md*md, 2 * mc*md - 2 * mb*ma, 0,
+		2 * mb*md - 2 * mc*ma, 2 * mc*md + 2 * mb*ma, 1 - 2 * mb*mb - 2 * mc*mc, 0,
+		0, 0, 0, 1);
+	return rm;
+}
+
 int main(){
 	quaternion quat, rotation;
 	quat.initUnitQuat();
