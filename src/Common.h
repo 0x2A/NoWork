@@ -37,3 +37,12 @@
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+template<class T>
+void DelPtr(T* ptr)
+{
+	if (ptr)
+	{
+		delete(ptr);
+	}
+	ptr = NULL;
+}

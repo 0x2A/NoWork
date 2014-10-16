@@ -149,7 +149,6 @@ inline Log::~Log()
 	Clear();
 
 #ifndef _DEBUG
-	delete m_MessageStream;
-	m_MessageStream = 0;
+	DelPtr(m_MessageStream);
 #endif
 }

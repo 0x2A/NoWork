@@ -23,5 +23,5 @@ private:
 	
 	float m_AspectRatio;
 	
-	Camera* m_Camera;
+	Camera* m_Camera = NULL;
 };
