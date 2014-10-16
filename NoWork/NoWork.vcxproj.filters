@@ -51,6 +51,7 @@
       <Filter>Quelldateien</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Mesh.h">
+    <ClInclude Include="..\src\Quaternion.h">
       <Filter>Quelldateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,6 +78,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Shader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Quaternion.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

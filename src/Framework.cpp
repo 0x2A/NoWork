@@ -204,5 +204,5 @@ GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(std::string title
 			return window;
 	}
 
-	return 0;
+	return NULL;
 }
