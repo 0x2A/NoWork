@@ -73,3 +73,23 @@ void Camera::Update()
 	 m_IsOrthographic = o;
 }
 
+void Camera::Render()
+{
+
+	//TODO: Check culling mask etc.
+	GLbitfield clearbf = GL_NONE;
+	switch (m_ClearFlag)
+	{
+	case ClearFlags::CF_DEPTH_ONLY:
+		clearbf = GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+		break;
+	case ClearFlags::CF_SOLID_COLOR:
+	default:
+		clearbf = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+		break;
+
+	}
+	glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
+	m_Renderer->ClearScreen(clearbf);
+
+}

@@ -36,6 +36,9 @@ public:
 	
 	glm::mat4 GetModelMatrix();
 
+	//overrides the model matrix (useful for custom matrix calculations)
+	void SetModelMatrix(glm::mat4);
+
 private:
 
 	glm::mat4 m_Transform = glm::mat4(), m_Scale;
@@ -70,20 +73,18 @@ inline void Transform::Translate(float x, float y, float z, bool world)
 {
 	glm::mat4 transMatrix = glm::translate(glm::vec3(x,y,z));
 	if(world)
-		m_Transform = m_Transform * transMatrix;
-			
-	else
 		m_Transform = transMatrix * m_Transform;
+	else
+		m_Transform = m_Transform * transMatrix;
 }
 
 inline void Transform::Translate(const glm::vec3 &dir, bool world)
 {
 	glm::mat4 transMatrix = glm::translate(dir);
 	if(world)
-		m_Transform = m_Transform * transMatrix;
-			
-	else
 		m_Transform = transMatrix * m_Transform;
+	else
+		m_Transform = m_Transform * transMatrix;
 }
 
 inline void Transform::Rotate(float x, float y, float z, bool world)
@@ -93,9 +94,9 @@ inline void Transform::Rotate(float x, float y, float z, bool world)
 	rotMatrix *= glm::rotate( z, glm::vec3(0,0,1));
 
 	if(world)
-		m_Transform = m_Transform * rotMatrix;
-	else
 		m_Transform = rotMatrix * m_Transform;
+	else
+		m_Transform = m_Transform * rotMatrix;
 			
 }
 
@@ -105,11 +106,10 @@ inline void Transform::Rotate(const glm::vec3 &rot,bool world)
 	rotMatrix *= glm::rotate( rot.y, glm::vec3(0,1,0));
 	rotMatrix *= glm::rotate( rot.z, glm::vec3(0,0,1));
 
-	if(world)
-		m_Transform = m_Transform * rotMatrix;
-			
-	else
+	if(world)	
 		m_Transform = rotMatrix * m_Transform;
+	else
+		m_Transform = m_Transform * rotMatrix;
 }
 
 
@@ -184,6 +184,11 @@ inline glm::vec3 Transform::GetRotation()
 inline glm::mat4 Transform::GetModelMatrix()
 {
 	return m_Transform * m_Scale;
+}
+
+inline void Transform::SetModelMatrix(glm::mat4 mat)
+{
+	m_Transform = mat;
 }
 
 inline void Transform::LookAt(glm::vec3 targetPosition)

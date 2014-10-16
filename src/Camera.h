@@ -8,6 +8,7 @@ class Camera
 {
 public:
 
+
 	enum class ClearFlags
 	{
 		CF_SOLID_COLOR,
@@ -39,6 +40,7 @@ public:
 
 
 	void Update();
+	void Render();
 
 private:
 	void BuildProjectionMatrix();
