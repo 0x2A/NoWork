@@ -47,6 +47,8 @@ public:
 
 private:
 
+	GLFWwindow* DetectMaxSupportedGlVersionAndCreateWindow(std::string title, int width, int height, bool fullscreen);
+
 	void Update();
 	bool ExtensionAvailable(std::string name);
 
