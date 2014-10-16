@@ -39,16 +39,14 @@ void MyGame::OnLoadContent()
 	
 	//and move it a bit backwards, so we can see it
 	testmesh->GetTransform()->Translate(0, 0, -5);
-	i = 0;
-	translatemat = testmesh->GetTransform()->GetModelMatrix();
 }
 
 void MyGame::OnUpdate(double deltaTime)
 {
-	//let it rotate around
-	glm::mat4 test = translatemat;
-	test += rotationQuaternion::getRM(0.015 * ++i, 0, 1, 0);
-	testmesh->GetTransform()->SetModelMatrix(test);
+	//let it manually rotate around with quaternions, YAY!
+	glm::mat4 currentMatrix = testmesh->GetTransform()->GetModelMatrix();
+	glm::mat4 newMatrix = currentMatrix * rotationQuaternion::getRM(0.015, 0, 1, 0); //if we switch the order here (quat * currentMatrix) we would rotate around the world center
+	testmesh->GetTransform()->SetModelMatrix(newMatrix);
 }
 
 void MyGame::OnRender()
