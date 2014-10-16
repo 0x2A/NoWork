@@ -23,3 +23,12 @@ void Renderer::Update()
 	if (m_Camera)
 		m_Camera->Update();
 }
+void Renderer::Render()
+{
+	m_Camera->Render();
+}
+
+void Renderer::ClearScreen(int bitfield /*= ClearBufferBits::STENCIL_BUFFER | ClearBufferBits::COLOR_BUFFER*/)
+{
+	glClear(bitfield);
+}

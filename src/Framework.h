@@ -7,14 +7,14 @@ namespace Window
 {
 	typedef enum
 	{
-		WINDOW_FULLSCREEN = 0x00000000,							/**< fullscreen window */
-		WINDOW_OPENGL_FORWARD_COMPAT = 0x00000001,              /**< enable OpenGL forward compatibility */
-		WINDOW_RESIZABLE = 0x00000002,							/**< window is resizable */
-		WINDOW_VISIBLE = 0x00000004,							/**< window is visible*/
-		WINDOW_DECORATED = 0x00000008,							/**< window has border and icon etc */
-		WINDOW_STEREO_RENDERING = 0x00000010,					/**< enable stereoscopic rendering */
+		WINDOW_FULLSCREEN = 0x00000001,							/**< fullscreen window */
+		WINDOW_OPENGL_FORWARD_COMPAT = 0x00000002,              /**< enable OpenGL forward compatibility */
+		WINDOW_RESIZABLE = 0x00000004,							/**< window is resizable */
+		WINDOW_VISIBLE = 0x00000008,							/**< window is visible*/
+		WINDOW_DECORATED = 0x00000010,							/**< window has border and icon etc */
+		WINDOW_STEREO_RENDERING = 0x00000020,					/**< enable stereoscopic rendering */
 		WINDOW_OPENGL_DEBUG_CONTEXT = 0x00000040,				/**< enable OpenGL debug context */
-		WINDOW_WINDOWED = WINDOW_VISIBLE | WINDOW_DECORATED,	/**< windowed mode */
+		WINDOW_SHOWED = WINDOW_VISIBLE | WINDOW_DECORATED,	/**< windowed mode */
 	} Flags;
 }
 
@@ -26,8 +26,9 @@ public:
 	NOWORK_API NoWork();
 	NOWORK_API ~NoWork();
 
-	NOWORK_API bool CreateNewWindow(std::string title, int width, int height, int posX = 40, int posY = 40, int flags = Window::Flags::WINDOW_WINDOWED);
-
+	NOWORK_API bool CreateNewWindow(std::string title, int width, int height, int posX = 40, int posY = 40, int flags = Window::Flags::WINDOW_SHOWED);
+	NOWORK_API void EnableVSync();
+	NOWORK_API void DisableVSync();
 	/** 
 	/* Sets the OpenGL profile to core only, so that only core OpenGL versions of the selected version are compatible (disables backwards compatibility and extensions)
 	/* Must be called before CreateNewWindow!
@@ -55,7 +56,7 @@ private:
 	void ContentLoaderFunc();
 
 	GLFWwindow* m_Window = NULL;
-	void *m_GlContext;
+	//GLFWwindow *m_LoaderThreadWindow = NULL;
 
 	GameBase* m_GameHandle = NULL;
 	long m_WindowFlags;

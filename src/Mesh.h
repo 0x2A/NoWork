@@ -1,7 +1,16 @@
 #pragma once
 
 #include "Common.h"
+#include "Renderer.h"
+#include "Transform.h"
+#include "Shader.h"
 
+#define MODEL_VERTEX_LOCATION 0
+#define MODEL_NORMAL_LOCATION 1
+#define MODEL_TEXCOORD_LOCATION 2
+#define MODEL_TANGENT_LOCATION 3
+#define MODEL_BITANGENT_LOCATION 4
+#define MODEL_MATERIAL_LOCATION 5
 
 class Vertex
 {
@@ -18,7 +27,7 @@ public:
 
 	Vertex(glm::vec3 _position) : Vertex(_position, glm::vec3())
 	{}
-
+	
 	glm::vec3 position; //Position of the vertex
 	glm::vec3 normal; //Normal of the vertex
 	glm::vec2 texCoord; //Texture coordinate of the vertex
@@ -26,21 +35,73 @@ public:
 private:
 };
 
+class Face
+{
+public:
+	Face(unsigned int a, unsigned int b, unsigned int c)
+	{
+		Indices[0] = a;
+		Indices[1] = b;
+		Indices[2] = c;
+	}
+	unsigned int Indices[3];
+};
+
 
 class Mesh
 {
 public:
+	enum DataUsage
+	{
+		STREAM_DRAW = 0x88E0,
+		STREAM_READ = 0x88E1,
+		STREAM_COPY = 0x88E2,
+		STATIC_DRAW = 0x88E4,
+		STATIC_READ = 0x88E5,
+		STATIC_COPY = 0x88E6,
+		DYNAMIC_DRAW = 0x88E8,
+		DYNAMIC_READ = 0x88E9,
+		DYNAMIC_COPY = 0x88EA
+	};
+
+	enum RenderMode
+	{
+		POINTS   	   = 0x0000,
+		LINES          = 0x0001,
+		LINE_LOOP      = 0x0002,
+		LINE_STRIP     = 0x0003,
+		TRIANGLES      = 0x0004,
+		TRIANGLE_STRIP = 0x0005,
+		TRIANGLE_FAN   = 0x0006,
+	};
 
 	NOWORK_API ~Mesh();
-	NOWORK_API static Mesh* Create(const std::vector<Vertex>& vertices);
+
+	//Creates a mesh without indices. The mesh must be triangles
+	NOWORK_API static Mesh* Create(Renderer* renderer, const std::vector<Vertex>& vertices, DataUsage usage = DataUsage::STATIC_DRAW);
+
+	//Creates a mesh with indices. The mesh must be triangles
+	NOWORK_API static Mesh* Create(Renderer* renderer, const std::vector<Vertex>& vertices, const std::vector<Face>& faces, bool calculateNormals = false, DataUsage usage = DataUsage::STATIC_DRAW);
 	
+	NOWORK_API void Render(Shader* shader, RenderMode mode = TRIANGLES);
+	NOWORK_API Transform* GetTransform() {return &m_Transform; }
 
 protected:
 	Mesh();
 
 private:
+	void CalculateNormals();
 	bool CreateVBO();
 
-
+	DataUsage m_DataUsage;
 	std::vector<Vertex> m_Vertices;
+	std::vector<Face> m_Faces;
+	Renderer* m_Renderer;
+
+	unsigned int m_NumIndices, m_NumVertices;
+
+	unsigned int m_VertexArrayObject;
+	unsigned int m_IndexBuffer, m_VertexBuffer, m_NormalBuffer, m_TexCoordBuffer;
+
+	Transform m_Transform;
 };

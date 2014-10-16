@@ -22,6 +22,10 @@
 #include "Shader.h"
 #include <fstream>
 #include <streambuf>
+#include "Mesh.h"
+
+NOWORK_API Shader* Shader::DefaultUnlit;
+NOWORK_API Shader* Shader::DefaultBlinPhong;
 
 static bool ValidateShader(GLuint shader, const char* file = 0)
 {
@@ -98,6 +102,11 @@ Shader* Shader::Create(std::string vs, std::string fs)
 		delete shader;
 		return 0;
 	}
+
+	glBindAttribLocation(shader->m_ShaderObject, MODEL_VERTEX_LOCATION, "vertexPosition");
+	glBindAttribLocation(shader->m_ShaderObject, MODEL_NORMAL_LOCATION, "vertexNormal");
+	glBindAttribLocation(shader->m_ShaderObject, MODEL_TEXCOORD_LOCATION, "vertexUV");
+
 	return shader;
 }
 
@@ -139,5 +148,89 @@ Shader::~Shader()
 
 void Shader::InitializeDefaultShaders()
 {
+	const std::string defaultUnlitVertSrc =
+		"#version 150\n"
+		"in vec3 vertexPosition;\n"
+		"in vec3 vertexNormal;\n"
+		"in vec2 vertexUV;\n"
+		"\n"
+		"uniform mat4 MVPMatrix;\n"
+		"uniform mat4 ModelViewMatrix;\n"
+		"uniform mat4 ModelMatrix;\n"
+		"\n"
+		"out vec2 texCoord;\n"
+		"\n"
+		"void main( void )\n"
+		"{\n"
+		"    texCoord = vertexUV;\n"
+		"    gl_Position = MVPMatrix * vec4(vertexPosition,1);\n"
+		"}";
 
+	const std::string defaultUnlitFragSrc =
+		"#version 150\n"
+		"uniform vec4 DiffuseColor;\n"
+		"\n"
+		"in vec2 texCoord;\n"
+		"\n"
+		"out vec4 colorOut;\n"
+		"\n"
+		"void main( void )\n"
+		"{\n"
+		"    colorOut = DiffuseColor;\n"
+		"}";
+
+	DefaultUnlit = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragSrc);
+	DefaultBlinPhong = NULL; //TODO
+}
+
+
+
+/*******************************************************************************
+Shader inline implementation:
+*******************************************************************************/
+
+
+ Shader::Shader()
+{}
+
+inline void Shader::SetParameterf(std::string name, float val)
+{
+	glUniform1f(glGetUniformLocation(m_ShaderObject, name.c_str()), val);
+}
+inline void Shader::SetParameteri(std::string name, int val)
+{
+	glUniform1i(glGetUniformLocation(m_ShaderObject, name.c_str()), val);
+}
+inline void Shader::SetParameterVec2(std::string name, glm::vec2 val)
+{
+	glUniform2f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y);
+}
+inline void Shader::SetParameterVec3(std::string name, glm::vec3 val)
+{
+	glUniform3f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y, val.z);
+}
+
+inline void Shader::SetParameterVec4(std::string name, glm::vec4 val)
+{
+	glUniform4f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y, val.z, val.w);
+}
+
+inline void Shader::SetParameterMat3(std::string name, glm::mat3 val)
+{
+	glUniformMatrix3fv(glGetUniformLocation(m_ShaderObject, name.c_str()), 1, GL_FALSE, glm::value_ptr(val));
+}
+
+inline void Shader::SetParameterMat4(std::string name, glm::mat4 val)
+{
+	glUniformMatrix4fv(glGetUniformLocation(m_ShaderObject, name.c_str()), 1, GL_FALSE, glm::value_ptr(val));
+}
+
+inline void Shader::SetDiffuseColor(glm::vec4 val)
+{
+	SetParameterVec4("DiffuseColor", val);
+}
+
+inline void Shader::SetDiffuseColor(float r, float g, float b, float a /*= 1*/)
+{
+	SetDiffuseColor(glm::vec4(r, g, b, a));
 }

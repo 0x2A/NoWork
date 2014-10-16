@@ -27,7 +27,8 @@ class Shader
 {
 	friend class NoWork;
 public:
-	
+
+	NOWORK_API virtual ~Shader();
 	NOWORK_API static Shader* Create(std::string vs, std::string fs);
 	NOWORK_API static Shader* Load(std::string vertexShaderPath, std::string fragmentShaderPath);
 
@@ -36,13 +37,16 @@ public:
 	NOWORK_API void Reload();
 
 
-	NOWORK_API void SetParameterf(std::string name, float val, int progIndex = 0);
-	NOWORK_API void SetParameteri(std::string name, int val, int progIndex = 0);
-	NOWORK_API void SetParameterVec2(std::string name, glm::vec2 val, int progIndex = 0);
-	NOWORK_API void SetParameterVec3(std::string name, glm::vec3 val, int progIndex = 0);
-	NOWORK_API void SetParameterVec4(std::string name, glm::vec4 val, int progIndex = 0);
-	NOWORK_API void SetParameterMat3(std::string name, glm::mat3 val, int progIndex = 0);
-	NOWORK_API void SetParameterMat4(std::string name, glm::mat4 val, int progIndex = 0);
+	NOWORK_API void SetParameterf(std::string name, float val);
+	NOWORK_API void SetParameteri(std::string name, int val);
+	NOWORK_API void SetParameterVec2(std::string name, glm::vec2 val);
+	NOWORK_API void SetParameterVec3(std::string name, glm::vec3 val);
+	NOWORK_API void SetParameterVec4(std::string name, glm::vec4 val);
+	NOWORK_API void SetParameterMat3(std::string name, glm::mat3 val);
+	NOWORK_API void SetParameterMat4(std::string name, glm::mat4 val);
+
+	NOWORK_API void SetDiffuseColor(glm::vec4 val);
+	NOWORK_API void SetDiffuseColor(float r, float g, float b, float a = 1);
 
 	NOWORK_API static Shader* DefaultUnlit;
 	NOWORK_API static Shader* DefaultBlinPhong;
@@ -50,7 +54,6 @@ public:
 protected:
 
 	NOWORK_API Shader();
-	NOWORK_API virtual ~Shader();
 
 	static void InitializeDefaultShaders();
 
@@ -62,45 +65,3 @@ private:
 	unsigned int m_VSObject;
 	unsigned int m_FSObject;
 };
-
-
-/*******************************************************************************
-	Shader inline implementation:
-*******************************************************************************/
-
-
-inline Shader::Shader()
-{}
-
-inline void Shader::SetParameterf(std::string name, float val, int progIndex)
-{
-	glUniform1f(glGetUniformLocation(m_ShaderObject, name.c_str()), val);
-}
-inline void Shader::SetParameteri(std::string name, int val, int progIndex)
-{
-	glUniform1i(glGetUniformLocation(m_ShaderObject, name.c_str()), val);
-}
-inline void Shader::SetParameterVec2(std::string name, glm::vec2 val, int progIndex)
-{
-	glUniform2f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y);
-}
-inline void Shader::SetParameterVec3(std::string name, glm::vec3 val, int progIndex)
-{
-	glUniform3f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y, val.z);
-}
-
-inline void Shader::SetParameterVec4(std::string name, glm::vec4 val, int progIndex)
-{
-	glUniform4f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y, val.z, val.w);
-}
-
-inline void Shader::SetParameterMat3(std::string name, glm::mat3 val, int progIndex)
-{
-	glUniformMatrix3fv(glGetUniformLocation(m_ShaderObject, name.c_str()), 1, GL_FALSE, glm::value_ptr(val));
-}
-
-inline void Shader::SetParameterMat4(std::string name, glm::mat4 val, int progIndex)
-{
-	glUniformMatrix4fv(glGetUniformLocation(m_ShaderObject, name.c_str()), 1, GL_FALSE, glm::value_ptr(val));
-}
-static bool ValidateProgram(unsigned int program);

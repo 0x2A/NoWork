@@ -36,6 +36,7 @@ NoWork::NoWork()
 
 NoWork::~NoWork()
 {
+	DelPtr(Shader::DefaultUnlit);
 	DelPtr(m_Renderer);
 	glfwDestroyWindow(m_Window);
 	glfwTerminate();
@@ -43,7 +44,6 @@ NoWork::~NoWork()
 
 bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX, int posY, int flags)
 {
-	
 
 	m_WindowFlags = flags;
 
@@ -76,9 +76,12 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 	if (!(flags & Window::Flags::WINDOW_FULLSCREEN)) 
 		glfwSetWindowPos(m_Window, posX, posY);
 
+
 	glfwMakeContextCurrent(m_Window);
-	
-	m_GlContext = glfwGetCurrentContext();
+
+	//glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+	//m_LoaderThreadWindow = glfwCreateWindow(1, 1, "Thread Window", 0, m_Window);
+
 
 	if (gl3wInit()) {
 		LOG_ERROR("failed to initialize gl3w");
@@ -133,6 +136,7 @@ void NoWork::Run()
 	//Initialize the game
 	m_Loading = true;
 	m_LoadingThread = std::thread(&NoWork::ContentLoaderFunc, this);
+	bool m_GameDataLoaded = false;
 
 	while (!glfwWindowShouldClose(m_Window))
 	{
@@ -144,12 +148,23 @@ void NoWork::Run()
 		}
 		else
 		{
+			if (!m_GameDataLoaded)
+			{
+				Shader::InitializeDefaultShaders();
+				m_GameHandle->OnLoadContent();
+				m_GameDataLoaded = true;
+			}
+
 			Update();
+
+			m_Renderer->Render();
 			m_GameHandle->OnRender();
 		}
 
 		glfwSwapBuffers(m_Window);
 		glfwPollEvents();
+
+		
 	}
 
 	m_GameHandle->OnShutdown();
@@ -171,12 +186,20 @@ void NoWork::Exit()
 
 void NoWork::ContentLoaderFunc()
 {
+	//We need to create a new OpenGL context (done in glfw by creating a new window, duh)
+	//This is needed because in OpenGL only one thread can have access to an context
+	//So OpenGL functions in this thread would fail if we wouldnt create a new context
+	
+	//glfwMakeContextCurrent(m_LoaderThreadWindow);
+
 	m_GameHandle->m_Framework = this;
 	m_GameHandle->m_Renderer = m_Renderer;
+	
+	//Sadly we cant load content here cause Framebuffer objects cant be shared between gl contexts
+	//So Mesh creation fails. It would be possible to realize this but this would get too complicated
+	//and i dont have the time do care about such sh*t
 	m_GameHandle->Init();
-
-	Shader::InitializeDefaultShaders();
-
+	
 	m_Loading = false;
 }
 
@@ -205,4 +228,14 @@ GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(std::string title
 	}
 
 	return NULL;
+}
+
+NOWORK_API void NoWork::EnableVSync()
+{
+	glfwSwapInterval(1);
+}
+
+NOWORK_API void NoWork::DisableVSync()
+{
+	glfwSwapInterval(0);
 }
