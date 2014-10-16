@@ -24,8 +24,7 @@ NoWork::NoWork()
 
 NoWork::~NoWork()
 {
-	delete m_Renderer;
-	m_Renderer = 0;
+	DelPtr(m_Renderer);
 	glfwDestroyWindow(m_Window);
 	glfwTerminate();
 }

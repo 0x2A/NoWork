@@ -15,8 +15,7 @@ Renderer::Renderer(GLFWwindow* window) : m_Window(window)
 
 Renderer::~Renderer()
 {
-	delete m_Camera;
-	m_Camera = 0;
+	DelPtr(m_Camera);
 }
 
 void Renderer::Update()
