@@ -16,16 +16,7 @@ quaternion::~quaternion()
 
 }
 
-void quaternion::initUnitQuat()
-{
-	ma = 1.0;
-	mb = 1.0;
-	mc = 1.0;
-	md = 1.0;
-	this->normalize();
-}
-
-void quaternion::initRotatedQuat( double a, double x, double y, double z )
+void quaternion::initQuat( double a, double x, double y, double z )
 {
 	ma = cos(a / 2);
 	mb = x * sin(a/2);
@@ -36,10 +27,13 @@ void quaternion::initRotatedQuat( double a, double x, double y, double z )
 void quaternion::normalize()
 {
 	double magni = magnitude();
-	ma = ma / magni;
-	mb = mb / magni;
-	mc = mc / magni;
-	md = md / magni;
+	if (magni)
+	{
+		ma = ma / magni;
+		mb = mb / magni;
+		mc = mc / magni;
+		md = md / magni;
+	}
 }
 
 quaternion quaternion::operator*=( quaternion const& q )
@@ -89,22 +83,26 @@ quaternion quaternion::conjugate()
 	return tmp;
 }
 
-glm::mat4 quaternion::getRM()
+NOWORK_API rotationQuaternion::rotationQuaternion()
 {
-	glm::mat4 rm;
-	rm = glm::mat4(
-		1 - 2 * mc * mc - 2 * md * md, 2 * mb * mc - 2 * md * ma, 2 * mb * md + 2 * mc * ma, 0,
-		2 * mb*mc + 2 * md*ma, 1 - 2 * mb*mb - 2 * md*md, 2 * mc*md - 2 * mb*ma, 0,
-		2 * mb*md - 2 * mc*ma, 2 * mc*md + 2 * mb*ma, 1 - 2 * mb*mb - 2 * mc*mc, 0,
-		0, 0, 0, 1);
-	return rm;
+
 }
 
-int main(){
-	quaternion quat, rotation;
-	quat.initUnitQuat();
-	double test = quat.magnitude();
-	rotation.initRotatedQuat(20,1,0,0);
-	quat *= rotation;
-	return 0;
+NOWORK_API rotationQuaternion::~rotationQuaternion()
+{
+
+}
+
+NOWORK_API glm::mat4 rotationQuaternion::getRM( double alpha, double x, double y, double z )
+{
+	quaternion q;
+	q.initQuat(alpha, x, y, z);
+	q.normalize();
+	glm::mat4 rm;
+	rm = glm::mat4(
+		1 - 2 * q.c() * q.c() - 2 * q.d() * q.d(), 2 * q.b() * q.c() - 2 * q.d() * q.a(), 2 * q.b() * q.d() + 2 * q.c() * q.a(), 0,
+		2 * q.b()*q.c() + 2 * q.d()*q.a(), 1 - 2 * q.b()*q.b() - 2 * q.d()*q.d(), 2 * q.c()*q.d() - 2 * q.b()*q.a(), 0,
+		2 * q.b()*q.d() - 2 * q.c()*q.a(), 2 * q.c()*q.d() + 2 * q.b()*q.a(), 1 - 2 * q.b()*q.b() - 2 * q.c()*q.c(), 0,
+		0, 0, 0, 1);
+	return rm;
 }
