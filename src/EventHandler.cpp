@@ -6,7 +6,7 @@
 
 void EventHandler::ErrorCallback(int error, const char* description)
 {
-	std::cout << "ERROR (" << error << "): " << description << std::endl;
+	LOG_ERROR("(" << error << "): " << description);
 }
 
 void EventHandler::KeyEventCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

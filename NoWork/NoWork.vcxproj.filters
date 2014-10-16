@@ -50,6 +50,9 @@
     <ClInclude Include="..\src\Shader.h">
       <Filter>Quelldateien</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Mesh.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Framework.cpp">

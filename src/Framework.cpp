@@ -66,6 +66,11 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 	{
 		LOG_ERROR("OpenGL version " << (int)m_OpenGLMajorVersion << "." << (int)m_OpenGLMinorVersion << " not supported!");
 		m_Window = DetectMaxSupportedGlVersionAndCreateWindow(title, width, height, flags & Window::Flags::WINDOW_FULLSCREEN);
+		if (!m_Window)
+		{
+			LOG_ERROR("Fatal error, no supported OpenGL version found!");
+			return false;
+		}
 		LOG_WARNING("Using latest supported OpenGL version: " << (int)m_OpenGLMajorVersion << "." << (int)m_OpenGLMinorVersion << "!");
 	}
 	if (!(flags & Window::Flags::WINDOW_FULLSCREEN)) 
@@ -199,5 +204,5 @@ GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(std::string title
 			return window;
 	}
 
-
+	return 0;
 }
