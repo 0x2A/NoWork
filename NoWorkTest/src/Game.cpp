@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Mesh *testmesh;
+
 
 //This function is called form a seperate thread.
 //So we can do time intensive stuff in here without hanging the program
@@ -15,38 +15,18 @@ void MyGame::Init()
 
 void MyGame::OnLoadContent()
 {
-	//Lets create a simple plane.
-	//First we need 4 vertices
-	std::vector<Vertex> vertices = { Vertex(glm::vec3(-1, -1, 0)),
-									 Vertex(glm::vec3(1, -1, 0)),
-									 Vertex(glm::vec3(1, 1, 0)),
-									 Vertex(glm::vec3(-1, 1, 0)) };
-
-	//now we set up the indices(faces/polys). These have to be triangles.
-	//indices are the index of the vertex to use for the face
-	//   3     2
-	//   .     .
-	//   |\
-	//   |  \
-	//   |   \
-	//   |____}
-	//   .     .
-	//   0     1
-	std::vector<Face> faces = { Face(0, 1, 3), Face(1, 2, 3) };
-
-	//now create the mesh
-	testmesh = Mesh::Create(m_Renderer, vertices, faces);
 	
+	CreateQuad();
 	//and move it a bit backwards, so we can see it
-	testmesh->GetTransform()->Translate(0, 0, -5);
+	m_QuadMesh->GetTransform()->Translate(0, 0, -5);
 }
 
 void MyGame::OnUpdate(double deltaTime)
 {
 	//let it manually rotate around with quaternions, YAY!
-	glm::mat4 currentMatrix = testmesh->GetTransform()->GetModelMatrix();
-	glm::mat4 newMatrix = currentMatrix * rotationQuaternion::getRM(0.015, 0, 1, 0); //if we switch the order here (quat * currentMatrix) we would rotate around the world center
-	testmesh->GetTransform()->SetModelMatrix(newMatrix);
+	glm::mat4 currentMatrix = m_QuadMesh->GetTransform()->GetModelMatrix();
+	glm::mat4 newMatrix = currentMatrix * Quaternion::Rotate(0.015, 0, 1, 0); //if we switch the order here (quat * currentMatrix) we would rotate around the world center
+	m_QuadMesh->GetTransform()->SetModelMatrix(newMatrix);
 }
 
 void MyGame::OnRender()
@@ -58,17 +38,47 @@ void MyGame::OnRender()
 	Shader::DefaultUnlit->SetDiffuseColor(1, 1, 1);
 
 	//and render it using the default unlit shader
-	testmesh->Render(Shader::DefaultUnlit);
+	m_QuadMesh->Render(Shader::DefaultUnlit);
 }
 
 void MyGame::OnShutdown()
 {
 	//delete the mesh we created
-	delete testmesh;
+	delete m_QuadMesh;
 }
 
 void MyGame::Exit(void* data)
 {
 	//we want to exit the game if this function is called
 	((NoWork*)data)->Exit();
+}
+
+void MyGame::CreateQuad()
+{
+	//Lets create a quad object.
+	//First we need 4 vertices
+	std::vector<Vertex> vertices = { Vertex(glm::vec3(-1, -1, 1)),
+		Vertex(glm::vec3(1, -1, 1)),
+		Vertex(glm::vec3(1, 1, 1)),
+		Vertex(glm::vec3(-1, 1, 1)),
+		Vertex(glm::vec3(-1, -1, -1)),
+		Vertex(glm::vec3(1, -1, -1)),
+		Vertex(glm::vec3(1, 1, -1)),
+		Vertex(glm::vec3(-1, 1, -1)) };
+
+	//now we set up the indices(faces/polys). These have to be triangles.
+	//indices are the index of the vertex to use for the face
+	//   3     2
+	//   .     .
+	//   |\
+			//   |  \
+			//   |   \
+			//   |____}
+	//   .     .
+	//   0     1
+	std::vector<Face> faces = { Face(0, 1, 3), Face(1, 2, 3), Face(1, 5, 2), Face(5, 6, 2), Face(5, 4, 6),
+		Face(4, 7, 6), Face(4, 0, 7), Face(0, 3, 7), Face(3, 2, 7), Face(2, 6, 7), Face(1, 0, 4), Face(1, 4, 5) };
+
+	//now create the mesh
+	m_QuadMesh = Mesh::Create(m_Renderer, vertices, faces);
 }

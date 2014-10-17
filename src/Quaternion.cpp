@@ -1,22 +1,22 @@
 #include "Quaternion.h"
 #include <math.h>
 
-quaternion::quaternion() : ma(0), mb(0), mc(0), md(0)
+Quaternion::Quaternion() : ma(0), mb(0), mc(0), md(0)
 {
 
 }
 
-quaternion::quaternion( quaternion const& q ): ma(q.a()), mb(q.b()), mc(q.c()), md(q.d())
+Quaternion::Quaternion( Quaternion const& q ): ma(q.a()), mb(q.b()), mc(q.c()), md(q.d())
 {
 
 }
 
-quaternion::~quaternion()
+Quaternion::~Quaternion()
 {
 
 }
 
-void quaternion::initQuat( double a, double x, double y, double z )
+void Quaternion::initQuat( double a, double x, double y, double z )
 {
 	ma = cos(a / 2);
 	mb = x * sin(a/2);
@@ -24,7 +24,7 @@ void quaternion::initQuat( double a, double x, double y, double z )
 	md = z * sin(a/2);
 }
 
-void quaternion::normalize()
+void Quaternion::normalize()
 {
 	double magni = magnitude();
 	if (magni)
@@ -36,9 +36,9 @@ void quaternion::normalize()
 	}
 }
 
-quaternion quaternion::operator*=( quaternion const& q )
+Quaternion Quaternion::operator*=( Quaternion const& q )
 {
-	quaternion tmp = quaternion( *this * q);
+	Quaternion tmp = Quaternion( *this * q);
 	ma = tmp.a();
 	mb = tmp.b();
 	mc = tmp.c();
@@ -46,9 +46,9 @@ quaternion quaternion::operator*=( quaternion const& q )
 	return *this;
 }
 
-quaternion quaternion::operator*( quaternion const& q )
+Quaternion Quaternion::operator*( Quaternion const& q )
 {
-	quaternion tmp;
+	Quaternion tmp;
 
 	double w1 = ma;
 	double x1 = mb;
@@ -68,14 +68,14 @@ quaternion quaternion::operator*( quaternion const& q )
 	return tmp;
 }
 
-double quaternion::magnitude()
+double Quaternion::magnitude()
 {
 	return sqrt( ma * ma + mb * mb + mc * mc + md * md);
 }
 
-quaternion quaternion::conjugate()
+Quaternion Quaternion::conjugate()
 {
-	quaternion tmp;
+	Quaternion tmp;
 	tmp.ma = ma;
 	tmp.mb = -mb;
 	tmp.mc = -mc;
@@ -83,19 +83,10 @@ quaternion quaternion::conjugate()
 	return tmp;
 }
 
-NOWORK_API rotationQuaternion::rotationQuaternion()
+
+glm::mat4 Quaternion::Rotate(double alpha, double x, double y, double z)
 {
-
-}
-
-NOWORK_API rotationQuaternion::~rotationQuaternion()
-{
-
-}
-
-NOWORK_API glm::mat4 rotationQuaternion::getRM( double alpha, double x, double y, double z )
-{
-	quaternion q;
+	Quaternion q;
 	q.initQuat(alpha, x, y, z);
 	q.normalize();
 	glm::mat4 rm;
