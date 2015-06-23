@@ -25,6 +25,7 @@
 #include "Mesh.h"
 
 NOWORK_API Shader* Shader::DefaultUnlit;
+NOWORK_API Shader* Shader::DefaultUnlitTextured;
 NOWORK_API Shader* Shader::DefaultBlinPhong;
 
 static bool ValidateShader(GLuint shader, const char* file = 0)
@@ -33,11 +34,20 @@ static bool ValidateShader(GLuint shader, const char* file = 0)
 	char buffer[BUFFER_SIZE];
 	memset(buffer, 0, BUFFER_SIZE);
 	GLsizei length = 0;
+	GLint success;
 
-	glGetShaderInfoLog(shader, BUFFER_SIZE, &length, buffer);
-	if (length > 0) {
-		LOG_ERROR("Shader " << shader << " (" << (file ? file : "") << ") compile error: " << buffer << std::endl);
-		return false;
+	//Note 1: Changed Validation: Intel returns 'No Errors' as InfoLog when in debug context
+	//so we cant simply check for InfoLog to verify the successfull compilation of the shader.
+	//So we first have to check the compile status and then get the detailed message.
+	//that way we cant missinterpret compile information as error message (thx intel...)
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (success != GL_TRUE)
+	{
+		glGetShaderInfoLog(shader, BUFFER_SIZE, &length, buffer);
+		if (length > 0) {
+			LOG_ERROR("Shader " << shader << " (" << (file ? file : "") << ") compile error: " << buffer << std::endl);
+			return false;
+		}
 	}
 	return true;
 }
@@ -49,22 +59,21 @@ bool ValidateProgram(unsigned int program)
 	memset(buffer, 0, BUFFER_SIZE);
 	GLsizei length = 0;
 
-	memset(buffer, 0, BUFFER_SIZE);
-	glGetProgramInfoLog(program, BUFFER_SIZE, &length, buffer);
-	if (length > 0)
-	{
-		LOG_ERROR("Program " << program << " link error: " << buffer << std::endl);
-		return false;
-	}
-	
 	glValidateProgram(program);
 	GLint status;
 	glGetProgramiv(program, GL_VALIDATE_STATUS, &status);
 	if (status == GL_FALSE)
 	{
 		LOG_ERROR("Error validating shader " << program << std::endl);
+
+		glGetProgramInfoLog(program, BUFFER_SIZE, &length, buffer);
+		if (length > 0)
+		{
+			LOG_ERROR("Program " << program << " link error: " << buffer << std::endl);
+		}
 		return false;
 	}
+
 
 	return true;
 }
@@ -96,6 +105,12 @@ Shader* Shader::Create(std::string vs, std::string fs)
 	shader->m_ShaderObject = glCreateProgram();
 	glAttachShader(shader->m_ShaderObject, shader->m_FSObject);
 	glAttachShader(shader->m_ShaderObject, shader->m_VSObject);
+
+	shader->BindAttributeLocation(0, "vertexPosition"); //bind input variables to their location ids
+	shader->BindAttributeLocation(1, "vertexNormal");   //this is important so the variable ids match 
+	shader->BindAttributeLocation(2, "vertexUV");       //the input ids from the mesh
+	shader->BindAttributeLocation(3, "vertexColor");    //normally the driver sets them in order of definition but we cant be sure
+
 	glLinkProgram(shader->m_ShaderObject);
 	if(!ValidateProgram(shader->m_ShaderObject))
 	{
@@ -149,25 +164,28 @@ Shader::~Shader()
 void Shader::InitializeDefaultShaders()
 {
 	const std::string defaultUnlitVertSrc =
-		"#version 150\n"
+		"#version 130\n"
 		"in vec3 vertexPosition;\n"
 		"in vec3 vertexNormal;\n"
 		"in vec2 vertexUV;\n"
+		"in vec3 vertexColor;\n"
 		"\n"
 		"uniform mat4 MVPMatrix;\n"
 		"uniform mat4 ModelViewMatrix;\n"
 		"uniform mat4 ModelMatrix;\n"
 		"\n"
 		"out vec2 texCoord;\n"
+		"out vec3 vertColor;\n"
 		"\n"
 		"void main( void )\n"
 		"{\n"
 		"    texCoord = vertexUV;\n"
+		"    vertColor = vertexColor;\n"
 		"    gl_Position = MVPMatrix * vec4(vertexPosition,1);\n"
 		"}";
 
 	const std::string defaultUnlitFragSrc =
-		"#version 150\n"
+		"#version 130\n"
 		"uniform vec4 DiffuseColor;\n"
 		"\n"
 		"in vec2 texCoord;\n"
@@ -176,10 +194,26 @@ void Shader::InitializeDefaultShaders()
 		"\n"
 		"void main( void )\n"
 		"{\n"
-		"    colorOut = DiffuseColor;\n"
+		"    colorOut = vec4(1,1,1,1);\n"
+		"}";
+
+	const std::string defaultUnlitFragTexturedSrc =
+		"#version 130\n"
+		"uniform vec4 DiffuseColor;\n"
+		"uniform sampler2D Texture;\n"
+		"\n"
+		"in vec2 texCoord;\n"
+		"in vec3 vertColor;\n"
+		"\n"
+		"out vec4 colorOut;\n"
+		"\n"
+		"void main( void )\n"
+		"{\n"
+		"    colorOut = DiffuseColor * vec4(vertColor,1) * texture(Texture, texCoord);\n"
 		"}";
 
 	DefaultUnlit = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragSrc);
+	DefaultUnlitTextured = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragTexturedSrc);
 	DefaultBlinPhong = NULL; //TODO
 }
 
@@ -233,4 +267,27 @@ inline void Shader::SetDiffuseColor(glm::vec4 val)
 inline void Shader::SetDiffuseColor(float r, float g, float b, float a /*= 1*/)
 {
 	SetDiffuseColor(glm::vec4(r, g, b, a));
+}
+
+inline void Shader::SetParameterTexture(std::string name, Texture* tex, uint32_t slot)
+{
+	if (!tex) return;
+	tex->Bind(slot);
+	glUniform1i(glGetUniformLocation(m_ShaderObject, name.c_str()), slot);
+
+}
+
+void Shader::SetTexture(Texture* tex)
+{
+	SetParameterTexture("Texture", tex, 0);
+}
+
+NOWORK_API unsigned int Shader::GetAttributeLocation(const std::string &name)
+{
+	return glGetAttribLocation(m_ShaderObject, name.c_str());
+}
+
+NOWORK_API void Shader::BindAttributeLocation(unsigned int id, const std::string &name)
+{
+	glBindAttribLocation(m_ShaderObject, id, name.c_str());
 }

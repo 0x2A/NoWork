@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.h"
+#include <functional>
 
 #define 	KEY_UNKNOWN   -1
 #define 	KEY_SPACE   32
@@ -125,18 +126,31 @@
 #define 	KEY_MENU   348
 #define 	KEY_LAST   KEY_MENU
 
+
 struct GLFWwindow;
 class Input
 {
-	typedef void(*KeyHandler)(void* params);
+	//typedef void(*KeyHandler)(void* params);
 
+	typedef std::function<void()> CallbackFunc;
+	//typedef void(*MethodPtr)(void);
+	
 	friend class NoWork;
 	friend class EventHandler;
 public:
 	
 	NOWORK_API static bool KeyDown(long key);
 	NOWORK_API static bool KeyHeld(long key);
-	NOWORK_API static void BindKey(long key, KeyHandler handler, void* args = NULL);
+
+	template<typename R, typename ...Args>
+	static void BindKey(long key, R *owner, void(R::*MethodPtr)(Args...), Args &&... args)
+	{
+		auto gotKey = m_KeyHandlers.find(key);
+		if (gotKey != m_KeyHandlers.end())
+			std::cout << "Warning: Key " << key << " was already bound to a function";
+		
+		m_KeyHandlers[key] = std::bind(MethodPtr, owner, std::forward<Args>(args)...);
+	}
 
 protected:
 	static void Init(GLFWwindow* window);
@@ -146,6 +160,6 @@ private:
 
 	NOWORK_API static GLFWwindow* m_Window;
 	NOWORK_API static std::unordered_map<long, bool> m_KeyStates;
-	NOWORK_API static std::unordered_map<long, Input::KeyHandler> m_KeyHandlers;
-	NOWORK_API static std::unordered_map<long, void*> m_KeyHandlersArgs;
+	NOWORK_API static std::unordered_map<long, Input::CallbackFunc> m_KeyHandlers;
+	//NOWORK_API static std::unordered_map<long, void*> m_KeyHandlersArgs;
 };

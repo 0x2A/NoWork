@@ -16,7 +16,7 @@ void EventHandler::KeyEventCallback(GLFWwindow* window, int key, int scancode, i
 }
 
 
-void APIENTRY EventHandler::GLErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
+void APIENTRY EventHandler::GLErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam)
 {
-	LOG_ERROR("GLError: " << message, __FUNCTION__);
+	LOG_ERROR("GLError: " << message, __FUNCTION__); 
 }

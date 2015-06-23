@@ -29,11 +29,14 @@ public:
 	void Update();
 	void Render();
 
+	void SetBackfaceCulling(bool state);
+
 	NOWORK_API void ClearScreen(int bitfield = ClearBufferBits::STENCIL_BUFFER | ClearBufferBits::COLOR_BUFFER);
 
 	//NOWORK_API void SetCamera(Camera* val) { m_Camera = val; }
 
 private:
+
 	GLFWwindow *m_Window;
 	
 	int m_FramebufferWidth, m_FramebufferHeight;

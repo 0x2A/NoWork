@@ -1,7 +1,7 @@
 #pragma once
 
 
-#define NOWORK_VERSION	"1.0"
+#define NOWORK_VERSION	"1.1"
 
 //Either export or import dll functions
 #ifdef _NOWORK_INTERNAL_
@@ -26,9 +26,9 @@
 #include <sstream>
 #include <thread>
 
-//online include gl3w and glfw3 if we are in NoWork context
+#include "GL/gl3w.h"
+//only include glfw3 if we are in NoWork context
 #ifdef _NOWORK_INTERNAL_
-#include <GL/gl3w.h>
 #include <glfw/glfw3.h>
 #endif
 
@@ -36,6 +36,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/quaternion.hpp"
+#include "glm/gtx/string_cast.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 
 template<class T>
 void DelPtr(T* ptr)

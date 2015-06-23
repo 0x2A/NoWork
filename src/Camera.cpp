@@ -15,9 +15,16 @@ m_Renderer(renderer), m_Fov(fov), m_ClipNear(clipNear), m_ClipFar(clipFar), m_Is
 
 void Camera::BuildProjectionMatrix()
 {
-	int screenWidth, screenHeight;
-	m_Renderer->GetFramebufferSize(screenWidth, screenHeight);
-	m_ProjectionMatrix = m_IsOrthographic ? glm::ortho(0.0f, (float)screenWidth, (float)screenHeight, 0.0f) : glm::perspective(m_Fov, m_Renderer->GetAspectRatio(), m_ClipNear, m_ClipFar);
+	if (m_IsOrthographic)
+	{
+		glm::vec3 pos = m_Transform.WorldPosition();
+		float t = glm::length(pos);
+		m_ProjectionMatrix = glm::ortho(-t, t, t, -t, m_ClipNear, m_ClipFar);
+	}
+	else
+	{
+		m_ProjectionMatrix = glm::perspective(m_Fov, m_Renderer->GetAspectRatio(), m_ClipNear, m_ClipFar);
+	}
 }
 
 void Camera::Update()
@@ -92,4 +99,31 @@ void Camera::Render()
 	glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
 	m_Renderer->ClearScreen(clearbf);
 
+}
+
+void Camera::ClearScreen(ClearFlags clearFlag)
+{
+	GLbitfield clearbf = GL_NONE;
+	switch (m_ClearFlag)
+	{
+	case ClearFlags::CF_DEPTH_ONLY:
+		clearbf = GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+		break;
+	case ClearFlags::CF_SOLID_COLOR:
+	default:
+		clearbf = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+		break;
+	}
+
+	glClear(clearbf);
+}
+
+void Camera::SetColorMask(bool r, bool g, bool b, bool a)
+{
+	glColorMask(r, g, b, a);
+}
+
+void Camera::SetFaceCulling(FaceCullingType type /*= FaceCullingType::BACK*/)
+{
+	glCullFace(type);
 }

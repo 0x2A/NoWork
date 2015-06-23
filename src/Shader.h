@@ -22,6 +22,7 @@
 
 #include "Common.h"
 #include "Log.h"
+#include "Texture.h"
 
 class Shader
 {
@@ -44,11 +45,20 @@ public:
 	NOWORK_API void SetParameterVec4(std::string name, glm::vec4 val);
 	NOWORK_API void SetParameterMat3(std::string name, glm::mat3 val);
 	NOWORK_API void SetParameterMat4(std::string name, glm::mat4 val);
+	NOWORK_API void SetParameterTexture(std::string name, Texture* tex, uint32_t slot);
+
+	NOWORK_API unsigned int GetAttributeLocation(const std::string &name);
+	NOWORK_API void BindAttributeLocation(unsigned int id, const std::string &name);
+
+	//Sets a texture to uniform 'texture'. Useful for default shaders.
+	//Note: if you want to use more than one texture use SetParameterTexture
+	NOWORK_API void SetTexture(Texture* tex);
 
 	NOWORK_API void SetDiffuseColor(glm::vec4 val);
 	NOWORK_API void SetDiffuseColor(float r, float g, float b, float a = 1);
 
 	NOWORK_API static Shader* DefaultUnlit;
+	NOWORK_API static Shader* DefaultUnlitTextured;
 	NOWORK_API static Shader* DefaultBlinPhong;
 
 protected:

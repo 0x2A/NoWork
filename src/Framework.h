@@ -22,6 +22,8 @@ struct GLFWwindow;
 class GameBase;
 class NoWork
 {
+	friend class Renderer;
+
 public:
 	NOWORK_API NoWork();
 	NOWORK_API ~NoWork();
@@ -46,12 +48,14 @@ public:
 
 	NOWORK_API void Exit();
 
+	NOWORK_API bool ExtensionAvailable(std::string name);
+
 private:
 
 	GLFWwindow* DetectMaxSupportedGlVersionAndCreateWindow(std::string title, int width, int height, bool fullscreen);
 
 	void Update();
-	bool ExtensionAvailable(std::string name);
+	
 
 	void ContentLoaderFunc();
 
@@ -66,4 +70,5 @@ private:
 
 	bool m_Loading = false;
 	std::thread m_LoadingThread;
+	double currentFrame, deltaTime, lastFrame;
 };

@@ -2,8 +2,14 @@
 
 #include "Log.h"
 
+
+Renderer* Mesh::m_sRenderer = NULL;
+
+
 Mesh::Mesh()
-{}
+{
+	m_VertexArrayObject = 0;
+}
 
 Mesh::~Mesh()
 {
@@ -14,19 +20,20 @@ Mesh::~Mesh()
 	glDeleteVertexArrays(1, &m_VertexArrayObject);
 }
 
-Mesh* Mesh::Create(Renderer* renderer, const std::vector<Vertex>& vertices, const std::vector<Face>& faces, bool calculateNormals, DataUsage usage)
+Mesh* Mesh::Create(const std::vector<Vertex> &vertices, const std::vector<Face> &faces, bool calculateNormals, DataUsage usage)
 {
 	LOG_DEBUG("Creating mesh with " << vertices.size() << " vertices");
 
 	Mesh* mesh = new Mesh;
 	mesh->m_DataUsage = usage;
 	mesh->m_Vertices = vertices;
-	mesh->m_Renderer = renderer;
+	mesh->m_Renderer = m_sRenderer;
 	mesh->m_Faces = faces;
 	mesh->m_NumIndices = (unsigned int)faces.size() * 3;
 	mesh->m_NumVertices = (unsigned int)vertices.size();
 
-	if (mesh->m_Faces.size() == 0 && calculateNormals || mesh->m_Faces.size() > 0)
+	//if (mesh->m_Faces.size() == 0 && calculateNormals || mesh->m_Faces.size() > 0)
+	if (calculateNormals)
 		mesh->CalculateNormals();
 
 	if (!mesh->CreateVBO())
@@ -37,14 +44,14 @@ Mesh* Mesh::Create(Renderer* renderer, const std::vector<Vertex>& vertices, cons
 	return mesh;
 }
 
-NOWORK_API Mesh* Mesh::Create(Renderer* renderer, const std::vector<Vertex>& vertices, DataUsage usage /*= DataUsage::STATIC_DRAW*/)
+NOWORK_API Mesh* Mesh::Create(const std::vector<Vertex> &vertices, DataUsage usage /*= DataUsage::STATIC_DRAW*/)
 {
 	LOG_DEBUG("Creating mesh with " << vertices.size() << " vertices");
 
 	Mesh* mesh = new Mesh;
 	mesh->m_DataUsage = usage;
 	mesh->m_Vertices = vertices;
-	mesh->m_Renderer = renderer;
+	mesh->m_Renderer = m_sRenderer;
 	mesh->m_NumIndices = 0;
 	mesh->m_NumVertices = (unsigned int)vertices.size();
 
@@ -120,8 +127,11 @@ bool Mesh::CreateVBO()
 
 	//texcoords (location = 2)
 	glEnableVertexAttribArray(MODEL_TEXCOORD_LOCATION);
-	glVertexAttribPointer(MODEL_TEXCOORD_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3)*2));
+	glVertexAttribPointer(MODEL_TEXCOORD_LOCATION, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2));
 
+	//vertexColor (location = 3)
+	glEnableVertexAttribArray(MODEL_VERTEX_COLOR_LOCATION);
+	glVertexAttribPointer(MODEL_VERTEX_COLOR_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2 + sizeof(glm::vec2)));
 
 	// unbind buffers
 	glBindVertexArray(0);
@@ -153,4 +163,68 @@ void Mesh::Render(Shader* shader, RenderMode mode)
 		glDrawArrays(mode, 0, m_NumVertices);
 
 	glBindVertexArray(0);
+}
+
+NOWORK_API Mesh* Mesh::CreatePlane(DataUsage usage /*= DataUsage::STATIC_DRAW*/)
+{
+	std::vector<Vertex> vertices;
+	std::vector<Face> faces;
+
+	Vertex v(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 1), glm::vec2(1, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 1), glm::vec2(1, 0)); vertices.push_back(v);
+	v = Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0)); vertices.push_back(v);
+
+	faces.push_back(Face(0, 1, 3));
+	faces.push_back(Face(1, 2, 3));
+	return Create(vertices, faces, false, usage);
+}
+
+void Mesh::Init(Renderer* renderer)
+{
+	m_sRenderer = renderer;
+}
+
+Mesh* Mesh::CreateQuad(DataUsage usage /*= DataUsage::STATIC_DRAW*/)
+{
+	std::vector<Vertex> vertices;
+	std::vector<Face> faces;
+
+	//front
+	Vertex v(glm::vec3(-1, -1, 1), glm::vec3(0, 0, 1), glm::vec2(0, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(1, -1, 1), glm::vec3(0, 0, 1), glm::vec2(1, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(1, 1, 1), glm::vec3(0, 0, 1), glm::vec2(1, 0)); vertices.push_back(v);
+	v = Vertex(glm::vec3(-1, 1, 1), glm::vec3(0, 0, 1), glm::vec2(0, 0)); vertices.push_back(v);
+	
+	//back
+	v = Vertex(glm::vec3(1, -1, -1), glm::vec3(0, 0, -1), glm::vec2(1, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(-1, -1, -1), glm::vec3(0, 0, -1), glm::vec2(0, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(-1, 1, -1), glm::vec3(0, 0, -1), glm::vec2(0, 0)); vertices.push_back(v);
+	v = Vertex(glm::vec3(1, 1, -1), glm::vec3(0, 0, -1), glm::vec2(1, 0)); vertices.push_back(v);
+	
+	//right
+	v = Vertex(glm::vec3(1, -1, 1), glm::vec3(1, 0, 0), glm::vec2(1, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(1, -1, -1), glm::vec3(1, 0, 0), glm::vec2(0, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(1, 1, -1), glm::vec3(1, 0, 0), glm::vec2(0, 0)); vertices.push_back(v);
+	v = Vertex(glm::vec3(1, 1, 1), glm::vec3(1, 0, 0), glm::vec2(1, 0)); vertices.push_back(v);
+
+	//left
+	v = Vertex(glm::vec3(-1, -1, -1), glm::vec3(1, 0, 0), glm::vec2(1, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(-1, -1, 1), glm::vec3(1, 0, 0), glm::vec2(0, 1)); vertices.push_back(v);
+	v = Vertex(glm::vec3(-1, 1, 1), glm::vec3(1, 0, 0), glm::vec2(0, 0)); vertices.push_back(v);
+	v = Vertex(glm::vec3(-1, 1, -1), glm::vec3(1, 0, 0), glm::vec2(1, 0)); vertices.push_back(v);
+
+	faces.push_back(Face(0, 1, 3));
+	faces.push_back(Face(1, 2, 3));
+
+	faces.push_back(Face(4, 5, 7));
+	faces.push_back(Face(5, 6, 7));
+
+	faces.push_back(Face(8, 9, 11));
+	faces.push_back(Face(9, 10, 11));
+
+	faces.push_back(Face(12, 13, 15));
+	faces.push_back(Face(13, 14, 15));
+
+	return Create(vertices, faces, false, usage);
 }

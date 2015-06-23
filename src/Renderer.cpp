@@ -8,6 +8,10 @@ Renderer::Renderer(GLFWwindow* window) : m_Window(window)
 	m_AspectRatio = m_FramebufferWidth / (float)m_FramebufferHeight;
 
 	glViewport(0, 0, m_FramebufferWidth, m_FramebufferHeight);
+	SetBackfaceCulling(true);
+
+	glEnable(GL_DEPTH_TEST);
+	glCullFace(GL_BACK);
 
 	m_Camera = new Camera(this);
 
@@ -31,4 +35,9 @@ void Renderer::Render()
 void Renderer::ClearScreen(int bitfield /*= ClearBufferBits::STENCIL_BUFFER | ClearBufferBits::COLOR_BUFFER*/)
 {
 	glClear(bitfield);
+}
+
+void Renderer::SetBackfaceCulling(bool state)
+{
+	state ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 }

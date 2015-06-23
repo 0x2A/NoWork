@@ -1,10 +1,12 @@
-#include "Framework.h"
+﻿#include "Framework.h"
 
 #include "Input.h"
 #include "EventHandler.h"
 #include "Game.h"
 #include "Log.h"
 #include "Shader.h"
+#include "Mesh.h"
+#include "Texture.h"
 
 
 
@@ -95,7 +97,9 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 	
 	LOG_MESSAGE("Created Window:\n" << "Dimension: " << w << "x" << h << "\n" <<
 		"Mode: " << ((monitor == 0) ? "windowed" : "fulscreen") << "\n" <<
-		"OpenGL version: " << glGetString(GL_VERSION) << ", GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION));
+		"OpenGL version: " << glGetString(GL_VERSION) << ", GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n" <<
+		"Hardware vendor: " << glGetString(GL_VENDOR) << "\n" <<
+		"Hardware name: " << glGetString(GL_RENDERER));
 
 	Input::Init(m_Window);
 #ifdef _DEBUG
@@ -110,7 +114,11 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 
 
 	m_Renderer = new Renderer(m_Window);
-	
+
+	//initialize static vars
+	Mesh::Init(m_Renderer);
+	Texture::Init(this, m_Renderer);
+
 	return true;
 }
 
@@ -144,7 +152,7 @@ void NoWork::Run()
 
 		if (m_Loading)
 		{
-			LOG_DEBUG("loading...");//TODO: Show loading text or something like this
+			//LOG_DEBUG("loading...");//TODO: Show loading text or something like this
 		}
 		else
 		{
@@ -174,7 +182,11 @@ void NoWork::Run()
 
 void NoWork::Update()
 {
-	m_GameHandle->OnUpdate(0);
+	currentFrame = glfwGetTime();
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+
+	m_GameHandle->OnUpdate(deltaTime);
 
 	m_Renderer->Update();
 }
@@ -210,8 +222,15 @@ GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(std::string title
 	for (int i = 0; i < elCount; i++)
 	{
 		if (m_OpenGLMajorVersion == glVersions[i].major && m_OpenGLMinorVersion == glVersions[i].minor)
+		{
 			index = i;
+			break;
+		}
 	}
+
+	//disable error callback while we try to get the latest glVersion working
+	//so we dont spam the error log
+	glfwSetErrorCallback(NULL);
 
 	while (index >= 0)
 	{
@@ -224,8 +243,14 @@ GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(std::string title
 
 		GLFWwindow *window = glfwCreateWindow(width, height, title.c_str(), fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
 		if (window)
+		{
+			glfwSetErrorCallback(&EventHandler::ErrorCallback);
 			return window;
+		}
 	}
+
+	//reenable error callback
+	glfwSetErrorCallback(&EventHandler::ErrorCallback);
 
 	return NULL;
 }

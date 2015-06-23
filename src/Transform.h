@@ -3,6 +3,7 @@
 
 #include "Common.h"
 
+
 #define RadToDeg 57.2957795130823f
 #define DegToRad 0.01745329251994f
 
@@ -11,49 +12,146 @@ class Transform
 
 public:
 	Transform();
-	void Translate(float x, float y, float z, bool world = false);
-	void Translate(const glm::vec3 &dir, bool world = false);
-	void SetPosition(const glm::vec3 &pos);
-	void SetYPosition(const float &pos);
-	void Rotate(float x, float y, float z, bool world = false);
-	void Rotate(const glm::vec3 &dir, bool world = false);
-	void Scale(const glm::vec3 &scale);
-	void Scale(float x, float y, float z);
-	glm::vec3 GetScale();
+	virtual void Translate(float x, float y, float z, bool world = false);
+	virtual void Translate(const glm::vec3 &dir, bool world = false);
+	virtual void Transformate(const glm::mat4& mat, bool world = false);
+	virtual void SetPosition(const glm::vec3 &pos);
+	virtual void SetYPosition(const float &pos);
+	virtual void Rotate(float x, float y, float z, bool world = false);
+	virtual void Rotate(const glm::vec3 &dir, bool world = false);
+	virtual void Rotate(glm::quat &q, bool world = false);
+	virtual void ResetRotation();
+	virtual void Scale(const glm::vec3 &scale);
+	virtual void Scale(float x, float y, float z);
+	virtual glm::vec3 GetScale();
+
+
 
 	void Reset();
 
-	glm::vec3 WorldPosition();
+	virtual glm::vec3 WorldPosition();
 	glm::vec3 GetRotation();
-	void LookAt(glm::vec3 targetPosition);
+	void LookAt(glm::vec3 &targetPosition);
 	
-	glm::vec3 Up();
-	glm::vec3 Right();
-	glm::vec3 Forward();
+	virtual glm::vec3 Up();
+	virtual glm::vec3 Right();
+	virtual glm::vec3 Forward();
 	
 	glm::mat4 operator*(glm::mat4 const&);
 	glm::mat4 operator*(Transform &);
 	
-	glm::mat4 GetModelMatrix();
+	virtual glm::mat4 GetModelMatrix();
 
 	//overrides the model matrix (useful for custom matrix calculations)
-	void SetModelMatrix(glm::mat4);
+	void SetModelMatrix(glm::mat4&);
 
-private:
+protected:
 
 	glm::mat4 m_Transform = glm::mat4(), m_Scale;
 	std::vector<Transform*> m_ChildTransforms;
 		
 };
 
+class ViewTransform : public Transform
+{
+
+public:
+	ViewTransform();
+	virtual void Translate(float x, float y, float z, bool world = false) override;
+	virtual void Translate(const glm::vec3 &dir, bool world = false) override;
+	virtual void Transformate(const glm::mat4& mat, bool world = false) override;
+	virtual void Rotate(float x, float y, float z, bool world = false) override;
+	virtual void Rotate(const glm::vec3 &dir, bool world = false) override;
+
+	virtual glm::mat4 GetModelMatrix() override;
+	glm::mat4 GetViewMatrix();
+
+	virtual glm::vec3 ViewUp();
+	virtual glm::vec3 ViewRight();
+	virtual glm::vec3 ViewForward();
+};
+
+inline ViewTransform::ViewTransform()
+{
+
+}
+
+inline void ViewTransform::Translate(float x, float y, float z, bool world /*= false*/)
+{
+	Translate(glm::vec3(x, y, z));
+}
+
+inline void ViewTransform::Translate(const glm::vec3 &dir, bool world /*= false*/)
+{
+	glm::mat4 transMatrix = glm::translate(-dir);
+	if (world)
+		m_Transform = m_Transform * transMatrix;
+	else
+		m_Transform = transMatrix * m_Transform;
+}
+
+inline void ViewTransform::Transformate(const glm::mat4& mat, bool world /*= false*/)
+{
+	if (world)
+		m_Transform = m_Transform * mat;
+	else
+		m_Transform = mat * m_Transform;
+}
+
+inline void ViewTransform::Rotate(float x, float y, float z, bool world /*= false*/)
+{
+	Rotate(glm::vec3(x, y, z));
+}
+
+inline void ViewTransform::Rotate(const glm::vec3 &dir, bool world /*= false*/)
+{
+	glm::mat4 rotMatrix = glm::rotate(-dir.x, glm::vec3(1, 0, 0));
+	rotMatrix *= glm::rotate(-dir.y, glm::vec3(0, 1, 0));
+	rotMatrix *= glm::rotate(-dir.z, glm::vec3(0, 0, 1));
+
+	if (world)
+		m_Transform = m_Transform * rotMatrix;
+	else
+		m_Transform = rotMatrix * m_Transform;
+}
+
+inline glm::mat4 ViewTransform::GetModelMatrix()
+{
+	return glm::inverse(m_Transform * m_Scale);
+}
+
+inline glm::mat4 ViewTransform::GetViewMatrix()
+{
+	return m_Transform * m_Scale;
+}
+
+inline glm::vec3 ViewTransform::ViewUp()
+{
+	glm::vec4 up = GetViewMatrix() * glm::vec4(0, 1, 0, 0);
+	return glm::vec3(up);
+}
+
+inline glm::vec3 ViewTransform::ViewRight()
+{
+	glm::vec4 r = GetViewMatrix() * glm::vec4(1, 0, 0, 0);
+	return glm::vec3(r);
+}
+
+inline glm::vec3 ViewTransform::ViewForward()
+{
+	glm::vec4 r = GetViewMatrix() * glm::vec4(0, 0, 1, 0);
+	return glm::vec3(r);
+}
+
+
 inline Transform::Transform()
 {}
 
 inline void Transform::SetPosition(const glm::vec3 &pos)
 {
-	glm::vec4 oPos = m_Transform * glm::vec4(0,0,0,1);
-	m_Transform *= glm::translate(glm::vec3(-oPos));
-	m_Transform *= glm::translate(glm::vec3(pos));
+	//glm::vec4 oPos = m_Transform * glm::vec4(0,0,0,1);
+	//m_Transform *= glm::translate(glm::vec3(-oPos));
+	m_Transform = glm::translate(glm::vec3(pos));
 }
 
 inline void Transform::SetYPosition(const float &pos)
@@ -110,6 +208,26 @@ inline void Transform::Rotate(const glm::vec3 &rot,bool world)
 		m_Transform = rotMatrix * m_Transform;
 	else
 		m_Transform = m_Transform * rotMatrix;
+}
+
+inline void Transform::Rotate(glm::quat& q, bool world)
+{
+	glm::mat4 rotMatrix = glm::toMat4(q);
+	if (world)
+		m_Transform = rotMatrix * m_Transform;
+	else
+		m_Transform = m_Transform * rotMatrix;
+}
+
+inline void Transform::ResetRotation()
+{
+	glm::mat4 rot(m_Transform[0][0], m_Transform[0][1], m_Transform[0][2], 0,
+		m_Transform[1][0], m_Transform[1][1], m_Transform[1][2], 0.f,
+		m_Transform[2][0], m_Transform[2][1], m_Transform[2][2], 0.f,
+				0.f, 0.f, 0.f, 1.f);
+	rot = glm::inverse(rot);
+
+	m_Transform *= rot;
 }
 
 
@@ -186,12 +304,12 @@ inline glm::mat4 Transform::GetModelMatrix()
 	return m_Transform * m_Scale;
 }
 
-inline void Transform::SetModelMatrix(glm::mat4 mat)
+inline void Transform::SetModelMatrix(glm::mat4& mat)
 {
 	m_Transform = mat;
 }
 
-inline void Transform::LookAt(glm::vec3 targetPosition)
+inline void Transform::LookAt(glm::vec3& targetPosition)
 {
 	m_Transform = glm::lookAt(WorldPosition(),targetPosition,glm::vec3(0,1,0));
 }
@@ -204,4 +322,13 @@ inline glm::mat4 Transform::operator*(glm::mat4 const& m)
 inline glm::mat4 Transform::operator*(Transform &m)
 {
 	return GetModelMatrix() * m.GetModelMatrix();
+}
+
+
+inline void Transform::Transformate(const glm::mat4& mat, bool world /*= false*/)
+{
+	if (world)
+		m_Transform = mat * m_Transform;
+	else
+		m_Transform = m_Transform * mat;
 }

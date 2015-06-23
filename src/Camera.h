@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Common.h"
+#include "SceneObject.h"
 #include "Transform.h"
 
 class Renderer;
-class Camera
+class Camera : public SceneObject
 {
 public:
 
@@ -17,6 +18,13 @@ public:
 
 	};
 
+	enum FaceCullingType
+	{
+		NONE = 0,
+		FRONT = 0x0404,
+		BACK = 0x0405,
+	};
+
 	NOWORK_API Camera(Renderer* renderer, float fov = 60.0f, float clipNear = 0.5f, float clipFar = 1000.0f, bool isOrthographic = false);
 
 	NOWORK_API glm::mat4 GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
@@ -27,7 +35,6 @@ public:
 
 	NOWORK_API float GetFov() const;
 	NOWORK_API void SetFov(float);
-	NOWORK_API Transform* GetTransform() { return &m_Transform; }
 
 	NOWORK_API float GetClipNear() const;
 	NOWORK_API void SetClipNear(float);
@@ -38,6 +45,10 @@ public:
 	NOWORK_API bool IsOrthographic() const;
 	NOWORK_API void SetOrthographic(bool);
 
+	NOWORK_API void ClearScreen(ClearFlags clearFlag);
+	NOWORK_API void SetColorMask(bool r, bool g, bool b, bool a);
+
+	NOWORK_API void SetFaceCulling(FaceCullingType type = FaceCullingType::BACK);
 
 	void Update();
 	void Render();
@@ -58,6 +69,5 @@ private:
 
 	Renderer* m_Renderer;
 
-	Transform m_Transform;
 	
 };
