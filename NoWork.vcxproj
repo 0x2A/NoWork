@@ -43,11 +43,15 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(SolutionDir)dep\NoWork\dep;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(SolutionDir)dep\NoWork\dep;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -85,32 +89,47 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\dep\gl3w\src\gl3w.c" />
-    <ClCompile Include="..\src\Camera.cpp" />
-    <ClCompile Include="..\src\EventHandler.cpp" />
-    <ClCompile Include="..\src\Framework.cpp" />
-    <ClCompile Include="..\src\Input.cpp" />
-    <ClCompile Include="..\src\Log.cpp" />
-    <ClCompile Include="..\src\Mesh.cpp" />
-    <ClCompile Include="..\src\Quaternion.cpp" />
-    <ClCompile Include="..\src\Renderer.cpp" />
-    <ClCompile Include="..\src\Shader.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\EventHandler.cpp" />
+    <ClCompile Include="src\Framework.cpp" />
+    <ClCompile Include="src\gl3w.c" />
+    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\Log.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Quaternion.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\soil\image_DXT.c" />
+    <ClCompile Include="src\soil\image_helper.c" />
+    <ClCompile Include="src\soil\SOIL.c" />
+    <ClCompile Include="src\soil\stb_image_aug.c" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\Camera.h" />
-    <ClInclude Include="..\src\Common.h" />
-    <ClInclude Include="..\src\EventHandler.h" />
-    <ClInclude Include="..\src\Framework.h" />
-    <ClInclude Include="..\src\Game.h" />
-    <ClInclude Include="..\src\glm\glm.hpp" />
-    <ClInclude Include="..\src\Input.h" />
-    <ClInclude Include="..\src\Log.h" />
-    <ClInclude Include="..\src\Mesh.h" />
-    <ClInclude Include="..\src\NoWork.h" />
-    <ClInclude Include="..\src\Quaternion.h" />
-    <ClInclude Include="..\src\Renderer.h" />
-    <ClInclude Include="..\src\Shader.h" />
-    <ClInclude Include="..\src\Transform.h" />
+    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Common.h" />
+    <ClInclude Include="src\EventHandler.h" />
+    <ClInclude Include="src\Framework.h" />
+    <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\glm\glm.hpp" />
+    <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Log.h" />
+    <ClInclude Include="src\Mesh.h" />
+    <ClInclude Include="src\NoWork.h" />
+    <ClInclude Include="src\Quaternion.h" />
+    <ClInclude Include="src\Renderer.h" />
+    <ClInclude Include="src\SceneObject.h" />
+    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\soil\image_DXT.h" />
+    <ClInclude Include="src\soil\image_helper.h" />
+    <ClInclude Include="src\soil\SOIL.h" />
+    <ClInclude Include="src\soil\stbi_DDS_aug.h" />
+    <ClInclude Include="src\soil\stbi_DDS_aug_c.h" />
+    <ClInclude Include="src\soil\stb_image_aug.h" />
+    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\Texture2D.h" />
+    <ClInclude Include="src\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

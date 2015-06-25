@@ -11,6 +11,9 @@ Quaternion::Quaternion( Quaternion const& q ): ma(q.a()), mb(q.b()), mc(q.c()), 
 
 }
 
+Quaternion::Quaternion(double a, double b, double c, double d) : ma(a), mb(b), mc(c), md(d)
+{}
+
 Quaternion::~Quaternion()
 {
 
@@ -19,9 +22,9 @@ Quaternion::~Quaternion()
 void Quaternion::initQuat( double a, double x, double y, double z )
 {
 	ma = cos(a / 2);
-	mb = x * sin(a/2);
-	mc = y * sin(a/2);
-	md = z * sin(a/2);
+	mb = x * sin(a / 2);
+	mc = y * sin(a / 2);
+	md = z * sin(a / 2);
 }
 
 void Quaternion::normalize()
@@ -68,6 +71,13 @@ Quaternion Quaternion::operator*( Quaternion const& q )
 	return tmp;
 }
 
+glm::mat4 Quaternion::operator*(glm::mat4 const& q)
+{
+	glm::mat4 mat = *this;
+	return mat * q;
+}
+
+
 double Quaternion::magnitude()
 {
 	return sqrt( ma * ma + mb * mb + mc * mc + md * md);
@@ -94,6 +104,17 @@ glm::mat4 Quaternion::Rotate(double alpha, double x, double y, double z)
 		1 - 2 * q.c() * q.c() - 2 * q.d() * q.d(), 2 * q.b() * q.c() - 2 * q.d() * q.a(), 2 * q.b() * q.d() + 2 * q.c() * q.a(), 0,
 		2 * q.b()*q.c() + 2 * q.d()*q.a(), 1 - 2 * q.b()*q.b() - 2 * q.d()*q.d(), 2 * q.c()*q.d() - 2 * q.b()*q.a(), 0,
 		2 * q.b()*q.d() - 2 * q.c()*q.a(), 2 * q.c()*q.d() + 2 * q.b()*q.a(), 1 - 2 * q.b()*q.b() - 2 * q.c()*q.c(), 0,
+		0, 0, 0, 1);
+	return rm;
+}
+
+Quaternion::operator glm::mat4()
+{
+	glm::mat4 rm;
+	rm = glm::mat4(
+		1 - 2 * ma * mc - 2 * md * md, 2 * mb * mc - 2 * md * ma, 2 * mb * md + 2 * mc * ma, 0,
+		2 * mb*mc + 2 * md*ma, 1 - 2 * mb*mb - 2 * md*md, 2 * mc*md - 2 * mb*ma, 0,
+		2 * mb*md - 2 * mc*ma, 2 * mc*md + 2 * mb*ma, 1 - 2 * mb*mb - 2 * mc*mc, 0,
 		0, 0, 0, 1);
 	return rm;
 }

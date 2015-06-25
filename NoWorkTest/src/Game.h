@@ -23,7 +23,7 @@ public:
 
 
 	//Bound to escape key, used to exit the game when escape pressed
-	void static Exit(void* data);
+	void Exit();
 
 private:
 

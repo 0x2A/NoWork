@@ -5,9 +5,11 @@
 
 class Texture2D : public Texture
 {
+	friend class Renderer;
 public:
 
 	NOWORK_API static Texture2D* Create(unsigned int width, unsigned int height, Texture::Format format, const unsigned char *pixels, bool constant = true);
+	NOWORK_API static Texture2D* Load(const std::string path,  bool constant = true);
 
 	NOWORK_API void Update(const unsigned char* pixels);
 protected:

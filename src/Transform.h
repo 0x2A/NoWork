@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Common.h"
+#include "Quaternion.h"
 
 
 #define RadToDeg 57.2957795130823f
@@ -19,6 +20,7 @@ public:
 	virtual void SetYPosition(const float &pos);
 	virtual void Rotate(float x, float y, float z, bool world = false);
 	virtual void Rotate(const glm::vec3 &dir, bool world = false);
+	virtual void Rotate(Quaternion &q, bool world = false);
 	virtual void Rotate(glm::quat &q, bool world = false);
 	virtual void ResetRotation();
 	virtual void Scale(const glm::vec3 &scale);
@@ -210,6 +212,14 @@ inline void Transform::Rotate(const glm::vec3 &rot,bool world)
 		m_Transform = m_Transform * rotMatrix;
 }
 
+inline void Transform::Rotate(Quaternion& q, bool world)
+{
+	glm::mat4 rotMatrix = q;
+	if (world)
+		m_Transform = rotMatrix * m_Transform;
+	else
+		m_Transform = m_Transform * rotMatrix;
+}
 inline void Transform::Rotate(glm::quat& q, bool world)
 {
 	glm::mat4 rotMatrix = glm::toMat4(q);

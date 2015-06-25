@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Common.h"
-#include "SceneObject.h"
 #include "Transform.h"
 
 class Renderer;
-class Camera : public SceneObject
+class Camera
 {
 public:
 
@@ -35,6 +34,7 @@ public:
 
 	NOWORK_API float GetFov() const;
 	NOWORK_API void SetFov(float);
+	NOWORK_API Transform* GetTransform() { return &m_Transform; }
 
 	NOWORK_API float GetClipNear() const;
 	NOWORK_API void SetClipNear(float);
@@ -50,7 +50,7 @@ public:
 
 	NOWORK_API void SetFaceCulling(FaceCullingType type = FaceCullingType::BACK);
 
-	void Update();
+	NOWORK_API void Update();
 	void Render();
 
 private:
@@ -69,5 +69,6 @@ private:
 
 	Renderer* m_Renderer;
 
+	Transform m_Transform;
 	
 };

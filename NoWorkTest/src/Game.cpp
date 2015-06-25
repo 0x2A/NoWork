@@ -10,7 +10,7 @@ void MyGame::Init()
 	LOG_DEBUG("Initializing game");
 	
 	//binding escape key to exit function
-	Input::BindKey(KEY_ESCAPE, MyGame::Exit, m_Framework);
+	Input::BindKey(KEY_ESCAPE, this, &MyGame::Exit);
 }
 
 void MyGame::OnLoadContent()
@@ -25,8 +25,9 @@ void MyGame::OnUpdate(double deltaTime)
 {
 	//let it manually rotate around with quaternions, YAY!
 	glm::mat4 currentMatrix = m_QuadMesh->GetTransform()->GetModelMatrix();
-	glm::mat4 newMatrix = currentMatrix * Quaternion::Rotate(0.015, 0, 1, 0); //if we switch the order here (quat * currentMatrix) we would rotate around the world center
+	glm::mat4 newMatrix = currentMatrix * Quaternion::Rotate(3.0f * deltaTime, 0, 1, 0); //if we switch the order here (quat * currentMatrix) we would rotate around the world center
 	m_QuadMesh->GetTransform()->SetModelMatrix(newMatrix);
+
 }
 
 void MyGame::OnRender()
@@ -47,10 +48,10 @@ void MyGame::OnShutdown()
 	delete m_QuadMesh;
 }
 
-void MyGame::Exit(void* data)
+void MyGame::Exit()
 {
 	//we want to exit the game if this function is called
-	((NoWork*)data)->Exit();
+	m_Framework->Exit();
 }
 
 void MyGame::CreateQuad()
@@ -80,5 +81,5 @@ void MyGame::CreateQuad()
 		Face(4, 7, 6), Face(4, 0, 7), Face(0, 3, 7), Face(3, 2, 7), Face(2, 6, 7), Face(1, 0, 4), Face(1, 4, 5) };
 
 	//now create the mesh
-	m_QuadMesh = Mesh::Create(m_Renderer, vertices, faces);
+	m_QuadMesh = Mesh::Create(vertices, faces);
 }

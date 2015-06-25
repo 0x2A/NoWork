@@ -7,6 +7,7 @@ class NoWork;
 class Texture
 {
 	friend class NoWork;
+	friend class Renderer;
 public:
 
 	enum Format : unsigned int
@@ -59,6 +60,10 @@ public:
 		RGB16I = 0x8D89,
 		RGBA8I = 0x8D8E,
 		RGB8I = 0x8D8F,
+		RGB16F = 0x881B,
+		RGB32F = 0x8815,
+		RGBA16F = 0x881A,
+		RGBA32F = 0x8814,
 		R8_SNORM = 0x8F94,
 		RG8_SNORM = 0x8F95,
 		RGB8_SNORM = 0x8F96,
@@ -67,7 +72,13 @@ public:
 		RG16_SNORM = 0x8F99,
 		RGB16_SNORM = 0x8F9A,
 		RGBA16_SNORM = 0x8F9B,
-		RGB10_A2UI = 0x906F
+		RGB10_A2UI = 0x906F,
+		DEPTH = 0x1801,
+		DEPTH_STENCIL = 0x84F9,
+		COMPRESSED_RED = 0x8225,
+		COMPRESSED_RG = 0x8226,
+		COMPRESSED_RGB = 0x84ED,
+		COMPRESSED_RGBA = 0x84EE
 	};
 
 	NOWORK_API ~Texture();
@@ -84,6 +95,7 @@ public:
 	NOWORK_API void SetLinearTextureFilter(bool state);
 
 	NOWORK_API unsigned int GetTextureId(){ return m_TextureId; }
+	NOWORK_API unsigned int GetType() { return m_TextureType; }
 
 protected:
 

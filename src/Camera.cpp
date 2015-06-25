@@ -15,6 +15,9 @@ m_Renderer(renderer), m_Fov(fov), m_ClipNear(clipNear), m_ClipFar(clipFar), m_Is
 
 void Camera::BuildProjectionMatrix()
 {
+	int screenWidth, screenHeight;
+	m_Renderer->GetFramebufferSize(screenWidth, screenHeight);
+	
 	if (m_IsOrthographic)
 	{
 		glm::vec3 pos = m_Transform.WorldPosition();
@@ -101,7 +104,7 @@ void Camera::Render()
 
 }
 
-void Camera::ClearScreen(ClearFlags clearFlag)
+NOWORK_API void Camera::ClearScreen(ClearFlags clearFlag)
 {
 	GLbitfield clearbf = GL_NONE;
 	switch (m_ClearFlag)
@@ -118,12 +121,12 @@ void Camera::ClearScreen(ClearFlags clearFlag)
 	glClear(clearbf);
 }
 
-void Camera::SetColorMask(bool r, bool g, bool b, bool a)
+NOWORK_API void Camera::SetColorMask(bool r, bool g, bool b, bool a)
 {
 	glColorMask(r, g, b, a);
 }
 
-void Camera::SetFaceCulling(FaceCullingType type /*= FaceCullingType::BACK*/)
+NOWORK_API void Camera::SetFaceCulling(FaceCullingType type /*= FaceCullingType::BACK*/)
 {
 	glCullFace(type);
 }

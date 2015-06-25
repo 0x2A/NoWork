@@ -30,8 +30,8 @@ class Shader
 public:
 
 	NOWORK_API virtual ~Shader();
-	NOWORK_API static Shader* Create(std::string vs, std::string fs);
-	NOWORK_API static Shader* Load(std::string vertexShaderPath, std::string fragmentShaderPath);
+	NOWORK_API static Shader* Create(const std::string& vs, const std::string& fs);
+	NOWORK_API static Shader* Load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 
 	NOWORK_API void Use();
 

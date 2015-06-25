@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Common.h"
-#include "SceneObject.h"
 #include "Renderer.h"
 #include "Transform.h"
 #include "Shader.h"
@@ -24,7 +23,7 @@ public:
 		if (glm::length(normal) != 0)
 			glm::normalize(normal);
 
-		color = glm::vec3(1, 1, 1);
+		color = glm::vec4(1, 1, 1, 1);
 	}
 
 	Vertex(glm::vec3 _position, glm::vec3 _normal) : Vertex(_position, _normal, glm::vec2())
@@ -33,20 +32,20 @@ public:
 	Vertex(glm::vec3 _position) : Vertex(_position, glm::vec3())
 	{}
 
-	Vertex(glm::vec3 _position, glm::vec3 _normal, glm::vec2 _texCoord, glm::vec3 _color) :Vertex(_position, _normal, _texCoord)
+	Vertex(glm::vec3 _position, glm::vec3 _normal, glm::vec2 _texCoord, glm::vec4 _color) :Vertex(_position, _normal, _texCoord)
 	{
 		color = _color;
 	}
 
 	Vertex() : position(0), normal(0), texCoord(0)
 	{
-		color = glm::vec3(1, 1, 1);
+		color = glm::vec4(1, 1, 1, 1);
 	}
 	
 	glm::vec3 position; //Position of the vertex
 	glm::vec3 normal; //Normal of the vertex
 	glm::vec2 texCoord; //Texture coordinate of the vertex
-	glm::vec3 color; //Color of the vertex
+	glm::vec4 color; //Color of the vertex
 private:
 };
 
@@ -63,7 +62,7 @@ public:
 };
 
 
-class Mesh : public SceneObject
+class Mesh
 {
 	friend class NoWork;
 public:
@@ -99,10 +98,10 @@ public:
 	//Creates a mesh with indices. The mesh must be triangles
 	NOWORK_API static Mesh* Create(const std::vector<Vertex> &vertices, const std::vector<Face> &faces, bool calculateNormals = false, DataUsage usage = DataUsage::STATIC_DRAW);
 	NOWORK_API static Mesh* CreatePlane(DataUsage usage = DataUsage::STATIC_DRAW);
-	NOWORK_API static Mesh* CreateQuad(DataUsage usage = DataUsage::STATIC_DRAW);
 
 	NOWORK_API void Render(Shader* shader, RenderMode mode = TRIANGLES);
-	
+	NOWORK_API Transform* GetTransform() {return &m_Transform; }
+
 protected:
 	static void Init(Renderer* renderer);
 	Mesh();
@@ -121,4 +120,6 @@ private:
 
 	unsigned int m_VertexArrayObject;
 	unsigned int m_IndexBuffer, m_VertexBuffer, m_NormalBuffer, m_TexCoordBuffer;
+
+	Transform m_Transform;
 };

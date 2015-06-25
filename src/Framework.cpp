@@ -34,6 +34,7 @@ NoWork::NoWork()
 	glfwSetErrorCallback(&EventHandler::ErrorCallback);
 
 	m_GameHandle = NULL;
+	lastFrame = glfwGetTime();
 }
 
 NoWork::~NoWork()

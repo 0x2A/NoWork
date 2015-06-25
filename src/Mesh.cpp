@@ -38,8 +38,8 @@ Mesh* Mesh::Create(const std::vector<Vertex> &vertices, const std::vector<Face> 
 
 	if (!mesh->CreateVBO())
 	{
-		delete mesh;
-		return NULL;
+		//delete mesh;
+		//return NULL;
 	}
 	return mesh;
 }
@@ -131,7 +131,7 @@ bool Mesh::CreateVBO()
 
 	//vertexColor (location = 3)
 	glEnableVertexAttribArray(MODEL_VERTEX_COLOR_LOCATION);
-	glVertexAttribPointer(MODEL_VERTEX_COLOR_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2 + sizeof(glm::vec2)));
+	glVertexAttribPointer(MODEL_VERTEX_COLOR_LOCATION, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2 + sizeof(glm::vec2)));
 
 	// unbind buffers
 	glBindVertexArray(0);
@@ -148,6 +148,10 @@ void Mesh::Render(Shader* shader, RenderMode mode)
 		LOG_ERROR("Invalid shader! Cant render!");
 		return;
 	}
+
+	if (m_Vertices.size() == 0)
+		return;
+
 	glBindVertexArray(m_VertexArrayObject);
 
 	glm::mat4 modelMatrix = m_Transform.GetModelMatrix();
@@ -183,48 +187,4 @@ NOWORK_API Mesh* Mesh::CreatePlane(DataUsage usage /*= DataUsage::STATIC_DRAW*/)
 void Mesh::Init(Renderer* renderer)
 {
 	m_sRenderer = renderer;
-}
-
-Mesh* Mesh::CreateQuad(DataUsage usage /*= DataUsage::STATIC_DRAW*/)
-{
-	std::vector<Vertex> vertices;
-	std::vector<Face> faces;
-
-	//front
-	Vertex v(glm::vec3(-1, -1, 1), glm::vec3(0, 0, 1), glm::vec2(0, 1)); vertices.push_back(v);
-	v = Vertex(glm::vec3(1, -1, 1), glm::vec3(0, 0, 1), glm::vec2(1, 1)); vertices.push_back(v);
-	v = Vertex(glm::vec3(1, 1, 1), glm::vec3(0, 0, 1), glm::vec2(1, 0)); vertices.push_back(v);
-	v = Vertex(glm::vec3(-1, 1, 1), glm::vec3(0, 0, 1), glm::vec2(0, 0)); vertices.push_back(v);
-	
-	//back
-	v = Vertex(glm::vec3(1, -1, -1), glm::vec3(0, 0, -1), glm::vec2(1, 1)); vertices.push_back(v);
-	v = Vertex(glm::vec3(-1, -1, -1), glm::vec3(0, 0, -1), glm::vec2(0, 1)); vertices.push_back(v);
-	v = Vertex(glm::vec3(-1, 1, -1), glm::vec3(0, 0, -1), glm::vec2(0, 0)); vertices.push_back(v);
-	v = Vertex(glm::vec3(1, 1, -1), glm::vec3(0, 0, -1), glm::vec2(1, 0)); vertices.push_back(v);
-	
-	//right
-	v = Vertex(glm::vec3(1, -1, 1), glm::vec3(1, 0, 0), glm::vec2(1, 1)); vertices.push_back(v);
-	v = Vertex(glm::vec3(1, -1, -1), glm::vec3(1, 0, 0), glm::vec2(0, 1)); vertices.push_back(v);
-	v = Vertex(glm::vec3(1, 1, -1), glm::vec3(1, 0, 0), glm::vec2(0, 0)); vertices.push_back(v);
-	v = Vertex(glm::vec3(1, 1, 1), glm::vec3(1, 0, 0), glm::vec2(1, 0)); vertices.push_back(v);
-
-	//left
-	v = Vertex(glm::vec3(-1, -1, -1), glm::vec3(1, 0, 0), glm::vec2(1, 1)); vertices.push_back(v);
-	v = Vertex(glm::vec3(-1, -1, 1), glm::vec3(1, 0, 0), glm::vec2(0, 1)); vertices.push_back(v);
-	v = Vertex(glm::vec3(-1, 1, 1), glm::vec3(1, 0, 0), glm::vec2(0, 0)); vertices.push_back(v);
-	v = Vertex(glm::vec3(-1, 1, -1), glm::vec3(1, 0, 0), glm::vec2(1, 0)); vertices.push_back(v);
-
-	faces.push_back(Face(0, 1, 3));
-	faces.push_back(Face(1, 2, 3));
-
-	faces.push_back(Face(4, 5, 7));
-	faces.push_back(Face(5, 6, 7));
-
-	faces.push_back(Face(8, 9, 11));
-	faces.push_back(Face(9, 10, 11));
-
-	faces.push_back(Face(12, 13, 15));
-	faces.push_back(Face(13, 14, 15));
-
-	return Create(vertices, faces, false, usage);
 }

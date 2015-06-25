@@ -1,5 +1,6 @@
 #include "Texture2D.h"
 #include "Log.h"
+#include "soil/SOIL.h"
 
 Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 {
@@ -32,6 +33,30 @@ Texture2D* Texture2D::Create(GLuint width, GLuint height, Texture::Format format
 
 	tex->SetLinearTextureFilter(true); //Set texture filtering to linear
 	return tex;
+}
+
+Texture2D* Texture2D::Load(const std::string path, bool constant /*= true*/)
+{
+	int width, height, channels;
+	unsigned char *ht_map = SOIL_load_image(path.c_str(), &width, &height, &channels, SOIL_LOAD_AUTO);
+
+	Texture::Format format;
+	switch (channels)
+	{
+	case 1:
+		format = Texture::R8;
+		break;
+	case 2:
+		format = Texture::RG8;
+		break;
+	case 3:
+		format = Texture::RGB8;
+		break;
+	case 4:
+		format = Texture::RGBA8;
+		break;
+	}
+	return Create(width, height, format, ht_map, constant);
 }
 
 void Texture2D::Update(const unsigned char* pixels)

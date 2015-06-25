@@ -59,6 +59,14 @@ bool ValidateProgram(unsigned int program)
 	memset(buffer, 0, BUFFER_SIZE);
 	GLsizei length = 0;
 
+	GLint loc = glGetUniformLocation(program, "ShadowTexture");
+	if (loc != -1)
+	{
+		glUseProgram(program);
+		glUniform1i(loc, 7);
+		glUseProgram(0);
+	}
+
 	glValidateProgram(program);
 	GLint status;
 	glGetProgramiv(program, GL_VALIDATE_STATUS, &status);
@@ -71,14 +79,14 @@ bool ValidateProgram(unsigned int program)
 		{
 			LOG_ERROR("Program " << program << " link error: " << buffer << std::endl);
 		}
-		return false;
+		//return false;
 	}
 
 
 	return true;
 }
 
-Shader* Shader::Create(std::string vs, std::string fs)
+NOWORK_API  Shader* Shader::Create(const std::string& vs, const std::string& fs)
 {
 	Shader* shader = new(std::nothrow) Shader();
 	shader->m_VSObject = glCreateShader(GL_VERTEX_SHADER);
@@ -125,21 +133,32 @@ Shader* Shader::Create(std::string vs, std::string fs)
 	return shader;
 }
 
-Shader* Shader::Load(std::string vertexShaderPath, std::string fragmentShaderPath)
+NOWORK_API  Shader* Shader::Load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
 	LOG_DEBUG("Creating shader from file '" << vertexShaderPath << "' and '" << fragmentShaderPath << "'");
 
-	std::ifstream t(vertexShaderPath);
+	std::ifstream t(vertexShaderPath, std::ios::in);
 	if (!t.is_open())
 	{
-		LOG_ERROR("Unable to open file '" << vertexShaderPath << "'");
+		LOG_ERROR("Unable to open file '" << vertexShaderPath << "': " << std::strerror(errno));
 		return 0;
 	}
 
 	std::string vertexSrc((std::istreambuf_iterator<char>(t)),
 		std::istreambuf_iterator<char>());
+
+	t.close();
+
+	t = std::ifstream(fragmentShaderPath, std::ios::in);
+	if (!t.is_open())
+	{
+		LOG_ERROR("Unable to open file '" << vertexShaderPath << "': " << std::strerror(errno));
+		return 0;
+	}
 	std::string fragmentSrc((std::istreambuf_iterator<char>(t)),
 		std::istreambuf_iterator<char>());
+
+	t.close();
 
 	return Create(vertexSrc, fragmentSrc);
 }
@@ -209,7 +228,10 @@ void Shader::InitializeDefaultShaders()
 		"\n"
 		"void main( void )\n"
 		"{\n"
-		"    colorOut = DiffuseColor * vec4(vertColor,1) * texture(Texture, texCoord);\n"
+		"	 vec4 col = texture(Texture, texCoord);\n"
+		"    if(col.a < 0.2)\n"
+		"         discard;\n"
+		"    colorOut = DiffuseColor * vec4(vertColor,1) * col;\n"
 		"}";
 
 	DefaultUnlit = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragSrc);
@@ -273,7 +295,8 @@ inline void Shader::SetParameterTexture(std::string name, Texture* tex, uint32_t
 {
 	if (!tex) return;
 	tex->Bind(slot);
-	glUniform1i(glGetUniformLocation(m_ShaderObject, name.c_str()), slot);
+	GLint loc = glGetUniformLocation(m_ShaderObject, name.c_str());
+	glUniform1i(loc, slot);
 
 }
 
