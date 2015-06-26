@@ -28,6 +28,8 @@ void MyGame::OnLoadContent()
 	m_SpriteSheet->GetSprite(0)->GetTransform()->Scale(glm::vec3(0.5f,0.5f,0.5f));
 	m_SpriteSheet->SetLinearFiltering(false);
 	m_SpriteSheet->SetColorKey(glm::vec3(0.588f,0.784f,0.98f));
+
+	auto size = m_SpriteSheet->GetSprite(1)->GetSizePixels();
 }
 
 void MyGame::OnUpdate(double deltaTime)

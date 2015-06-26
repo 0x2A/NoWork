@@ -40,3 +40,19 @@ void Sprite::Render()
 	mesh->Render(shader);	
 }
 
+glm::vec3 Sprite::GetPosition()
+{
+	return m_Transform.WorldPosition();
+}
+
+glm::vec2 Sprite::GetSizePixels()
+{
+	return glm::vec2(m_Area.Width(), m_Area.Height());
+}
+
+glm::vec2 Sprite::GetSize()
+{
+	auto scale = m_Transform.GetScale();
+	return glm::vec2(scale);
+}
+

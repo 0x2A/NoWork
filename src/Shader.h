@@ -47,8 +47,8 @@ public:
 	NOWORK_API void SetParameterMat4(std::string name, glm::mat4 val);
 	NOWORK_API void SetParameterTexture(std::string name, Texture* tex, uint32_t slot);
 
-	NOWORK_API unsigned int GetAttributeLocation(const std::string &name);
 	NOWORK_API void BindAttributeLocation(unsigned int id, const std::string &name);
+	NOWORK_API int GetAttributeLocation(const std::string& name);
 
 	//Sets a texture to uniform 'texture'. Useful for default shaders.
 	//Note: if you want to use more than one texture use SetParameterTexture
@@ -74,4 +74,6 @@ private:
 	unsigned int m_ShaderObject;
 	unsigned int m_VSObject;
 	unsigned int m_FSObject;
+	
+	std::map<std::string, int> m_ParamLocations;
 };

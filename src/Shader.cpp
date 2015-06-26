@@ -251,34 +251,34 @@ Shader inline implementation:
 
 inline void Shader::SetParameterf(std::string name, float val)
 {
-	glUniform1f(glGetUniformLocation(m_ShaderObject, name.c_str()), val);
+	glUniform1f(GetAttributeLocation(name), val);
 }
 inline void Shader::SetParameteri(std::string name, int val)
 {
-	glUniform1i(glGetUniformLocation(m_ShaderObject, name.c_str()), val);
+	glUniform1i(GetAttributeLocation(name), val);
 }
 inline void Shader::SetParameterVec2(std::string name, glm::vec2 val)
 {
-	glUniform2f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y);
+	glUniform2f(GetAttributeLocation(name), val.x, val.y);
 }
 inline void Shader::SetParameterVec3(std::string name, glm::vec3 val)
 {
-	glUniform3f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y, val.z);
+	glUniform3f(GetAttributeLocation(name), val.x, val.y, val.z);
 }
 
 inline void Shader::SetParameterVec4(std::string name, glm::vec4 val)
 {
-	glUniform4f(glGetUniformLocation(m_ShaderObject, name.c_str()), val.x, val.y, val.z, val.w);
+	glUniform4f(GetAttributeLocation(name), val.x, val.y, val.z, val.w);
 }
 
 inline void Shader::SetParameterMat3(std::string name, glm::mat3 val)
 {
-	glUniformMatrix3fv(glGetUniformLocation(m_ShaderObject, name.c_str()), 1, GL_FALSE, glm::value_ptr(val));
+	glUniformMatrix3fv(GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
 }
 
 inline void Shader::SetParameterMat4(std::string name, glm::mat4 val)
 {
-	glUniformMatrix4fv(glGetUniformLocation(m_ShaderObject, name.c_str()), 1, GL_FALSE, glm::value_ptr(val));
+	glUniformMatrix4fv(GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
 }
 
 inline void Shader::SetDiffuseColor(glm::vec4 val)
@@ -295,8 +295,8 @@ inline void Shader::SetParameterTexture(std::string name, Texture* tex, uint32_t
 {
 	if (!tex) return;
 	tex->Bind(slot);
-	GLint loc = glGetUniformLocation(m_ShaderObject, name.c_str());
-	glUniform1i(loc, slot);
+	
+	glUniform1i(GetAttributeLocation(name), slot);
 
 }
 
@@ -305,12 +305,19 @@ void Shader::SetTexture(Texture* tex)
 	SetParameterTexture("Texture", tex, 0);
 }
 
-NOWORK_API unsigned int Shader::GetAttributeLocation(const std::string &name)
-{
-	return glGetAttribLocation(m_ShaderObject, name.c_str());
-}
-
 NOWORK_API void Shader::BindAttributeLocation(unsigned int id, const std::string &name)
 {
 	glBindAttribLocation(m_ShaderObject, id, name.c_str());
+}
+
+int Shader::GetAttributeLocation(const std::string& name)
+{
+	auto res = m_ParamLocations.find(name);
+	if (res != m_ParamLocations.end()) //key already requested?
+		return res->second;
+
+	//not requested yet
+	GLint loc = glGetUniformLocation(m_ShaderObject, name.c_str());
+	m_ParamLocations[name] = loc;
+	return loc;
 }

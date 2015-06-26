@@ -18,6 +18,9 @@ public:
 	NOWORK_API void SetKeyThreshold(float val) { m_colorKeyParams.x = val; }
 	NOWORK_API void SetKeySmoothing(float val) { m_colorKeyParams.y = val; }
 	NOWORK_API void DisableColorKey() { m_ColorKey = glm::vec3(-1, -1, -1); }
+	NOWORK_API glm::vec3 GetPosition();
+	NOWORK_API glm::vec2 GetSizePixels();
+	NOWORK_API glm::vec2 GetSize();
 
 private:
 
