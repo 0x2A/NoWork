@@ -9,4 +9,5 @@
 #include "Log.h"
 #include "Mesh.h"
 #include "Texture2D.h"
+#include "SpriteSheet.h"
 #include "soil/SOIL.h"

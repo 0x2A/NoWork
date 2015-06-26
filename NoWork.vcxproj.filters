@@ -25,6 +25,8 @@
     <ClCompile Include="src\soil\stb_image_aug.c">
       <Filter>soil</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpriteSheet.cpp" />
+    <ClCompile Include="src\Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
@@ -62,6 +64,9 @@
     <ClInclude Include="src\soil\stbi_DDS_aug_c.h">
       <Filter>soil</Filter>
     </ClInclude>
+    <ClInclude Include="src\SpriteSheet.h" />
+    <ClInclude Include="src\Sprite.h" />
+    <ClInclude Include="src\Area.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="soil">

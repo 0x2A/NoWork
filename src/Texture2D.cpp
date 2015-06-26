@@ -40,6 +40,12 @@ Texture2D* Texture2D::Load(const std::string path, bool constant /*= true*/)
 	int width, height, channels;
 	unsigned char *ht_map = SOIL_load_image(path.c_str(), &width, &height, &channels, SOIL_LOAD_AUTO);
 
+	if (!ht_map)
+	{
+		LOG_ERROR("Unable to load texture '" << path << "': " << SOIL_last_result());
+		return nullptr;
+	}
+
 	Texture::Format format;
 	switch (channels)
 	{

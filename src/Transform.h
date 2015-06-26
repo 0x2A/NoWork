@@ -25,6 +25,8 @@ public:
 	virtual void ResetRotation();
 	virtual void Scale(const glm::vec3 &scale);
 	virtual void Scale(float x, float y, float z);
+	virtual void SetScale(float x, float y, float z);
+	virtual void SetScale(const glm::vec3 &scale);
 	virtual glm::vec3 GetScale();
 
 
@@ -341,4 +343,14 @@ inline void Transform::Transformate(const glm::mat4& mat, bool world /*= false*/
 		m_Transform = mat * m_Transform;
 	else
 		m_Transform = m_Transform * mat;
+}
+
+inline void Transform::SetScale(float x, float y, float z)
+{
+	m_Scale = glm::scale(x, y, z);
+}
+
+inline void Transform::SetScale(const glm::vec3 &scale)
+{
+	m_Scale = glm::scale(scale);
 }

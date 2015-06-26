@@ -19,6 +19,15 @@ void MyGame::OnLoadContent()
 	CreateQuad();
 	//and move it a bit backwards, so we can see it
 	m_QuadMesh->GetTransform()->Translate(0, 0, -5);
+
+	
+	m_SpriteSheet = SpriteSheet::Load("data/miku.json");
+
+	m_Renderer->GetCamera()->SetOrthographic(true);
+	m_Renderer->GetCamera()->GetTransform()->Translate(glm::vec3(0, 0, -1));
+	m_SpriteSheet->GetSprite(0)->GetTransform()->Scale(glm::vec3(0.5f,0.5f,0.5f));
+	m_SpriteSheet->SetLinearFiltering(false);
+	m_SpriteSheet->SetColorKey(glm::vec3(0.588f,0.784f,0.98f));
 }
 
 void MyGame::OnUpdate(double deltaTime)
@@ -39,13 +48,16 @@ void MyGame::OnRender()
 	Shader::DefaultUnlit->SetDiffuseColor(1, 1, 1);
 
 	//and render it using the default unlit shader
-	m_QuadMesh->Render(Shader::DefaultUnlit);
+	//m_QuadMesh->Render(Shader::DefaultUnlit);
+
+	m_SpriteSheet->GetSprite(0)->Render();
+	m_SpriteSheet->GetSprite(1)->Render();
 }
 
 void MyGame::OnShutdown()
 {
 	//delete the mesh we created
-	delete m_QuadMesh;
+	DelPtr(m_SpriteSheet);
 }
 
 void MyGame::Exit()

@@ -41,11 +41,8 @@
 #include "glm/gtx/rotate_vector.hpp"
 
 template<class T>
-void DelPtr(T* ptr)
+inline void DelPtr(T* ptr)
 {
-	if (ptr)
-	{
-		delete(ptr);
-	}
-	ptr = NULL;
+	delete ptr;
+	ptr = nullptr;
 }

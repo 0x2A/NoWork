@@ -57,8 +57,8 @@ NOWORK_API Mesh* Mesh::Create(const std::vector<Vertex> &vertices, DataUsage usa
 
 	if (!mesh->CreateVBO())
 	{
-		delete mesh;
-		return NULL;
+		//delete mesh;
+		//return NULL;
 	}
 	return mesh;
 }

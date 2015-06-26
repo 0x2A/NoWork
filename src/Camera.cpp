@@ -15,14 +15,16 @@ m_Renderer(renderer), m_Fov(fov), m_ClipNear(clipNear), m_ClipFar(clipFar), m_Is
 
 void Camera::BuildProjectionMatrix()
 {
-	int screenWidth, screenHeight;
-	m_Renderer->GetFramebufferSize(screenWidth, screenHeight);
 	
 	if (m_IsOrthographic)
 	{
-		glm::vec3 pos = m_Transform.WorldPosition();
-		float t = glm::length(pos);
-		m_ProjectionMatrix = glm::ortho(-t, t, t, -t, m_ClipNear, m_ClipFar);
+		//glm::vec3 pos = m_Transform.WorldPosition();
+		//float t = glm::max(glm::length(pos),1.0f);
+
+		int screenWidth, screenHeight;
+		m_Renderer->GetFramebufferSize(screenWidth, screenHeight);
+		float aspect = screenWidth / (float)screenHeight;
+		m_ProjectionMatrix = glm::ortho(-aspect, aspect, -1.0f, 1.0f, m_ClipNear, m_ClipFar);
 	}
 	else
 	{

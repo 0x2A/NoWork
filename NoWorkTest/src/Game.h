@@ -30,4 +30,5 @@ private:
 	void CreateQuad();
 
 	Mesh *m_QuadMesh;
+	SpriteSheet *m_SpriteSheet;
 };

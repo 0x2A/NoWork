@@ -1,0 +1,14 @@
+{"SpriteSheet": 
+	{
+    "name": "Miku",
+	"texture": "data/PC Computer - Miku n Pop - Miku Hatsune.png",
+    "sprites": [
+        { "posx": 0, "posy": 0, "width": 1180, "height": 497 },
+		{ "posx": 0, "posy": 0, "width": 56, "height": 64 }
+    ],
+	"animations": [
+        
+		
+    ]
+	}
+}

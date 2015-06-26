@@ -101,13 +101,13 @@ NOWORK_API  Shader* Shader::Create(const std::string& vs, const std::string& fs)
 	glCompileShader(shader->m_VSObject);
 	if (!ValidateShader(shader->m_VSObject))
 	{
-		delete shader;
+		DelPtr(shader);
 		return 0;
 	}
 	glCompileShader(shader->m_FSObject);
 	if(!ValidateShader(shader->m_FSObject))
 	{
-		delete shader;
+		DelPtr(shader);
 		return 0;
 	}
 	shader->m_ShaderObject = glCreateProgram();
@@ -122,7 +122,7 @@ NOWORK_API  Shader* Shader::Create(const std::string& vs, const std::string& fs)
 	glLinkProgram(shader->m_ShaderObject);
 	if(!ValidateProgram(shader->m_ShaderObject))
 	{
-		delete shader;
+		DelPtr(shader);
 		return 0;
 	}
 
@@ -146,7 +146,7 @@ NOWORK_API  Shader* Shader::Load(const std::string& vertexShaderPath, const std:
 
 	std::string vertexSrc((std::istreambuf_iterator<char>(t)),
 		std::istreambuf_iterator<char>());
-
+		
 	t.close();
 
 	t = std::ifstream(fragmentShaderPath, std::ios::in);
