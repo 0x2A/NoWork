@@ -115,9 +115,6 @@ SpriteSheet* SpriteSheet::Load(const std::string& path)
 	
 	SpriteSheet *sheet = new SpriteSheet;
 
-	//try to get the spriteSheet name
-	if (GotValue(doc, "name", "Name not defined",true, false))
-		sheet->m_Name = doc["name"].GetString();
 
 	//load the texture
 	if (!GotValue(doc, "texture", "No texture path defined", false, true))
@@ -168,6 +165,28 @@ SpriteSheet* SpriteSheet::Load(const std::string& path)
 	return sheet;
 }
 
+bool SpriteSheet::GetArea(rapidjson::Value& doc, Area<int>* targetArea)
+{
+	if (!GotValue(doc, "posx", "posx not defined for sprite element", false, true))
+		return false;
+	int posX = doc["posx"].GetInt();
+
+	if (!GotValue(doc, "posy", "posy not defined for sprite element", false, true))
+		return false;
+	int posY = doc["posy"].GetInt();
+
+	if (!GotValue(doc, "width", "width not defined for sprite element", false, true))
+		return false;
+	int width = doc["width"].GetInt();
+
+	if (!GotValue(doc, "height", "height not defined for sprite element", false, true))
+		return false;
+	int height = doc["height"].GetInt();
+
+	*targetArea = Area<int>(posX, posY, posX + width, posY + height);
+	return true;
+}
+
 bool SpriteSheet::ParseSprites(SpriteSheet* sheet, rapidjson::Value& doc)
 {
 	int numSprites = doc.Size();
@@ -175,23 +194,11 @@ bool SpriteSheet::ParseSprites(SpriteSheet* sheet, rapidjson::Value& doc)
 
 	for (int i = 0; i < numSprites; i++)
 	{
-		if (!GotValue(doc[i], "posx", "posx not defined for sprite element", false, true))
-			return false;
-		int posX = doc[i]["posx"].GetInt(); 
+		Area<int> area;
+		if (!GetArea(doc[i], &area))
+			continue;
 
-		if (!GotValue(doc[i], "posy", "posy not defined for sprite element", false, true))
-			return false;
-		int posY = doc[i]["posy"].GetInt();
-
-		if (!GotValue(doc[i], "width", "width not defined for sprite element", false, true))
-			return false;
-		int width = doc[i]["width"].GetInt();
-
-		if (!GotValue(doc[i], "height", "height not defined for sprite element", false, true))
-			return false;
-		int height = doc[i]["height"].GetInt();
-
-		Sprite *sprite = new Sprite(Area<int>(posX, posY, posX + width, posY + height), sheet->m_SpriteTexture);
+		Sprite *sprite = new Sprite(area, sheet->m_SpriteTexture);
 		sheet->m_Sprites.push_back(sprite);
 	}
 	
@@ -200,7 +207,38 @@ bool SpriteSheet::ParseSprites(SpriteSheet* sheet, rapidjson::Value& doc)
 
 bool SpriteSheet::ParseAnimations(SpriteSheet* sheet, rapidjson::Value& doc)
 {
-	//TODO
+	int numAnimations = doc.Size();
+
+	for (int i = 0; i < numAnimations; i++)
+	{
+		std::string str = "no frames defined for animation " + std::to_string(i);
+		if (!GotValue(doc[i], "frames", str, false, true))
+			continue;
+
+		std::string name = "";
+		int frameRate = 15;
+		if (GotValue(doc[i], "name", "no name defined for animation", true, false))
+			name = doc[i]["name"].GetString();
+
+		if (GotValue(doc[i], "framerate", "no framerate defined for animation. setting to default 15 fps.", true, false))
+			frameRate = doc[i]["framerate"].GetInt();
+
+		std::vector<Area<int>> frames;
+		rapidjson::Value& frameEntries = doc[i]["frames"];
+		frames.reserve(frameEntries.Size());
+		for (int j = 0; j < frameEntries.Size(); j++)
+		{
+			Area<int> area;
+			if (!GetArea(frameEntries[j], &area))
+				continue;
+
+			frames.push_back(area);
+		}
+
+		SpriteAnimation *animation = new SpriteAnimation(frames, frameRate, name, sheet->m_SpriteTexture);
+		sheet->m_SpriteAnimations.push_back(animation);
+	}
+
 	return true;
 }
 
@@ -226,6 +264,12 @@ SpriteSheet::~SpriteSheet()
 		delete sprite;
 	}
 	m_Sprites.clear();
+
+	for (auto sprite : m_SpriteAnimations)
+	{
+		delete sprite;
+	}
+	m_SpriteAnimations.clear();
 }
 
 Sprite* SpriteSheet::GetSprite(size_t index)
@@ -234,6 +278,14 @@ Sprite* SpriteSheet::GetSprite(size_t index)
 		return nullptr;
 
 	return m_Sprites[index];
+}
+
+SpriteAnimation* SpriteSheet::GetAnimation(size_t index)
+{
+	if (index >= m_SpriteAnimations.size())
+		return nullptr;
+
+	return m_SpriteAnimations[index];
 }
 
 void SpriteSheet::SetLinearFiltering(bool b)
@@ -247,11 +299,19 @@ void SpriteSheet::SetColorKey(glm::vec3 color)
 	{
 		sprite->SetColorKey(color);
 	}
+	for (auto sprite : m_SpriteAnimations)
+	{
+		sprite->SetColorKey(color);
+	}
 }
 
 void SpriteSheet::DisableColorKey()
 {
 	for (auto sprite : m_Sprites)
+	{
+		sprite->DisableColorKey();
+	}
+	for (auto sprite : m_SpriteAnimations)
 	{
 		sprite->DisableColorKey();
 	}

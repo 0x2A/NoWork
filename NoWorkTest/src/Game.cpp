@@ -39,6 +39,7 @@ void MyGame::OnUpdate(double deltaTime)
 	glm::mat4 newMatrix = currentMatrix * Quaternion::Rotate(3.0f * deltaTime, 0, 1, 0); //if we switch the order here (quat * currentMatrix) we would rotate around the world center
 	m_QuadMesh->GetTransform()->SetModelMatrix(newMatrix);
 
+	m_SpriteSheet->GetAnimation(1)->Update(deltaTime);
 }
 
 void MyGame::OnRender()
@@ -52,8 +53,10 @@ void MyGame::OnRender()
 	//and render it using the default unlit shader
 	//m_QuadMesh->Render(Shader::DefaultUnlit);
 
-	m_SpriteSheet->GetSprite(0)->Render();
-	m_SpriteSheet->GetSprite(1)->Render();
+	//m_SpriteSheet->GetSprite(0)->Render();
+	//m_SpriteSheet->GetSprite(1)->Render();
+
+	m_SpriteSheet->GetAnimation(1)->Render(m_SpriteSheet->GetSprite(0)->GetTransform()->GetModelMatrix());
 }
 
 void MyGame::OnShutdown()

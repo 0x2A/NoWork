@@ -1,14 +1,51 @@
 {"SpriteSheet": 
 	{
-    "name": "Miku",
 	"texture": "data/PC Computer - Miku n Pop - Miku Hatsune.png",
     "sprites": [
         { "posx": 0, "posy": 0, "width": 1180, "height": 497 },
 		{ "posx": 0, "posy": 0, "width": 56, "height": 64 }
     ],
 	"animations": [
-        
-		
+		{
+			"name": "idle",
+			"framerate": 15,
+			"frames": [
+			{ "posx": 1, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 60, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 119, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 178, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 237, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 296, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 355, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 414, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 473, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 532, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 591, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 650, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 709, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 768, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 827, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 886, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 945, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 1004, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 1063, "posy": 0, "width": 59, "height": 64 },
+			{ "posx": 1122, "posy": 0, "width": 59, "height": 64 }
+			]
+		},
+		{
+			"name": "running",
+			"framerate": 15,
+			"frames": [
+			{ "posx": 0, "posy": 66, "width": 77, "height": 66 },
+			{ "posx": 77, "posy": 66, "width": 77, "height": 66 },
+			{ "posx": 154, "posy": 66, "width": 77, "height": 66 },
+			{ "posx": 231, "posy": 66, "width": 77, "height": 66 },
+			{ "posx": 308, "posy": 66, "width": 77, "height": 66 },
+			{ "posx": 385, "posy": 66, "width": 77, "height": 66 },
+			{ "posx": 462, "posy": 66, "width": 77, "height": 66 },
+			{ "posx": 539, "posy": 66, "width": 77, "height": 66 }
+			]
+		}
     ]
 	}
 }

@@ -27,6 +27,7 @@
     </ClCompile>
     <ClCompile Include="src\SpriteSheet.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
+    <ClCompile Include="src\SpriteAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
@@ -67,6 +68,7 @@
     <ClInclude Include="src\SpriteSheet.h" />
     <ClInclude Include="src\Sprite.h" />
     <ClInclude Include="src\Area.h" />
+    <ClInclude Include="src\SpriteAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="soil">

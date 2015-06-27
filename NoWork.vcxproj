@@ -104,6 +104,7 @@
     <ClCompile Include="src\soil\SOIL.c" />
     <ClCompile Include="src\soil\stb_image_aug.c" />
     <ClCompile Include="src\Sprite.cpp" />
+    <ClCompile Include="src\SpriteAnimation.cpp" />
     <ClCompile Include="src\SpriteSheet.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Texture2D.cpp" />
@@ -131,6 +132,7 @@
     <ClInclude Include="src\soil\stbi_DDS_aug_c.h" />
     <ClInclude Include="src\soil\stb_image_aug.h" />
     <ClInclude Include="src\Sprite.h" />
+    <ClInclude Include="src\SpriteAnimation.h" />
     <ClInclude Include="src\SpriteSheet.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Texture2D.h" />
