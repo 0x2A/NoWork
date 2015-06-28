@@ -31,4 +31,6 @@ private:
 
 	Mesh *m_QuadMesh;
 	SpriteSheet *m_SpriteSheet;
+
+	AnimatedSprite *m_AnimatedSprite;
 };

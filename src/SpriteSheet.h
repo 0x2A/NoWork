@@ -25,6 +25,12 @@ public:
 	NOWORK_API void SetColorKey(glm::vec3 color);
 	NOWORK_API void DisableColorKey();
 
+	NOWORK_API size_t NumAnimations() { return m_SpriteAnimations.size(); }
+	NOWORK_API size_t NumSprites() { return m_Sprites.size(); }
+
+	NOWORK_API const std::vector<SpriteAnimation*> GetAnimations() { return m_SpriteAnimations; }
+	NOWORK_API const std::vector<Sprite*> GetSrpites() { return m_Sprites; }
+
 protected:
 
 	static Mesh *m_PlaneMesh;

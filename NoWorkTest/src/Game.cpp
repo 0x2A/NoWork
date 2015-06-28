@@ -15,31 +15,44 @@ void MyGame::Init()
 
 void MyGame::OnLoadContent()
 {
-	
+	//create a quad mesh
 	CreateQuad();
 	//and move it a bit backwards, so we can see it
 	m_QuadMesh->GetTransform()->Translate(0, 0, -5);
 
-	
-	m_SpriteSheet = SpriteSheet::Load("data/miku.json");
-
+	//set the camera to orthographic projection, since we are using sprites
 	m_Renderer->GetCamera()->SetOrthographic(true);
+	//move the camera back a bit so we see something
 	m_Renderer->GetCamera()->GetTransform()->Translate(glm::vec3(0, 0, -1));
-	m_SpriteSheet->GetSprite(0)->GetTransform()->Scale(glm::vec3(0.5f,0.5f,0.5f));
+
+	//load a spritesheet from json file
+	m_SpriteSheet = SpriteSheet::Load("data/miku.json");
+	//disable linear filtering (pixelated look)
 	m_SpriteSheet->SetLinearFiltering(false);
+	//remove the backround using color keying
 	m_SpriteSheet->SetColorKey(glm::vec3(0.588f,0.784f,0.98f));
 
-	auto size = m_SpriteSheet->GetSprite(1)->GetSizePixels();
+	//create an animated sprite
+	m_AnimatedSprite = AnimatedSprite::Create();
+	m_AnimatedSprite->AddAnimation(m_SpriteSheet->GetAnimations()); //add all animations from the spritesheet to the animated sprite
+	m_AnimatedSprite->Play(0); //play the first animation
+
+	//scale the sprite down a bit
+	m_AnimatedSprite->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
 }
 
 void MyGame::OnUpdate(double deltaTime)
 {
-	//let it manually rotate around with quaternions, YAY!
-	glm::mat4 currentMatrix = m_QuadMesh->GetTransform()->GetModelMatrix();
-	glm::mat4 newMatrix = currentMatrix * Quaternion::Rotate(3.0f * deltaTime, 0, 1, 0); //if we switch the order here (quat * currentMatrix) we would rotate around the world center
-	m_QuadMesh->GetTransform()->SetModelMatrix(newMatrix);
 
-	m_SpriteSheet->GetAnimation(1)->Update(deltaTime);
+	if (Input::KeyDown(KEY_1))
+		m_AnimatedSprite->SelectAnimation(0);
+	if (Input::KeyDown(KEY_2))
+		m_AnimatedSprite->SelectAnimation(1);
+	if (Input::KeyDown(KEY_3))
+		m_AnimatedSprite->SelectAnimation(2);
+
+	//update the animated sprite
+	m_AnimatedSprite->Update(deltaTime);
 }
 
 void MyGame::OnRender()
@@ -53,10 +66,8 @@ void MyGame::OnRender()
 	//and render it using the default unlit shader
 	//m_QuadMesh->Render(Shader::DefaultUnlit);
 
-	//m_SpriteSheet->GetSprite(0)->Render();
-	//m_SpriteSheet->GetSprite(1)->Render();
-
-	m_SpriteSheet->GetAnimation(1)->Render(m_SpriteSheet->GetSprite(0)->GetTransform()->GetModelMatrix());
+	//render a sprite
+	m_AnimatedSprite->Render();
 }
 
 void MyGame::OnShutdown()
