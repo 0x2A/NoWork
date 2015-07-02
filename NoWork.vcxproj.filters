@@ -1,18 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\EventHandler.cpp" />
-    <ClCompile Include="src\Framework.cpp" />
-    <ClCompile Include="src\Input.cpp" />
-    <ClCompile Include="src\Log.cpp" />
-    <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\Quaternion.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
-    <ClCompile Include="src\Texture2D.cpp" />
-    <ClCompile Include="src\gl3w.c" />
     <ClCompile Include="src\soil\image_DXT.c">
       <Filter>soil</Filter>
     </ClCompile>
@@ -25,52 +13,67 @@
     <ClCompile Include="src\soil\stb_image_aug.c">
       <Filter>soil</Filter>
     </ClCompile>
-    <ClCompile Include="src\SpriteSheet.cpp" />
-    <ClCompile Include="src\Sprite.cpp" />
-    <ClCompile Include="src\SpriteAnimation.cpp" />
-    <ClCompile Include="src\AnimatedSprite.cpp" />
+    <ClCompile Include="src\NoWork\AnimatedSprite.cpp" />
+    <ClCompile Include="src\NoWork\Camera.cpp" />
+    <ClCompile Include="src\NoWork\EventHandler.cpp" />
+    <ClCompile Include="src\NoWork\Framework.cpp" />
+    <ClCompile Include="src\NoWork\gl3w.c" />
+    <ClCompile Include="src\NoWork\Input.cpp" />
+    <ClCompile Include="src\NoWork\Log.cpp" />
+    <ClCompile Include="src\NoWork\Mesh.cpp" />
+    <ClCompile Include="src\NoWork\Quaternion.cpp" />
+    <ClCompile Include="src\NoWork\Renderer.cpp" />
+    <ClCompile Include="src\NoWork\Shader.cpp" />
+    <ClCompile Include="src\NoWork\Sprite.cpp" />
+    <ClCompile Include="src\NoWork\SpriteAnimation.cpp" />
+    <ClCompile Include="src\NoWork\SpriteSheet.cpp" />
+    <ClCompile Include="src\NoWork\Texture.cpp" />
+    <ClCompile Include="src\NoWork\Texture2D.cpp" />
+    <ClCompile Include="src\NoWork\AudioSource.cpp" />
+    <ClCompile Include="src\NoWork\AudioSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\Common.h" />
-    <ClInclude Include="src\EventHandler.h" />
-    <ClInclude Include="src\Framework.h" />
-    <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\glm\glm.hpp" />
-    <ClInclude Include="src\Input.h" />
-    <ClInclude Include="src\Log.h" />
-    <ClInclude Include="src\Mesh.h" />
-    <ClInclude Include="src\NoWork.h" />
-    <ClInclude Include="src\Quaternion.h" />
-    <ClInclude Include="src\Renderer.h" />
-    <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\Transform.h" />
-    <ClInclude Include="src\SceneObject.h" />
-    <ClInclude Include="src\Texture.h" />
-    <ClInclude Include="src\Texture2D.h" />
-    <ClInclude Include="src\soil\image_DXT.h">
+    <ClInclude Include="include\NoWork\AnimatedSprite.h" />
+    <ClInclude Include="include\NoWork\Area.h" />
+    <ClInclude Include="include\NoWork\Camera.h" />
+    <ClInclude Include="include\NoWork\Common.h" />
+    <ClInclude Include="include\NoWork\EventHandler.h" />
+    <ClInclude Include="include\NoWork\Framework.h" />
+    <ClInclude Include="include\NoWork\Game.h" />
+    <ClInclude Include="include\NoWork\Input.h" />
+    <ClInclude Include="include\NoWork\Log.h" />
+    <ClInclude Include="include\NoWork\Mesh.h" />
+    <ClInclude Include="include\NoWork\NoWork.h" />
+    <ClInclude Include="include\NoWork\Quaternion.h" />
+    <ClInclude Include="include\NoWork\Renderer.h" />
+    <ClInclude Include="include\NoWork\SceneObject.h" />
+    <ClInclude Include="include\NoWork\Shader.h" />
+    <ClInclude Include="include\NoWork\Sprite.h" />
+    <ClInclude Include="include\NoWork\SpriteAnimation.h" />
+    <ClInclude Include="include\NoWork\SpriteSheet.h" />
+    <ClInclude Include="include\NoWork\Texture.h" />
+    <ClInclude Include="include\NoWork\Texture2D.h" />
+    <ClInclude Include="include\NoWork\Transform.h" />
+    <ClInclude Include="include\soil\image_DXT.h">
       <Filter>soil</Filter>
     </ClInclude>
-    <ClInclude Include="src\soil\image_helper.h">
+    <ClInclude Include="include\soil\image_helper.h">
       <Filter>soil</Filter>
     </ClInclude>
-    <ClInclude Include="src\soil\SOIL.h">
+    <ClInclude Include="include\soil\SOIL.h">
       <Filter>soil</Filter>
     </ClInclude>
-    <ClInclude Include="src\soil\stb_image_aug.h">
+    <ClInclude Include="include\soil\stb_image_aug.h">
       <Filter>soil</Filter>
     </ClInclude>
-    <ClInclude Include="src\soil\stbi_DDS_aug.h">
+    <ClInclude Include="include\soil\stbi_DDS_aug.h">
       <Filter>soil</Filter>
     </ClInclude>
-    <ClInclude Include="src\soil\stbi_DDS_aug_c.h">
+    <ClInclude Include="include\soil\stbi_DDS_aug_c.h">
       <Filter>soil</Filter>
     </ClInclude>
-    <ClInclude Include="src\SpriteSheet.h" />
-    <ClInclude Include="src\Sprite.h" />
-    <ClInclude Include="src\Area.h" />
-    <ClInclude Include="src\SpriteAnimation.h" />
-    <ClInclude Include="src\AnimatedSprite.h" />
+    <ClInclude Include="include\NoWork\AudioSource.h" />
+    <ClInclude Include="src\NoWork\AudioSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="soil">

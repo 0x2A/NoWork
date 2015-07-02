@@ -7,7 +7,7 @@
 	public domain
 */
 
-#include "image_DXT.h"
+#include "soil/image_DXT.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

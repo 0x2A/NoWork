@@ -9,6 +9,12 @@ void MyGame::Init()
 {
 	LOG_DEBUG("Initializing game");
 	
+	m_Sound = AudioSource::Load("sound", "data/sound.ogg", true);
+	m_Sound->SetGain(0.7f);
+	m_Sound->SetLooping(true);
+	m_Sound->Play();
+	m_Sound->SetReverb(FMOD_PRESET_CONCERTHALL, 0.75f, 0.25f);
+	
 	//binding escape key to exit function
 	Input::BindKey(KEY_ESCAPE, this, &MyGame::Exit);
 }
@@ -39,6 +45,7 @@ void MyGame::OnLoadContent()
 
 	//scale the sprite down a bit
 	m_AnimatedSprite->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
+
 }
 
 void MyGame::OnUpdate(double deltaTime)

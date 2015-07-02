@@ -1,4 +1,4 @@
-#include "../../src/NoWork.h"
+#include <NoWork/NoWork.h>
 
 
 class MyGame : public GameBase
@@ -33,4 +33,5 @@ private:
 	SpriteSheet *m_SpriteSheet;
 
 	AnimatedSprite *m_AnimatedSprite;
+	AudioSource *m_Sound;
 };

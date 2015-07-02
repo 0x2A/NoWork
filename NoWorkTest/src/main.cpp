@@ -1,4 +1,4 @@
-#include "../../src/NoWork.h"
+#include <NoWork/NoWork.h>
 #include "Game.h"
 
 
