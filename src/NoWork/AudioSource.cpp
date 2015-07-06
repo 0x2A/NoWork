@@ -1,6 +1,6 @@
 #include "NoWork/AudioSource.h"
 #include "NoWork/Log.h"
-#include "AudioSystem.h"
+#include "NoWork/AudioSystem.h"
 
 
 NOWORK_API  AudioSource* AudioSource::Load(const std::string& name, const std::string& filename, bool ambient /*= false*/, bool stream)

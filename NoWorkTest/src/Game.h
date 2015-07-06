@@ -34,4 +34,6 @@ private:
 
 	AnimatedSprite *m_AnimatedSprite;
 	AudioSource *m_Sound;
+
+	Model* m_Model;
 };

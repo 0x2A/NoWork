@@ -42,14 +42,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(solutionDir)dep\FMOD\api\lowlevel\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(SolutionDir)dep\FMOD\api\lowlevel\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(SolutionDir)dep\FMOD\api\lowlevel\lib;$(SolutionDir)dep\assimp-3.1.1\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(solutionDir)dep\FMOD\api\lowlevel\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(SolutionDir)dep\FMOD\api\lowlevel\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(SolutionDir)dep\FMOD\api\lowlevel\lib;$(SolutionDir)dep\assimp-3.1.1\lib\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -66,7 +66,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;OpenGL32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;OpenGL32.lib;fmod64_vc.lib;assimpd.lib;zlibstaticd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <NoEntryPoint>false</NoEntryPoint>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
@@ -88,7 +88,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glfw3.lib;OpenGL32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;OpenGL32.lib;fmod64_vc.lib;assimp.lib;zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -103,6 +103,7 @@
     <ClCompile Include="src\NoWork\Input.cpp" />
     <ClCompile Include="src\NoWork\Log.cpp" />
     <ClCompile Include="src\NoWork\Mesh.cpp" />
+    <ClCompile Include="src\NoWork\Model.cpp" />
     <ClCompile Include="src\NoWork\Quaternion.cpp" />
     <ClCompile Include="src\NoWork\Renderer.cpp" />
     <ClCompile Include="src\NoWork\Shader.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="include\NoWork\AnimatedSprite.h" />
     <ClInclude Include="include\NoWork\Area.h" />
     <ClInclude Include="include\NoWork\AudioSource.h" />
+    <ClInclude Include="include\NoWork\AudioSystem.h" />
     <ClInclude Include="include\NoWork\Camera.h" />
     <ClInclude Include="include\NoWork\Common.h" />
     <ClInclude Include="include\NoWork\EventHandler.h" />
@@ -128,6 +130,7 @@
     <ClInclude Include="include\NoWork\Input.h" />
     <ClInclude Include="include\NoWork\Log.h" />
     <ClInclude Include="include\NoWork\Mesh.h" />
+    <ClInclude Include="include\NoWork\Model.h" />
     <ClInclude Include="include\NoWork\NoWork.h" />
     <ClInclude Include="include\NoWork\Quaternion.h" />
     <ClInclude Include="include\NoWork\Renderer.h" />
@@ -145,7 +148,6 @@
     <ClInclude Include="include\NoWork\Texture.h" />
     <ClInclude Include="include\NoWork\Texture2D.h" />
     <ClInclude Include="include\NoWork\Transform.h" />
-    <ClInclude Include="src\NoWork\AudioSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

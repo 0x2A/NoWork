@@ -61,6 +61,13 @@ public:
 	unsigned int Indices[3];
 };
 
+//typedefs for easier usage
+
+//list of vertices for mesh creation
+typedef std::vector<Vertex> VertexList;
+
+//list of faces (indices) for mesh creation
+typedef std::vector<Face> FaceList;
 
 class Mesh
 {
@@ -92,11 +99,12 @@ public:
 
 	NOWORK_API ~Mesh();
 
+
 	//Creates a mesh without indices. The mesh must be triangles
-	NOWORK_API static Mesh* Create(const std::vector<Vertex> &vertices, DataUsage usage = DataUsage::STATIC_DRAW);
+	NOWORK_API static Mesh* Create(const VertexList &vertices, DataUsage usage = DataUsage::STATIC_DRAW);
 
 	//Creates a mesh with indices. The mesh must be triangles
-	NOWORK_API static Mesh* Create(const std::vector<Vertex> &vertices, const std::vector<Face> &faces, bool calculateNormals = false, DataUsage usage = DataUsage::STATIC_DRAW);
+	NOWORK_API static Mesh* Create(const VertexList &vertices, const FaceList &faces, bool calculateNormals = false, DataUsage usage = DataUsage::STATIC_DRAW);
 	NOWORK_API static Mesh* CreatePlane(DataUsage usage = DataUsage::STATIC_DRAW);
 
 	NOWORK_API void Render(Shader* shader, RenderMode mode = TRIANGLES);
@@ -108,7 +116,7 @@ protected:
 
 private:
 	void CalculateNormals();
-	bool CreateVBO();
+	bool CreateVBO(const VertexList &vertices, const FaceList &faces);
 
 	DataUsage m_DataUsage;
 	std::vector<Vertex> m_Vertices;

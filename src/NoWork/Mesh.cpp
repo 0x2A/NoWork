@@ -1,5 +1,4 @@
 #include "nowork/Mesh.h"
-
 #include "nowork/Log.h"
 
 
@@ -20,15 +19,15 @@ Mesh::~Mesh()
 	glDeleteVertexArrays(1, &m_VertexArrayObject);
 }
 
-Mesh* Mesh::Create(const std::vector<Vertex> &vertices, const std::vector<Face> &faces, bool calculateNormals, DataUsage usage)
+Mesh* Mesh::Create(const VertexList &vertices, const FaceList &faces, bool calculateNormals, DataUsage usage)
 {
 	LOG_DEBUG("Creating mesh with " << vertices.size() << " vertices");
 
 	Mesh* mesh = new Mesh;
 	mesh->m_DataUsage = usage;
-	mesh->m_Vertices = vertices;
+	if(usage != STATIC_DRAW) mesh->m_Vertices = vertices;
 	mesh->m_Renderer = m_sRenderer;
-	mesh->m_Faces = faces;
+	if (usage != STATIC_DRAW) mesh->m_Faces = faces;
 	mesh->m_NumIndices = (unsigned int)faces.size() * 3;
 	mesh->m_NumVertices = (unsigned int)vertices.size();
 
@@ -36,7 +35,7 @@ Mesh* Mesh::Create(const std::vector<Vertex> &vertices, const std::vector<Face> 
 	if (calculateNormals)
 		mesh->CalculateNormals();
 
-	if (!mesh->CreateVBO())
+	if (!mesh->CreateVBO(vertices, faces))
 	{
 		//delete mesh;
 		//return NULL;
@@ -44,18 +43,18 @@ Mesh* Mesh::Create(const std::vector<Vertex> &vertices, const std::vector<Face> 
 	return mesh;
 }
 
-NOWORK_API Mesh* Mesh::Create(const std::vector<Vertex> &vertices, DataUsage usage /*= DataUsage::STATIC_DRAW*/)
+NOWORK_API Mesh* Mesh::Create(const VertexList &vertices, DataUsage usage /*= DataUsage::STATIC_DRAW*/)
 {
 	LOG_DEBUG("Creating mesh with " << vertices.size() << " vertices");
 
 	Mesh* mesh = new Mesh;
 	mesh->m_DataUsage = usage;
-	mesh->m_Vertices = vertices;
+	if (usage != STATIC_DRAW) mesh->m_Vertices = vertices;
 	mesh->m_Renderer = m_sRenderer;
 	mesh->m_NumIndices = 0;
 	mesh->m_NumVertices = (unsigned int)vertices.size();
 
-	if (!mesh->CreateVBO())
+	if (!mesh->CreateVBO(vertices, mesh->m_Faces))
 	{
 		//delete mesh;
 		//return NULL;
@@ -85,9 +84,9 @@ void Mesh::CalculateNormals()
 	}
 }
 
-bool Mesh::CreateVBO()
+bool Mesh::CreateVBO(const VertexList &vertices, const FaceList &faces)
 {
-	if (m_Vertices.size() == 0)
+	if (vertices.size() == 0)
 	{
 		LOG_ERROR("No vertices defined. Please add some vertices",__FUNCTION__);
 		return false;
@@ -106,13 +105,13 @@ bool Mesh::CreateVBO()
 	{
 		glGenBuffers(1, &m_IndexBuffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Face) * m_Faces.size(), &m_Faces[0], m_DataUsage);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Face) * faces.size(), &faces[0], m_DataUsage);
 	}
 
 	//buffer for vertices
 	glGenBuffers(1, &m_VertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0], m_DataUsage);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), &vertices[0], m_DataUsage);
 
 	
 	//setup data locations
@@ -149,8 +148,8 @@ void Mesh::Render(Shader* shader, RenderMode mode)
 		return;
 	}
 
-	if (m_Vertices.size() == 0)
-		return;
+//	if (m_Vertices.size() == 0)
+//		return;
 
 	glBindVertexArray(m_VertexArrayObject);
 

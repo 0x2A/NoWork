@@ -12,4 +12,5 @@
 #include "nowork/SpriteSheet.h"
 #include "nowork/AnimatedSprite.h"
 #include "NoWork/AudioSource.h"
+#include "NoWork/Model.h"
 #include "soil/SOIL.h"

@@ -2,6 +2,9 @@
 
 
 
+const float moveSpeed = 45.f;
+bool useWireframe;
+
 //This function is called form a seperate thread.
 //So we can do time intensive stuff in here without hanging the program
 //HINT: DONT CALL FUNCTIONS THAT USE OPENGL IN HERE (i.e. Mesh::Create etc) DO THIS IN OnLoadContent!
@@ -9,14 +12,14 @@ void MyGame::Init()
 {
 	LOG_DEBUG("Initializing game");
 	
-	m_Sound = AudioSource::Load("sound", "data/sound.ogg", true);
+	m_Sound = AudioSource::Load("sound", "data/music.mp3", true);
 	m_Sound->SetGain(0.7f);
 	m_Sound->SetLooping(true);
-	m_Sound->Play();
-	m_Sound->SetReverb(FMOD_PRESET_CONCERTHALL, 0.75f, 0.25f);
 	
 	//binding escape key to exit function
 	Input::BindKey(KEY_ESCAPE, this, &MyGame::Exit);
+
+	useWireframe = false;
 }
 
 void MyGame::OnLoadContent()
@@ -27,9 +30,9 @@ void MyGame::OnLoadContent()
 	m_QuadMesh->GetTransform()->Translate(0, 0, -5);
 
 	//set the camera to orthographic projection, since we are using sprites
-	m_Renderer->GetCamera()->SetOrthographic(true);
+	//m_Renderer->GetCamera()->SetOrthographic(true);
 	//move the camera back a bit so we see something
-	m_Renderer->GetCamera()->GetTransform()->Translate(glm::vec3(0, 0, -1));
+	m_Renderer->GetCamera()->GetTransform()->Translate(glm::vec3(0, 0, -10));
 
 	//load a spritesheet from json file
 	m_SpriteSheet = SpriteSheet::Load("data/miku.json");
@@ -46,17 +49,43 @@ void MyGame::OnLoadContent()
 	//scale the sprite down a bit
 	m_AnimatedSprite->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
 
+
+	m_Model = Model::Load("data/support/model.fbx");
+	m_Model->GetTransform()->Rotate(-90, 0, 0);
+
+	m_Sound->Play();
+	m_Sound->SetReverb(FMOD_PRESET_CONCERTHALL, 0.75f, 0.25f);
+
 }
 
 void MyGame::OnUpdate(double deltaTime)
 {
-
+	auto camera = m_Renderer->GetCamera();
 	if (Input::KeyDown(KEY_1))
 		m_AnimatedSprite->SelectAnimation(0);
 	if (Input::KeyDown(KEY_2))
 		m_AnimatedSprite->SelectAnimation(1);
 	if (Input::KeyDown(KEY_3))
 		m_AnimatedSprite->SelectAnimation(2);
+
+	if (Input::KeyHeld(KEY_W))
+		camera->GetTransform()->Translate(glm::vec3(0, 0, moveSpeed*deltaTime));
+	if (Input::KeyHeld(KEY_S))
+		camera->GetTransform()->Translate(glm::vec3(0, 0, -moveSpeed*deltaTime));
+	if (Input::KeyHeld(KEY_A))
+		camera->GetTransform()->Translate(glm::vec3(moveSpeed*deltaTime, 0, 0));
+	if (Input::KeyHeld(KEY_D))
+		camera->GetTransform()->Translate(glm::vec3(-moveSpeed*deltaTime, 0, 0));
+	if (Input::KeyHeld(KEY_E))
+		camera->GetTransform()->Translate(glm::vec3(0, moveSpeed*deltaTime, 0));
+	if (Input::KeyHeld(KEY_Q))
+		camera->GetTransform()->Translate(glm::vec3(0, -moveSpeed*deltaTime, 0));
+	if (Input::KeyDown(KEY_O))
+	{
+		useWireframe = !useWireframe;
+		m_Renderer->SetWireframeMode(useWireframe);
+	}
+		
 
 	//update the animated sprite
 	m_AnimatedSprite->Update(deltaTime);
@@ -75,12 +104,15 @@ void MyGame::OnRender()
 
 	//render a sprite
 	m_AnimatedSprite->Render();
+
+	m_Model->Render(Shader::DefaultUnlitTextured);
 }
 
 void MyGame::OnShutdown()
 {
 	//delete the mesh we created
 	DelPtr(m_SpriteSheet);
+	DelPtr(m_Model);
 }
 
 void MyGame::Exit()
@@ -107,9 +139,9 @@ void MyGame::CreateQuad()
 	//   3     2
 	//   .     .
 	//   |\
-			//   |  \
-			//   |   \
-			//   |____}
+	//   |  \
+	//   |   \
+	//   |____}
 	//   .     .
 	//   0     1
 	std::vector<Face> faces = { Face(0, 1, 3), Face(1, 2, 3), Face(1, 5, 2), Face(5, 6, 2), Face(5, 4, 6),
