@@ -27,13 +27,14 @@ public:
 
 private:
 
-	void CreateQuad();
 
-	Mesh *m_QuadMesh;
 	SpriteSheet *m_SpriteSheet;
 
 	AnimatedSprite *m_AnimatedSprite;
 	AudioSource *m_Sound;
 
 	Model* m_Model;
+
+	Framebuffer* m_FBO;
+	RenderTexture* m_RenderTex;
 };

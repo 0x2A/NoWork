@@ -98,6 +98,7 @@
     <ClCompile Include="src\NoWork\AudioSystem.cpp" />
     <ClCompile Include="src\NoWork\Camera.cpp" />
     <ClCompile Include="src\NoWork\EventHandler.cpp" />
+    <ClCompile Include="src\NoWork\Framebuffer.cpp" />
     <ClCompile Include="src\NoWork\Framework.cpp" />
     <ClCompile Include="src\NoWork\gl3w.c" />
     <ClCompile Include="src\NoWork\Input.cpp" />
@@ -106,6 +107,7 @@
     <ClCompile Include="src\NoWork\Model.cpp" />
     <ClCompile Include="src\NoWork\Quaternion.cpp" />
     <ClCompile Include="src\NoWork\Renderer.cpp" />
+    <ClCompile Include="src\NoWork\RenderTexture.cpp" />
     <ClCompile Include="src\NoWork\Shader.cpp" />
     <ClCompile Include="src\soil\image_DXT.c" />
     <ClCompile Include="src\soil\image_helper.c" />
@@ -125,6 +127,7 @@
     <ClInclude Include="include\NoWork\Camera.h" />
     <ClInclude Include="include\NoWork\Common.h" />
     <ClInclude Include="include\NoWork\EventHandler.h" />
+    <ClInclude Include="include\NoWork\Framebuffer.h" />
     <ClInclude Include="include\NoWork\Framework.h" />
     <ClInclude Include="include\NoWork\Game.h" />
     <ClInclude Include="include\NoWork\Input.h" />
@@ -134,6 +137,7 @@
     <ClInclude Include="include\NoWork\NoWork.h" />
     <ClInclude Include="include\NoWork\Quaternion.h" />
     <ClInclude Include="include\NoWork\Renderer.h" />
+    <ClInclude Include="include\NoWork\RenderTexture.h" />
     <ClInclude Include="include\NoWork\SceneObject.h" />
     <ClInclude Include="include\NoWork\Shader.h" />
     <ClInclude Include="include\soil\image_DXT.h" />

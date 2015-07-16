@@ -32,6 +32,8 @@
     <ClCompile Include="src\NoWork\AudioSource.cpp" />
     <ClCompile Include="src\NoWork\AudioSystem.cpp" />
     <ClCompile Include="src\NoWork\Model.cpp" />
+    <ClCompile Include="src\NoWork\Framebuffer.cpp" />
+    <ClCompile Include="src\NoWork\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\NoWork\AnimatedSprite.h" />
@@ -76,6 +78,8 @@
     <ClInclude Include="include\NoWork\AudioSource.h" />
     <ClInclude Include="include\NoWork\AudioSystem.h" />
     <ClInclude Include="include\NoWork\Model.h" />
+    <ClInclude Include="include\NoWork\Framebuffer.h" />
+    <ClInclude Include="include\NoWork\RenderTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="soil">

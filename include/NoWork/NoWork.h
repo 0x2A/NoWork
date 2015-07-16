@@ -13,4 +13,5 @@
 #include "nowork/AnimatedSprite.h"
 #include "NoWork/AudioSource.h"
 #include "NoWork/Model.h"
+#include "NoWork/Framebuffer.h"
 #include "soil/SOIL.h"

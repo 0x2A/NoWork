@@ -57,11 +57,15 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType);
+		aiProcess_SortByPType | 
+		aiProcess_PreTransformVertices | 
+		aiProcess_SplitLargeMeshes |
+		aiProcess_FindInvalidData | aiProcess_GenUVCoords | aiProcess_FlipUVs);
 
+	
 	if (!scene)
 	{
-		LOG_ERROR("Unable to load Model '" << path << "'");
+		LOG_ERROR("Unable to load Model '" << path << "': " << importer.GetErrorString());
 		return nullptr;
 	}
 
@@ -110,7 +114,6 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 	}
 
 	int iNumMaterials = scene->mNumMaterials;
-	std::vector<int> materialRemap(iNumMaterials);
 
 	std::string basePath = GetBasePath(path);
 

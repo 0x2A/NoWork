@@ -6,6 +6,9 @@ bool Texture::m_UseDSA;
 bool Texture::m_UseTexStorage;
 bool Texture::m_UseInternalFormat;
 
+//gl3w is missing this, idk why...
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+
 void Texture::Init(NoWork* framework, Renderer* renderer)
 {
 	m_Renderer = renderer;
@@ -190,8 +193,16 @@ NOWORK_API void Texture::SetLinearTextureFilter(bool state)
 {
 	if (state)
 	{
-		SetParameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		SetParameteri(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		float aniFilter = m_Renderer->GetAnisotropicFilterValue();
+		if (aniFilter > 0.0f)
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniFilter);
+		}
+		else
+		{
+			SetParameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			SetParameteri(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
 	}
 	else
 	{

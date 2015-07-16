@@ -4,10 +4,9 @@
 #include "nowork/Camera.h"
 
 
-
-
 struct GLFWwindow;
 class Texture;
+class NoWork;
 class Renderer
 {
 public:
@@ -42,7 +41,7 @@ public:
 		DEPTH_STENCIL_ATTACHMENT = 0x821A
 	};
 
-	Renderer(GLFWwindow* window);
+	Renderer(NoWork* framework, GLFWwindow* window);
 	~Renderer();
 
 	NOWORK_API Camera* GetCamera() const { return m_Camera; }
@@ -68,6 +67,10 @@ public:
 
 	NOWORK_API void ClearScreen(int bitfield = ClearBufferBits::STENCIL_BUFFER | ClearBufferBits::COLOR_BUFFER);
 
+	NOWORK_API void SetAnisotropicFiltering(float val);
+	NOWORK_API float GetAnisotropicFilterValue();
+	NOWORK_API bool AnisotropicFilteringAvailable() { return m_AnisotropicFilteringAvail; }
+
 	//NOWORK_API void SetCamera(Camera* val) { m_Camera = val; }
 
 private:
@@ -77,6 +80,12 @@ private:
 	int m_FramebufferWidth, m_FramebufferHeight;
 	
 	float m_AspectRatio;
+
+	float m_MaxAnisotropicFiltering;
+	float m_AnisotropicFilteringVal;
+	bool m_AnisotropicFilteringAvail;
 	
 	Camera* m_Camera = NULL;
+
+	NoWork *m_Framework;
 };

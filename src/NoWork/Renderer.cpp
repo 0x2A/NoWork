@@ -2,10 +2,14 @@
 #include "nowork/Texture.h"
 #include "nowork/Texture2D.h"
 #include "nowork/Log.h"
+#include "NoWork/Framework.h"
 
-Renderer::Renderer(GLFWwindow* window) : m_Window(window)
+//gl3w is missing this, idk why...
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+
+Renderer::Renderer(NoWork* framework, GLFWwindow* window) : m_Window(window)
 {
-
+	m_Framework = framework;
 	glfwGetFramebufferSize(window, &m_FramebufferWidth, &m_FramebufferHeight);
 	m_AspectRatio = m_FramebufferWidth / (float)m_FramebufferHeight;
 
@@ -17,6 +21,13 @@ Renderer::Renderer(GLFWwindow* window) : m_Window(window)
 
 	m_Camera = new Camera(this);
 
+	m_AnisotropicFilteringAvail = m_Framework->ExtensionAvailable("GL_EXT_texture_filter_anisotropic");
+	m_AnisotropicFilteringVal = 0.0f;
+
+	if (m_AnisotropicFilteringAvail)
+	{
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_MaxAnisotropicFiltering);
+	}
 }
 
 Renderer::~Renderer()
@@ -198,7 +209,24 @@ Texture* Renderer::CreateFBOTexture(int width, int height, unsigned int textureF
 	tex->m_Renderer = this;
 	tex->m_Type = GL_TEXTURE_2D;
 
-	glBindTexture(GL_TEXTURE_2D, 0);
-
 	return tex;
+}
+
+void Renderer::SetAnisotropicFiltering(float val)
+{
+	if (val <= 0.0f || !m_AnisotropicFilteringAvail) 
+		m_AnisotropicFilteringVal = 0.0f;
+	else
+	{
+		m_AnisotropicFilteringVal = val;
+		if (m_AnisotropicFilteringVal > m_MaxAnisotropicFiltering)
+			m_AnisotropicFilteringVal = m_MaxAnisotropicFiltering;
+	}
+}
+
+float Renderer::GetAnisotropicFilterValue()
+{
+	if (!m_AnisotropicFilteringAvail)
+		return 0.0f;
+	return m_AnisotropicFilteringVal;
 }

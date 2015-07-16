@@ -15,6 +15,10 @@ void MyGame::Init()
 	m_Sound = AudioSource::Load("sound", "data/music.mp3", true);
 	m_Sound->SetGain(0.7f);
 	m_Sound->SetLooping(true);
+
+	//play the sound
+	m_Sound->Play();
+	m_Sound->SetReverb(FMOD_PRESET_CONCERTHALL, 0.75f, 0.25f);
 	
 	//binding escape key to exit function
 	Input::BindKey(KEY_ESCAPE, this, &MyGame::Exit);
@@ -24,13 +28,9 @@ void MyGame::Init()
 
 void MyGame::OnLoadContent()
 {
-	//create a quad mesh
-	CreateQuad();
-	//and move it a bit backwards, so we can see it
-	m_QuadMesh->GetTransform()->Translate(0, 0, -5);
+	//Set anisotropic filtering (if available)
+	m_Renderer->SetAnisotropicFiltering(16.0f);
 
-	//set the camera to orthographic projection, since we are using sprites
-	//m_Renderer->GetCamera()->SetOrthographic(true);
 	//move the camera back a bit so we see something
 	m_Renderer->GetCamera()->GetTransform()->Translate(glm::vec3(0, 0, -10));
 
@@ -49,17 +49,22 @@ void MyGame::OnLoadContent()
 	//scale the sprite down a bit
 	m_AnimatedSprite->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
 
+	//load a model from file
+	m_Model = Model::Load("data/altair/altair.3ds");
 
-	m_Model = Model::Load("data/support/model.fbx");
-	m_Model->GetTransform()->Rotate(-90, 0, 0);
+	//create a framebuffer object for testing
+	m_FBO = Framebuffer::Create();
 
-	m_Sound->Play();
-	m_Sound->SetReverb(FMOD_PRESET_CONCERTHALL, 0.75f, 0.25f);
+	//create a render texture as RGBA8 and bind it to the framebuffer object as color attachment #0
+	//(currently we are not using it for anything yet, feel free to change this ;) )
+	m_RenderTex = RenderTexture::Create(1280, 720, RenderTexture::TEXTURE_2D, Texture::RGBA8, true);
+	m_FBO->BindTexture(m_RenderTex, Framebuffer::COLOR0);
 
 }
 
 void MyGame::OnUpdate(double deltaTime)
 {
+	//process input so we can move the camera around with wsad, q and r
 	auto camera = m_Renderer->GetCamera();
 	if (Input::KeyDown(KEY_1))
 		m_AnimatedSprite->SelectAnimation(0);
@@ -85,7 +90,6 @@ void MyGame::OnUpdate(double deltaTime)
 		useWireframe = !useWireframe;
 		m_Renderer->SetWireframeMode(useWireframe);
 	}
-		
 
 	//update the animated sprite
 	m_AnimatedSprite->Update(deltaTime);
@@ -93,18 +97,10 @@ void MyGame::OnUpdate(double deltaTime)
 
 void MyGame::OnRender()
 {
-	//First we enable the default unlit shader
-	Shader::DefaultUnlit->Use();
-
-	//Now set a color for the mesh
-	Shader::DefaultUnlit->SetDiffuseColor(1, 1, 1);
-
-	//and render it using the default unlit shader
-	//m_QuadMesh->Render(Shader::DefaultUnlit);
-
 	//render a sprite
 	m_AnimatedSprite->Render();
 
+	//render the model
 	m_Model->Render(Shader::DefaultUnlitTextured);
 }
 
@@ -113,40 +109,14 @@ void MyGame::OnShutdown()
 	//delete the mesh we created
 	DelPtr(m_SpriteSheet);
 	DelPtr(m_Model);
+	DelPtr(m_FBO);
+	DelPtr(m_RenderTex);
+	DelPtr(m_Sound);
+	DelPtr(m_AnimatedSprite);
 }
 
 void MyGame::Exit()
 {
 	//we want to exit the game if this function is called
 	m_Framework->Exit();
-}
-
-void MyGame::CreateQuad()
-{
-	//Lets create a quad object.
-	//First we need 4 vertices
-	std::vector<Vertex> vertices = { Vertex(glm::vec3(-1, -1, 1)),
-		Vertex(glm::vec3(1, -1, 1)),
-		Vertex(glm::vec3(1, 1, 1)),
-		Vertex(glm::vec3(-1, 1, 1)),
-		Vertex(glm::vec3(-1, -1, -1)),
-		Vertex(glm::vec3(1, -1, -1)),
-		Vertex(glm::vec3(1, 1, -1)),
-		Vertex(glm::vec3(-1, 1, -1)) };
-
-	//now we set up the indices(faces/polys). These have to be triangles.
-	//indices are the index of the vertex to use for the face
-	//   3     2
-	//   .     .
-	//   |\
-	//   |  \
-	//   |   \
-	//   |____}
-	//   .     .
-	//   0     1
-	std::vector<Face> faces = { Face(0, 1, 3), Face(1, 2, 3), Face(1, 5, 2), Face(5, 6, 2), Face(5, 4, 6),
-		Face(4, 7, 6), Face(4, 0, 7), Face(0, 3, 7), Face(3, 2, 7), Face(2, 6, 7), Face(1, 0, 4), Face(1, 4, 5) };
-
-	//now create the mesh
-	m_QuadMesh = Mesh::Create(vertices, faces);
 }

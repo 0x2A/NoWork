@@ -118,7 +118,7 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 	}
 
 
-	m_Renderer = new Renderer(m_Window);
+	m_Renderer = new Renderer(this, m_Window);
 
 	//initialize static vars
 	Mesh::Init(m_Renderer);
