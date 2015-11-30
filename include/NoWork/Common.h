@@ -1,7 +1,7 @@
 #pragma once
 
 
-#define NOWORK_VERSION	"1.1"
+#define NOWORK_VERSION	"1.5"
 
 //Either export or import dll functions
 #ifdef _NOWORK_INTERNAL_
@@ -40,9 +40,18 @@
 #include "glm/gtx/string_cast.hpp"
 #include "glm/gtx/rotate_vector.hpp"
 
+using namespace glm;
+
 template<class T>
 inline void DelPtr(T* ptr)
 {
 	delete ptr;
+	ptr = nullptr;
+}
+
+template<class T>
+inline void DelArr(T* ptr)
+{
+	delete []ptr;
 	ptr = nullptr;
 }

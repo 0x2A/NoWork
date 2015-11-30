@@ -1,9 +1,9 @@
 #pragma once
 
 #include "nowork/Common.h"
-#include "nowork/Renderer.h"
 #include "nowork/Transform.h"
 #include "nowork/Shader.h"
+#include "NoWork/AsyncGLWorker.h"
 
 #define MODEL_VERTEX_LOCATION 0
 #define MODEL_NORMAL_LOCATION 1
@@ -13,7 +13,7 @@
 #define MODEL_BITANGENT_LOCATION 5
 #define MODEL_MATERIAL_LOCATION 6
 
-
+class Renderer;
 class Vertex
 {
 public:
@@ -69,9 +69,10 @@ typedef std::vector<Vertex> VertexList;
 //list of faces (indices) for mesh creation
 typedef std::vector<Face> FaceList;
 
-class Mesh
+class Mesh : public AsyncGLWorker
 {
 	friend class NoWork;
+	friend class Renderer;
 public:
 	enum DataUsage
 	{
@@ -110,24 +111,36 @@ public:
 	NOWORK_API void Render(Shader* shader, RenderMode mode = TRIANGLES);
 	NOWORK_API Transform* GetTransform() {return &m_Transform; }
 
+	NOWORK_API VertexList* GetVertexList() { return &m_Vertices; }
+	NOWORK_API FaceList* GetFacesList() { return &m_Faces; }
+
+	NOWORK_API void UpdateBufferData(bool reallocate = false);
+
 protected:
 	static void Init(Renderer* renderer);
 	Mesh();
 
+	bool CreateVBO();
+
 private:
 	void CalculateNormals();
-	bool CreateVBO(const VertexList &vertices, const FaceList &faces);
 
-	DataUsage m_DataUsage;
-	std::vector<Vertex> m_Vertices;
-	std::vector<Face> m_Faces;
+	virtual void DoAsyncWork(int mode, void *params) override;
+
+
+
 	Renderer* m_Renderer;
 	static Renderer* m_sRenderer;
 
 	unsigned int m_NumIndices, m_NumVertices;
 
+	DataUsage m_DataUsage;
+	std::vector<Vertex> m_Vertices;
+	std::vector<Face> m_Faces;
+
 	unsigned int m_VertexArrayObject;
 	unsigned int m_IndexBuffer, m_VertexBuffer, m_NormalBuffer, m_TexCoordBuffer;
 
 	Transform m_Transform;
+
 };

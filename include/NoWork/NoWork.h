@@ -14,4 +14,5 @@
 #include "NoWork/AudioSource.h"
 #include "NoWork/Model.h"
 #include "NoWork/Framebuffer.h"
+#include "NoWork/Font.h"
 #include "soil/SOIL.h"

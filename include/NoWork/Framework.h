@@ -50,6 +50,11 @@ public:
 
 	NOWORK_API bool ExtensionAvailable(std::string name);
 
+	NOWORK_API static bool IsMainThread();
+
+	NOWORK_API GLFWwindow* GetWindow() { return m_Window; }
+	NOWORK_API glm::ivec2 ScreenSize();
+
 private:
 
 	GLFWwindow* DetectMaxSupportedGlVersionAndCreateWindow(std::string title, int width, int height, bool fullscreen);
@@ -71,4 +76,6 @@ private:
 	bool m_Loading = false;
 	std::thread m_LoadingThread;
 	double currentFrame, deltaTime, lastFrame;
+
+	NOWORK_API static std::thread::id m_MainThreadId;
 };

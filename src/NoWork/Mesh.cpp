@@ -1,18 +1,21 @@
 #include "nowork/Mesh.h"
 #include "nowork/Log.h"
-
+#include "nowork/Renderer.h"
+#include "NoWork/Framework.h"
 
 Renderer* Mesh::m_sRenderer = NULL;
 
 
-Mesh::Mesh()
+Mesh::Mesh() : AsyncGLWorker()
 {
 	m_VertexArrayObject = 0;
 }
 
+
 Mesh::~Mesh()
 {
 	m_Vertices.clear();
+	m_Faces.clear();
 
 	unsigned int buffers[] = { m_IndexBuffer, m_VertexBuffer, m_NormalBuffer, m_TexCoordBuffer };
 	glDeleteBuffers(4, buffers);
@@ -35,11 +38,7 @@ Mesh* Mesh::Create(const VertexList &vertices, const FaceList &faces, bool calcu
 	if (calculateNormals)
 		mesh->CalculateNormals();
 
-	if (!mesh->CreateVBO(vertices, faces))
-	{
-		//delete mesh;
-		//return NULL;
-	}
+	mesh->CreateVBO();
 	return mesh;
 }
 
@@ -54,11 +53,7 @@ NOWORK_API Mesh* Mesh::Create(const VertexList &vertices, DataUsage usage /*= Da
 	mesh->m_NumIndices = 0;
 	mesh->m_NumVertices = (unsigned int)vertices.size();
 
-	if (!mesh->CreateVBO(vertices, mesh->m_Faces))
-	{
-		//delete mesh;
-		//return NULL;
-	}
+	mesh->CreateVBO();
 	return mesh;
 }
 
@@ -84,34 +79,42 @@ void Mesh::CalculateNormals()
 	}
 }
 
-bool Mesh::CreateVBO(const VertexList &vertices, const FaceList &faces)
+bool Mesh::CreateVBO()
 {
-	if (vertices.size() == 0)
+	if (m_Vertices.size() == 0 && !(m_DataUsage == DYNAMIC_COPY || m_DataUsage == DYNAMIC_DRAW ||m_DataUsage == DYNAMIC_READ))
 	{
 		LOG_ERROR("No vertices defined. Please add some vertices",__FUNCTION__);
 		return false;
 	}
 	if (m_NumIndices == 0)
 	{
-		LOG_WARNING("No indices defined. Rendering in array mode (slower)", __FUNCTION__);
+		//LOG_WARNING("No indices defined. Rendering in array mode (slower)", __FUNCTION__);
 	}
 	
+	if (!NoWork::IsMainThread())
+	{
+		AddToGLQueue(m_Renderer, 0);
+		return true;
+	}
+
 	//generate vertex buffer object
 	glGenVertexArrays(1, &m_VertexArrayObject);
 	glBindVertexArray(m_VertexArrayObject);
 
 	// buffer for indices
-	if (m_NumIndices > 0)
+	if (m_NumIndices > 0 || (m_DataUsage == DYNAMIC_COPY || m_DataUsage == DYNAMIC_DRAW || m_DataUsage == DYNAMIC_READ))
 	{
 		glGenBuffers(1, &m_IndexBuffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Face) * faces.size(), &faces[0], m_DataUsage);
+		if (m_Faces.size() != 0)
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Face) * m_Faces.size(), &m_Faces[0], m_DataUsage);
 	}
 
 	//buffer for vertices
 	glGenBuffers(1, &m_VertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), &vertices[0], m_DataUsage);
+	if (m_Vertices.size() != 0)
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0], m_DataUsage);
 
 	
 	//setup data locations
@@ -165,7 +168,8 @@ void Mesh::Render(Shader* shader, RenderMode mode)
 	else
 		glDrawArrays(mode, 0, m_NumVertices);
 
-	glBindVertexArray(0);
+	//glBindVertexArray(0);
+	Renderer::DrawCalls++;
 }
 
 NOWORK_API Mesh* Mesh::CreatePlane(DataUsage usage /*= DataUsage::STATIC_DRAW*/)
@@ -187,3 +191,53 @@ void Mesh::Init(Renderer* renderer)
 {
 	m_sRenderer = renderer;
 }
+
+void Mesh::UpdateBufferData(bool reallocate)
+{
+	if (!(m_DataUsage == DYNAMIC_DRAW || m_DataUsage == DYNAMIC_COPY))
+		return;
+
+	if (!NoWork::IsMainThread())
+	{
+		AddToGLQueue(m_Renderer, 1, reinterpret_cast<void*>(+reallocate));
+		return;
+	}
+
+	if (m_Vertices.size() == 0) return;
+
+	m_NumIndices = m_Faces.size()*3;
+	m_NumVertices = m_Vertices.size();
+
+	glBindVertexArray(m_VertexArrayObject);
+	if (m_NumIndices > 0)
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+		if (reallocate)
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Face) * m_Faces.size(), &m_Faces[0], m_DataUsage);
+		else
+			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(Face) * m_Faces.size(), &m_Faces[0]);
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+
+	if (reallocate)
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0], m_DataUsage);
+	else
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0]);
+
+	
+}
+
+void Mesh::DoAsyncWork(int mode, void *params)
+{
+	switch (mode)
+	{
+	case 0:
+		CreateVBO();
+		break;
+	case 1:
+		UpdateBufferData((bool)(params));
+		break;
+	}
+}
+

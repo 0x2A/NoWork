@@ -29,6 +29,7 @@ public:
 	virtual void SetScale(const glm::vec3 &scale);
 	virtual glm::vec3 GetScale();
 
+	static glm::vec4 ScreenSpaceToWorldSpacePoint(glm::ivec2 ssPpoint, glm::mat4 ViewProjectionMatrix, glm::ivec2 viewportSize);
 
 
 	void Reset();
@@ -353,4 +354,25 @@ inline void Transform::SetScale(float x, float y, float z)
 inline void Transform::SetScale(const glm::vec3 &scale)
 {
 	m_Scale = glm::scale(scale);
+}
+
+inline glm::vec4 Transform::ScreenSpaceToWorldSpacePoint(glm::ivec2 ssPpoint, glm::mat4 ViewProjectionMatrix, glm::ivec2 viewportSize)
+{
+	glm::mat4 vpInverse = ViewProjectionMatrix._inverse();
+
+	glm::vec4 out;
+	float winZ = 1.0;
+
+	out[0] = (2.0f*(ssPpoint.x / (float)viewportSize.x)) - 1.0f;
+	out[1] = 1.0f - (2.0f*(ssPpoint.y / (float)viewportSize.y));
+	out[2] = 2.0* winZ - 1.0;
+	out[3] = 1.0;
+	out = out * vpInverse;
+
+	out.w = 1.0f / out.w;
+	out.x *= out.w;
+	out.y *= out.w;
+	out.z *= out.w;
+
+	return out;
 }

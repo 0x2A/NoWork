@@ -21,6 +21,7 @@
 #pragma once
 
 #include "nowork/Common.h"
+#include <mutex>
 
 //Super advanced macro definitions (kinda like overloading parameters)
 
@@ -115,6 +116,7 @@ private:
 
 	//Share this variable so it doesn't get instanciated per process
 	static std::ostream *m_MessageStream;
+	static std::mutex m_Mutex;
 };
 
 	
@@ -138,7 +140,8 @@ inline Log::Log()
 #ifdef _DEBUG
 	m_MessageStream = &std::cout;
 #else
-	m_MessageStream = new std::stringstream;
+	m_MessageStream = &std::cout;
+	//m_MessageStream = new std::stringstream;
 #endif
 
 	m_MessageStream->clear();
@@ -149,6 +152,6 @@ inline Log::~Log()
 	Clear();
 
 #ifndef _DEBUG
-	DelPtr(m_MessageStream);
+	//DelPtr(m_MessageStream);
 #endif
 }

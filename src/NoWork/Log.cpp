@@ -22,7 +22,9 @@
 #include "nowork/Common.h"
 
 #include <time.h>
-	
+
+std::mutex Log::m_Mutex;
+
 
 
 std::ostream *Log::m_MessageStream = NULL;
@@ -45,8 +47,10 @@ void Log::Print(std::ostream &os, std::string functionName /* = "" */, int line 
 	std::ostringstream& s = dynamic_cast<std::ostringstream&>(os);
 	if (s)
 	{
+		m_Mutex.lock();
 		PrintMsgHeader(*m_MessageStream, functionName, "", line);
 		*m_MessageStream << s.str() << std::endl;
+		m_Mutex.unlock();
 	}
 }
 
@@ -64,10 +68,12 @@ void Log::Warning(std::ostream &message, std::string functionName /* = "" */, in
 	std::ostringstream& s = dynamic_cast<std::ostringstream&>(message);
 	if (s)
 	{
+		m_Mutex.lock();
 		SetTextColor(Color::Yellow);
 		PrintMsgHeader(*m_MessageStream, "WARNING", functionName, line);
 		*m_MessageStream << s.str() << std::endl;
 		SetTextColor(Color::White);
+		m_Mutex.unlock();
 	}
 }
 
@@ -77,10 +83,12 @@ void Log::Error(std::ostream &message, std::string functionName /* = "" */, int 
 	std::ostringstream& s = dynamic_cast<std::ostringstream&>(message);
 	if (s)
 	{
+		m_Mutex.lock();
 		SetTextColor(Color::Red);
 		PrintMsgHeader(*m_MessageStream, "ERROR", functionName, line);
 		*m_MessageStream << s.str() << std::endl;
 		SetTextColor(Color::White);
+		m_Mutex.unlock();
 	}
 }
 
@@ -89,10 +97,12 @@ void Log::ScriptError(std::ostream &message, std::string functionName /*= ""*/)
 	std::ostringstream& s = dynamic_cast<std::ostringstream&>(message);
 	if (s)
 	{
+		m_Mutex.lock();
 		SetTextColor(Color::Red);
 		PrintMsgHeader(*m_MessageStream, "SCRIPT ERROR", functionName);
 		*m_MessageStream << s.str() << std::endl;
 		SetTextColor(Color::White);
+		m_Mutex.unlock();
 	}
 }
 

@@ -62,6 +62,12 @@ void MyGame::OnLoadContent()
 
 }
 
+void MyGame::OnLoadRender()
+{
+	//TODO: print a loading message
+}
+
+
 void MyGame::OnUpdate(double deltaTime)
 {
 	//process input so we can move the camera around with wsad, q and r

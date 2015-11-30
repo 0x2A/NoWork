@@ -1,10 +1,11 @@
 #pragma once
 
 #include "nowork/Common.h"
-#include "nowork/Renderer.h"
+#include "NoWork/AsyncGLWorker.h"
 
 class NoWork;
-class Texture
+class Renderer;
+class Texture : public AsyncGLWorker
 {
 	friend class NoWork;
 	friend class Renderer;
@@ -81,6 +82,13 @@ public:
 		COMPRESSED_RGBA = 0x84EE
 	};
 
+	enum AsyncMode_t : int
+	{
+		AM_GenerateTexture = 0,
+		AM_SetLinearTextureFilter,
+		AM_OFFSET
+	};
+
 	NOWORK_API ~Texture();
 
 	NOWORK_API void SetParameteri(unsigned int pName, int param);
@@ -106,6 +114,8 @@ protected:
 	static void Init(NoWork* framework, Renderer* renderer);
 
 	void GenerateTexture();
+
+	virtual void DoAsyncWork(int mode, void *params) override;
 
 	NOWORK_API static bool m_UseDSA, m_UseTexStorage, m_UseInternalFormat;
 	NOWORK_API static Renderer* m_Renderer;

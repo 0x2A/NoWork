@@ -18,7 +18,6 @@ void Texture::Init(NoWork* framework, Renderer* renderer)
 	m_UseTexStorage = framework->ExtensionAvailable("GL_ARB_texture_storage"); 
 	m_UseInternalFormat = framework->ExtensionAvailable("GL_ARB_internalformat_query2");
 
-
 }
 
 Texture::Texture(GLuint textType, GLenum texBindingType)
@@ -94,6 +93,12 @@ void Texture::SetParameterfv(GLenum pName, const GLfloat *param)
 
 void Texture::GenerateTexture()
 {
+	if (!NoWork::IsMainThread())
+	{
+		AddToGLQueue(m_Renderer, AsyncMode_t::AM_GenerateTexture);
+		return;
+	}
+
 	glGenTextures(1, &m_TextureId);
 	glBindTexture(m_TextureType, m_TextureId);
 }
@@ -191,6 +196,12 @@ void Texture::GetInternalFormat(GLenum textureType, GLenum targetFormat, GLint* 
 
 NOWORK_API void Texture::SetLinearTextureFilter(bool state)
 {
+	if (!NoWork::IsMainThread())
+	{
+		AddToGLQueue(m_Renderer, AsyncMode_t::AM_SetLinearTextureFilter, reinterpret_cast<void *>(+state));
+		return;
+	}
+	
 	if (state)
 	{
 		float aniFilter = m_Renderer->GetAnisotropicFilterValue();
@@ -214,6 +225,21 @@ NOWORK_API void Texture::SetLinearTextureFilter(bool state)
 Texture::~Texture()
 {
 	glDeleteTextures(1, &m_TextureId);
+}
+
+void Texture::DoAsyncWork(int mode, void *params)
+{
+	switch ((AsyncMode_t)mode)
+	{
+	case AsyncMode_t::AM_GenerateTexture:
+		GenerateTexture();
+		break;
+	case AsyncMode_t::AM_SetLinearTextureFilter:
+		SetLinearTextureFilter((bool)params);
+		break;
+	default:
+		break;
+	}
 }
 
 

@@ -126,8 +126,20 @@
 #define 	KEY_MENU   348
 #define 	KEY_LAST   KEY_MENU
 
+#define 	MOUSE_BUTTON_1   0
+#define 	MOUSE_BUTTON_2   1
+#define 	MOUSE_BUTTON_3   2
+#define 	MOUSE_BUTTON_4   3
+#define 	MOUSE_BUTTON_5   4
+#define 	MOUSE_BUTTON_6   5
+#define 	MOUSE_BUTTON_7   6
+#define 	MOUSE_BUTTON_8   7
+#define 	MOUSE_BUTTON_LAST   MOUSE_BUTTON_8
+#define 	MOUSE_BUTTON_LEFT   MOUSE_BUTTON_1
+#define 	MOUSE_BUTTON_RIGHT   MOUSE_BUTTON_2
+#define 	MOUSE_BUTTON_MIDDLE   MOUSE_BUTTON_3
 
-struct GLFWwindow;
+class NoWork;
 class Input
 {
 	//typedef void(*KeyHandler)(void* params);
@@ -141,6 +153,12 @@ public:
 	
 	NOWORK_API static bool KeyDown(long key);
 	NOWORK_API static bool KeyHeld(long key);
+	NOWORK_API static glm::vec2 MouseDelta();
+	NOWORK_API static glm::vec2 MousePos();
+	NOWORK_API static void CenterMouse(bool s) { m_CenterMouse = s; }
+	NOWORK_API static bool MouseButtonDown(long btn);
+	NOWORK_API static bool MouseButtonHeld(long btn);
+	NOWORK_API static void GrabMouse(bool s);
 
 	template<typename R, typename ...Args>
 	static void BindKey(long key, R *owner, void(R::*MethodPtr)(Args...), Args &&... args)
@@ -153,13 +171,20 @@ public:
 	}
 
 protected:
-	static void Init(GLFWwindow* window);
+	static void Init(NoWork* framework);
 	static void Update();
 	static void HandleKey(long key);
+	
 private:
 
-	NOWORK_API static GLFWwindow* m_Window;
+	NOWORK_API static bool m_CenterMouse;
+	NOWORK_API static glm::vec2 m_MouseLastPos;
+	NOWORK_API static glm::vec2 m_MouseDelta;
+	NOWORK_API static glm::vec2 m_MousePos;
+
+	NOWORK_API static NoWork* m_Framework;
 	NOWORK_API static std::unordered_map<long, bool> m_KeyStates;
+	NOWORK_API static std::unordered_map<long, bool> m_MouseKeyStates;
 	NOWORK_API static std::unordered_map<long, Input::CallbackFunc> m_KeyHandlers;
 	//NOWORK_API static std::unordered_map<long, void*> m_KeyHandlersArgs;
 };

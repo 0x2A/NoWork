@@ -8,15 +8,27 @@ class Texture2D : public Texture
 	friend class Renderer;
 public:
 
-	NOWORK_API static Texture2D* Create(unsigned int width, unsigned int height, Texture::Format format, const unsigned char *pixels, bool constant = true);
+	enum AsyncMode_t : int
+	{
+		AM_CopyPixData = Texture::AM_OFFSET
+	};
+
+	NOWORK_API static Texture2D* Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant = true);
 	NOWORK_API static Texture2D* Load(const std::string path,  bool constant = true);
 
 	NOWORK_API void Update(const unsigned char* pixels);
+	NOWORK_API void Update(const unsigned char* pixels, int width, int height);
 protected:
 
 	Texture2D();
 
+	virtual void DoAsyncWork(int mode, void *params) override;
+
 private:
+
+	void CopyPixelData();
+
+	GLubyte *m_Pixels;
 
 	int m_InternalFormat;
 	int m_Type;

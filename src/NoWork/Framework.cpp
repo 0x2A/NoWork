@@ -9,6 +9,9 @@
 #include "nowork/Texture.h"
 #include "NoWork/AudioSource.h"
 #include "NoWork/AudioSystem.h"
+#include "NoWork/Font.h"
+
+#include <time.h>
 
 
 
@@ -22,21 +25,35 @@ const glversion_t glVersions[] = { { 1, 1 }, { 1, 2 }, { 1, 3 }, { 1, 4 }, { 1, 
 									{ 3, 1 }, { 3, 2 }, { 3, 3 }, 
 									{ 4, 0 }, { 4, 1 }, { 4, 2 }, { 4, 3 }, { 4, 4 }, { 4, 5 } };
 
+
+std::thread::id NoWork::m_MainThreadId;
+
+
 NoWork::NoWork()
 {
 	static Log log; //trick to call Logs constructor
 
 	LOG_MESSAGE("NoWork framework version: " << NOWORK_VERSION);
 
+	m_Renderer = 0;
+
 	if (!glfwInit())
 	{
-		std::cout << "ERROR: Failed to initialize glfw" << std::endl;
+		LOG_ERROR("Failed to initialize glfw");
 	}
 
 	glfwSetErrorCallback(&EventHandler::ErrorCallback);
 
 	m_GameHandle = NULL;
 	lastFrame = glfwGetTime();
+
+	m_MainThreadId = std::this_thread::get_id();
+
+
+	AudioSystem::Init();
+
+	srand((uint32_t)time(NULL));
+	rand(); //invoke rand one time cause some implementations ignore srand at first call
 }
 
 NoWork::~NoWork()
@@ -49,6 +66,9 @@ NoWork::~NoWork()
 
 bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX, int posY, int flags)
 {
+	//delete old renderer if there was created one before
+	if (m_Renderer)
+		DelPtr(m_Renderer);
 
 	m_WindowFlags = flags;
 
@@ -93,8 +113,6 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 		return false;
 	}
 
-	AudioSystem::Init();
-
 	//Print window informations of actual settings
 	int w, h;
 	glfwGetWindowSize(m_Window, &w, &h);
@@ -106,10 +124,9 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 		"Hardware vendor: " << glGetString(GL_VENDOR) << "\n" <<
 		"Hardware name: " << glGetString(GL_RENDERER));
 
-	Input::Init(m_Window);
-#ifdef _DEBUG
+
+	Input::Init(this);
 	glfwSetKeyCallback(m_Window, EventHandler::KeyEventCallback);
-#endif
 
 	if (ExtensionAvailable("GL_ARB_debug_output"))
 	{
@@ -123,6 +140,9 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 	//initialize static vars
 	Mesh::Init(m_Renderer);
 	Texture::Init(this, m_Renderer);
+	
+	//font depends on textures so init it last
+	Font::Init(this);
 
 	return true;
 }
@@ -144,31 +164,31 @@ void NoWork::Run()
 	{
 		std::cout << "ERROR: No game registered! Please call RegisterGame and pass a valid game object pointer." << std::endl;
 		Exit();
-	}
-	
+	}	
 
 	//Initialize the game
+	m_GameHandle->m_Framework = this;
+	m_GameHandle->m_Renderer = m_Renderer;
+
+	Shader::InitializeDefaultShaders();
+	m_GameHandle->Init();
+
 	m_Loading = true;
 	m_LoadingThread = std::thread(&NoWork::ContentLoaderFunc, this);
-	bool m_GameDataLoaded = false;
 
 	while (!glfwWindowShouldClose(m_Window))
 	{
+		Renderer::DrawCalls = 0;
 		Input::Update();
 
+		m_Renderer->DoAsyncGLQueue();
 		if (m_Loading)
 		{
-			//LOG_DEBUG("loading...");//TODO: Show loading text or something like this
+			m_Renderer->Render();
+			m_GameHandle->OnLoadRender();
 		}
 		else
 		{
-			if (!m_GameDataLoaded)
-			{
-				Shader::InitializeDefaultShaders();
-				m_GameHandle->OnLoadContent();
-				m_GameDataLoaded = true;
-			}
-
 			Update();
 
 			m_Renderer->Render();
@@ -178,13 +198,13 @@ void NoWork::Run()
 		glfwSwapBuffers(m_Window);
 		glfwPollEvents();
 
-		
 	}
 
 	m_GameHandle->OnShutdown();
 	m_LoadingThread.join();
 
 	AudioSystem::Shutdown();
+	Font::Shutdown();
 }
 
 
@@ -201,6 +221,7 @@ void NoWork::Update()
 }
 
 void NoWork::Exit()
+
 {
 	glfwSetWindowShouldClose(m_Window, true);
 }
@@ -213,13 +234,8 @@ void NoWork::ContentLoaderFunc()
 	
 	//glfwMakeContextCurrent(m_LoaderThreadWindow);
 
-	m_GameHandle->m_Framework = this;
-	m_GameHandle->m_Renderer = m_Renderer;
 	
-	//Sadly we cant load content here cause Framebuffer objects cant be shared between gl contexts
-	//So Mesh creation fails. It would be possible to realize this but this would get too complicated
-	//and i dont have the time do care about such sh*t
-	m_GameHandle->Init();
+	m_GameHandle->OnLoadContent();
 	
 	m_Loading = false;
 }
@@ -264,12 +280,24 @@ GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(std::string title
 	return NULL;
 }
 
-NOWORK_API void NoWork::EnableVSync()
+void NoWork::EnableVSync()
 {
 	glfwSwapInterval(1);
 }
 
-NOWORK_API void NoWork::DisableVSync()
+void NoWork::DisableVSync()
 {
 	glfwSwapInterval(0);
+}
+
+bool NoWork::IsMainThread()
+{
+	return std::this_thread::get_id() == m_MainThreadId;
+}
+
+NOWORK_API glm::ivec2 NoWork::ScreenSize()
+{
+	int w, h;
+	m_Renderer->GetFramebufferSize(w, h);
+	return glm::ivec2(w, h);
 }

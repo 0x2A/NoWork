@@ -27,6 +27,10 @@
 NOWORK_API Shader* Shader::DefaultUnlit;
 NOWORK_API Shader* Shader::DefaultUnlitTextured;
 NOWORK_API Shader* Shader::DefaultBlinPhong;
+NOWORK_API Shader* Shader::ScreenAlignedTextured;
+
+Shader* Shader::ScreenAligned;
+
 
 static bool ValidateShader(GLuint shader, const char* file = 0)
 {
@@ -187,14 +191,14 @@ void Shader::InitializeDefaultShaders()
 		"in vec3 vertexPosition;\n"
 		"in vec3 vertexNormal;\n"
 		"in vec2 vertexUV;\n"
-		"in vec3 vertexColor;\n"
+		"in vec4 vertexColor;\n"
 		"\n"
 		"uniform mat4 MVPMatrix;\n"
 		"uniform mat4 ModelViewMatrix;\n"
 		"uniform mat4 ModelMatrix;\n"
 		"\n"
 		"out vec2 texCoord;\n"
-		"out vec3 vertColor;\n"
+		"out vec4 vertColor;\n"
 		"\n"
 		"void main( void )\n"
 		"{\n"
@@ -208,12 +212,13 @@ void Shader::InitializeDefaultShaders()
 		"uniform vec4 DiffuseColor;\n"
 		"\n"
 		"in vec2 texCoord;\n"
+		"in vec4 vertColor;\n"
 		"\n"
 		"out vec4 colorOut;\n"
 		"\n"
 		"void main( void )\n"
 		"{\n"
-		"    colorOut = vec4(1,1,1,1);\n"
+		"    colorOut = DiffuseColor * vertColor;\n"
 		"}";
 
 	const std::string defaultUnlitFragTexturedSrc =
@@ -222,21 +227,39 @@ void Shader::InitializeDefaultShaders()
 		"uniform sampler2D Texture;\n"
 		"\n"
 		"in vec2 texCoord;\n"
-		"in vec3 vertColor;\n"
+		"in vec4 vertColor;\n"
 		"\n"
 		"out vec4 colorOut;\n"
 		"\n"
 		"void main( void )\n"
 		"{\n"
 		"	 vec4 col = texture(Texture, texCoord);\n"
-		"    if(col.a < 0.2)\n"
-		"         discard;\n"
-		"    colorOut = DiffuseColor * vec4(vertColor,1) * col;\n"
+		"    colorOut = DiffuseColor * vertColor * col;\n"
 		"}";
+
+	const std::string screenAlignedVertSrc =
+		"#version 130\n"
+		"in vec3 vertexPosition;\n"
+		"in vec3 vertexNormal;\n"
+		"in vec2 vertexUV;\n"
+		"in vec4 vertexColor;\n"
+		"\n"
+		"out vec2 texCoord;\n"
+		"out vec4 vertColor;\n"
+		"\n"
+		"void main( void )\n"
+		"{\n"
+		"    texCoord = vertexUV;\n"
+		"    vertColor = vertexColor;\n"
+		"    gl_Position = vec4(vertexPosition.xy, 0, 1);\n"
+		"}";
+
 
 	DefaultUnlit = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragSrc);
 	DefaultUnlitTextured = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragTexturedSrc);
 	DefaultBlinPhong = NULL; //TODO
+	ScreenAligned = Shader::Create(screenAlignedVertSrc, defaultUnlitFragSrc);
+	ScreenAlignedTextured = Shader::Create(screenAlignedVertSrc, defaultUnlitFragTexturedSrc);
 }
 
 

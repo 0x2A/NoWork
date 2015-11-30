@@ -24,6 +24,10 @@
 #include "nowork/Log.h"
 #include "nowork/Texture.h"
 
+
+#define SHADER_SRC(x) #x
+
+
 class Shader
 {
 	friend class NoWork;
@@ -60,6 +64,8 @@ public:
 	NOWORK_API static Shader* DefaultUnlit;
 	NOWORK_API static Shader* DefaultUnlitTextured;
 	NOWORK_API static Shader* DefaultBlinPhong;
+	NOWORK_API static Shader* ScreenAligned;
+	NOWORK_API static Shader* ScreenAlignedTextured;
 
 protected:
 

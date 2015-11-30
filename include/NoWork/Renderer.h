@@ -2,13 +2,18 @@
 
 #include "nowork/Common.h"
 #include "nowork/Camera.h"
+#include "NoWork/Mesh.h"
+#include "NoWork/AsyncGLWorker.h"
 
+#include <queue>
+#include <mutex>
 
 struct GLFWwindow;
 class Texture;
 class NoWork;
 class Renderer
 {
+	friend class AsyncGLWorker;
 public:
 
 	enum ClearBufferBits
@@ -70,10 +75,26 @@ public:
 	NOWORK_API void SetAnisotropicFiltering(float val);
 	NOWORK_API float GetAnisotropicFilterValue();
 	NOWORK_API bool AnisotropicFilteringAvailable() { return m_AnisotropicFilteringAvail; }
+	
+	NOWORK_API void DoAsyncGLQueue();
+
+	NOWORK_API int* GetViewport() { return m_Viewport; }
+
+	NOWORK_API void SetDepthTest(bool t);
 
 	//NOWORK_API void SetCamera(Camera* val) { m_Camera = val; }
 
+	NOWORK_API static int DrawCalls;
+
+protected:
+
+	void RegisterAsyncGLWork(AsyncGLWork_t worker);
+	
 private:
+
+
+	std::queue<AsyncGLWork_t> m_AsyncGlQueue;
+	std::mutex m_GLQueueMutex;
 
 	GLFWwindow *m_Window;
 	
@@ -88,4 +109,6 @@ private:
 	Camera* m_Camera = NULL;
 
 	NoWork *m_Framework;
+
+	int m_Viewport[4];
 };

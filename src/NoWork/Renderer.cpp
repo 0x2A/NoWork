@@ -7,12 +7,19 @@
 //gl3w is missing this, idk why...
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 
+
+int Renderer::DrawCalls = 0;
+
 Renderer::Renderer(NoWork* framework, GLFWwindow* window) : m_Window(window)
 {
 	m_Framework = framework;
 	glfwGetFramebufferSize(window, &m_FramebufferWidth, &m_FramebufferHeight);
 	m_AspectRatio = m_FramebufferWidth / (float)m_FramebufferHeight;
 
+	m_Viewport[0] = 0;
+	m_Viewport[1] = 0;
+	m_Viewport[2] = m_FramebufferWidth;
+	m_Viewport[3] = m_FramebufferHeight;
 	glViewport(0, 0, m_FramebufferWidth, m_FramebufferHeight);
 	SetBackfaceCulling(true);
 
@@ -63,15 +70,23 @@ void Renderer::SetAlphaBlending(bool state)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	else
+	{
 		glDisable(GL_BLEND);
+	}
 }
 
 void Renderer::SetWireframeMode(bool state)
 {
 	if (state)
+	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		SetBackfaceCulling(false);
+	}
 	else
+	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		SetBackfaceCulling(true);
+	}
 }
 
 unsigned int Renderer::CreateFrameBuffer()
@@ -127,6 +142,10 @@ void Renderer::UnBindFrameBuffer()
 
 void Renderer::SetViewPort(int x, int y, int width, int height)
 {
+	m_Viewport[0] = x;
+	m_Viewport[1] = y;
+	m_Viewport[2] = width;
+	m_Viewport[3] = height;
 	glViewport(x, y, width, height);
 }
 
@@ -230,3 +249,32 @@ float Renderer::GetAnisotropicFilterValue()
 		return 0.0f;
 	return m_AnisotropicFilteringVal;
 }
+
+
+void Renderer::DoAsyncGLQueue()
+{
+	while (!m_AsyncGlQueue.empty())
+	{
+		m_GLQueueMutex.lock();
+		auto work = m_AsyncGlQueue.front();
+		work.worker->DoAsyncWork(work.mode, work.params);
+		m_AsyncGlQueue.pop();
+		m_GLQueueMutex.unlock();
+	}
+}
+
+void Renderer::RegisterAsyncGLWork(AsyncGLWork_t work)
+{
+	m_GLQueueMutex.lock();
+	m_AsyncGlQueue.push(work);
+	m_GLQueueMutex.unlock();
+}
+
+NOWORK_API void Renderer::SetDepthTest(bool t)
+{
+	if (t)
+		glEnable(GL_DEPTH_TEST);
+	else
+		glDisable(GL_DEPTH_TEST);
+}
+

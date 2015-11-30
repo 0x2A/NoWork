@@ -25,6 +25,8 @@ public:
 	//Bound to escape key, used to exit the game when escape pressed
 	void Exit();
 
+	virtual void OnLoadRender() override;
+
 private:
 
 

@@ -50,6 +50,9 @@ public:
 
 	NOWORK_API void SetFaceCulling(FaceCullingType type = FaceCullingType::BACK);
 
+	NOWORK_API void SetClearColor(glm::vec3 c) { m_ClearColor = c; }
+	NOWORK_API glm::vec3 GetClearColor() { return m_ClearColor; }
+
 	NOWORK_API void Update();
 	void Render();
 

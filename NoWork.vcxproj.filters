@@ -14,49 +14,743 @@
       <Filter>soil</Filter>
     </ClCompile>
     <ClCompile Include="src\NoWork\AnimatedSprite.cpp" />
+    <ClCompile Include="src\NoWork\AsyncGLWorker.cpp" />
+    <ClCompile Include="src\NoWork\AudioSource.cpp" />
+    <ClCompile Include="src\NoWork\AudioSystem.cpp" />
     <ClCompile Include="src\NoWork\Camera.cpp" />
     <ClCompile Include="src\NoWork\EventHandler.cpp" />
+    <ClCompile Include="src\NoWork\Font.cpp" />
+    <ClCompile Include="src\NoWork\Framebuffer.cpp" />
     <ClCompile Include="src\NoWork\Framework.cpp" />
-    <ClCompile Include="src\NoWork\gl3w.c" />
     <ClCompile Include="src\NoWork\Input.cpp" />
     <ClCompile Include="src\NoWork\Log.cpp" />
     <ClCompile Include="src\NoWork\Mesh.cpp" />
+    <ClCompile Include="src\NoWork\Model.cpp" />
     <ClCompile Include="src\NoWork\Quaternion.cpp" />
     <ClCompile Include="src\NoWork\Renderer.cpp" />
+    <ClCompile Include="src\NoWork\RenderTexture.cpp" />
     <ClCompile Include="src\NoWork\Shader.cpp" />
     <ClCompile Include="src\NoWork\Sprite.cpp" />
     <ClCompile Include="src\NoWork\SpriteAnimation.cpp" />
     <ClCompile Include="src\NoWork\SpriteSheet.cpp" />
     <ClCompile Include="src\NoWork\Texture.cpp" />
     <ClCompile Include="src\NoWork\Texture2D.cpp" />
-    <ClCompile Include="src\NoWork\AudioSource.cpp" />
-    <ClCompile Include="src\NoWork\AudioSystem.cpp" />
-    <ClCompile Include="src\NoWork\Model.cpp" />
-    <ClCompile Include="src\NoWork\Framebuffer.cpp" />
-    <ClCompile Include="src\NoWork\RenderTexture.cpp" />
+    <ClCompile Include="src\gl3w\gl3w.c">
+      <Filter>gl3w</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\edtaa3func.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\font-manager.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\mat4.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\platform.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\shader-ft.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\text-buffer.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\texture-atlas.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\texture-font.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\vector.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\vertex-attribute.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype-gl\vertex-buffer.c">
+      <Filter>freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\autofit\autofit.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\bdf\bdf.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftbase.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftbbox.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftbitmap.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\cache\ftcache.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftdebug.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftfntfmt.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftfstype.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftgasp.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftglyph.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftgxval.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\gzip\ftgzip.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftinit.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftlcdfil.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\lzw\ftlzw.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftmm.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftotval.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftpatent.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftpfr.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftstroke.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftsynth.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftsystem.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\fttype1.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\base\ftwinfnt.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\pcf\pcf.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\pfr\pfr.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\psaux\psaux.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\pshinter\pshinter.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\psnames\psmodule.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\raster\raster.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\sfnt\sfnt.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\smooth\smooth.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\truetype\truetype.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\type42\type42.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\freetype\winfonts\winfnt.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\3DSConverter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\3DSExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\3DSLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ACLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ASELoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ASEParser.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\AssbinExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\AssbinLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Assimp.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\AssimpCExport.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\AssxmlExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\B3DImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BaseImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BaseProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Bitmap.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BlenderBMesh.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BlenderDNA.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BlenderLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BlenderModifier.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BlenderScene.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BlenderTessellator.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\BVHLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\C4DImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\CalcTangentsProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\COBLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ColladaExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ColladaLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ColladaParser.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ComputeUVMappingProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ConvertToLHProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\CSMLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\DeboneProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\DefaultIOStream.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\DefaultIOSystem.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\DefaultLogger.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\DXFLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Exporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXAnimation.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXBinaryTokenizer.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXConverter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXDeformer.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXDocument.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXDocumentUtil.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXMaterial.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXMeshGeometry.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXModel.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXNodeAttribute.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXParser.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXProperties.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXTokenizer.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FBXUtil.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FindDegenerates.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FindInstancesProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FindInvalidDataProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\FixNormalsStep.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\GenFaceNormalsProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\GenVertexNormalsProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\glTFImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\HMPLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCBoolean.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCCurve.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCGeometry.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCMaterial.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCOpenings.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCProfile.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCReaderGen.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IFCUtil.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Importer.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ImporterRegistry.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ImproveCacheLocality.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IRRLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IRRMeshLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\IRRShared.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\JoinVerticesProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\LimitBoneWeightsProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\LWOAnimation.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\LWOBLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\LWOLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\LWOMaterial.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\LWSLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MakeVerboseFormat.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MaterialSystem.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MD2Loader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MD3Loader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MD5Loader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MD5Parser.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MDCLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MDLLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MDLMaterialLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\MS3DLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\NDOLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\NFFLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ObjExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ObjFileImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ObjFileMtlImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ObjFileParser.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OFFLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OgreBinarySerializer.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OgreImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OgreMaterial.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OgreStructs.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OgreXmlSerializer.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OpenGEXImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OptimizeGraph.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\OptimizeMeshes.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\PlyExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\PlyLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\PlyParser.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\PostStepRegistry.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\PretransformVertices.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ProcessHelper.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Q3BSPFileImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Q3BSPFileParser.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Q3BSPZipArchive.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Q3DLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\RawLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\RemoveComments.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\RemoveRedundantMaterials.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\RemoveVCProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\SceneCombiner.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ScenePreprocessor.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\SGSpatialSort.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\SkeletonMeshBuilder.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\SMDLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\SortByPTypeProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\SpatialSort.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\SplitByBoneCountProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\SplitLargeMeshes.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\StandardShapes.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\StepExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\STEPFileEncoding.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\STEPFileReader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\STLExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\STLLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Subdivision.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\TargetAnimation.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\TerragenLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\TextureTransform.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\TriangulateProcess.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\UnrealLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\ValidateDataStructure.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\Version.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\VertexTriangleAdjacency.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\XFileExporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\XFileImporter.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\XFileParser.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\code\XGLLoader.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\clipper\clipper.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\irrXML\irrXML.cpp">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\ConvertUTF\ConvertUTF.c">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\zlib\inflate.c">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\zlib\inffast.c">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\zlib\inftrees.c">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\zlib\crc32.c">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\zlib\zutil.c">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\poly2tri\poly2tri\sweep\cdt.cc">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\poly2tri\poly2tri\sweep\sweep.cc">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\poly2tri\poly2tri\sweep\advancing_front.cc">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\poly2tri\poly2tri\sweep\sweep_context.cc">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\poly2tri\poly2tri\common\shapes.cc">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assimp\contrib\zlib\adler32.c">
+      <Filter>assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffdrivr.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2arrst.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2blues.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2error.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2font.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2ft.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2hints.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2intrp.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2read.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2stack.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffcmap.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffgload.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffload.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffobjs.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffparse.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffpic.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1afm.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1gload.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1load.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1objs.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1parse.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1driver.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidriver.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidgload.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidload.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidobjs.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidparse.c">
+      <Filter>freetype</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\NoWork\AnimatedSprite.h" />
-    <ClInclude Include="include\NoWork\Area.h" />
-    <ClInclude Include="include\NoWork\Camera.h" />
-    <ClInclude Include="include\NoWork\Common.h" />
-    <ClInclude Include="include\NoWork\EventHandler.h" />
-    <ClInclude Include="include\NoWork\Framework.h" />
-    <ClInclude Include="include\NoWork\Game.h" />
-    <ClInclude Include="include\NoWork\Input.h" />
-    <ClInclude Include="include\NoWork\Log.h" />
-    <ClInclude Include="include\NoWork\Mesh.h" />
-    <ClInclude Include="include\NoWork\NoWork.h" />
-    <ClInclude Include="include\NoWork\Quaternion.h" />
-    <ClInclude Include="include\NoWork\Renderer.h" />
-    <ClInclude Include="include\NoWork\SceneObject.h" />
-    <ClInclude Include="include\NoWork\Shader.h" />
-    <ClInclude Include="include\NoWork\Sprite.h" />
-    <ClInclude Include="include\NoWork\SpriteAnimation.h" />
-    <ClInclude Include="include\NoWork\SpriteSheet.h" />
-    <ClInclude Include="include\NoWork\Texture.h" />
-    <ClInclude Include="include\NoWork\Texture2D.h" />
-    <ClInclude Include="include\NoWork\Transform.h" />
     <ClInclude Include="include\soil\image_DXT.h">
       <Filter>soil</Filter>
     </ClInclude>
@@ -75,15 +769,53 @@
     <ClInclude Include="include\soil\stbi_DDS_aug_c.h">
       <Filter>soil</Filter>
     </ClInclude>
+    <ClInclude Include="include\NoWork\AnimatedSprite.h" />
+    <ClInclude Include="include\NoWork\Area.h" />
+    <ClInclude Include="include\NoWork\AsyncGLWorker.h" />
     <ClInclude Include="include\NoWork\AudioSource.h" />
     <ClInclude Include="include\NoWork\AudioSystem.h" />
-    <ClInclude Include="include\NoWork\Model.h" />
+    <ClInclude Include="include\NoWork\Camera.h" />
+    <ClInclude Include="include\NoWork\Common.h" />
+    <ClInclude Include="include\NoWork\EventHandler.h" />
+    <ClInclude Include="include\NoWork\Font.h" />
     <ClInclude Include="include\NoWork\Framebuffer.h" />
+    <ClInclude Include="include\NoWork\Framework.h" />
+    <ClInclude Include="include\NoWork\Game.h" />
+    <ClInclude Include="include\NoWork\Input.h" />
+    <ClInclude Include="include\NoWork\Log.h" />
+    <ClInclude Include="include\NoWork\Mesh.h" />
+    <ClInclude Include="include\NoWork\Model.h" />
+    <ClInclude Include="include\NoWork\NoWork.h" />
+    <ClInclude Include="include\NoWork\Quaternion.h" />
+    <ClInclude Include="include\NoWork\Renderer.h" />
     <ClInclude Include="include\NoWork\RenderTexture.h" />
+    <ClInclude Include="include\NoWork\SceneObject.h" />
+    <ClInclude Include="include\NoWork\Shader.h" />
+    <ClInclude Include="include\NoWork\Sprite.h" />
+    <ClInclude Include="include\NoWork\SpriteAnimation.h" />
+    <ClInclude Include="include\NoWork\SpriteSheet.h" />
+    <ClInclude Include="include\NoWork\Texture.h" />
+    <ClInclude Include="include\NoWork\Texture2D.h" />
+    <ClInclude Include="include\NoWork\Transform.h" />
+    <ClInclude Include="..\PhysiCam\external\freetype\include\freetype\config\ftmodule.h">
+      <Filter>freetype</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="soil">
       <UniqueIdentifier>{7a500eb5-f7f3-4c09-9e0f-24c2215a429e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gl3w">
+      <UniqueIdentifier>{976f6e6d-5cd4-4c34-857e-bf11ebd28e92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="freetype-gl">
+      <UniqueIdentifier>{be9c00c2-8abc-4cbb-8925-31cafe0e5e3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="freetype">
+      <UniqueIdentifier>{c347b31a-aca6-4da4-9582-d89d040dc3ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assimp">
+      <UniqueIdentifier>{686b7bb8-d9d9-4355-8ad2-b91e9343dfa2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
