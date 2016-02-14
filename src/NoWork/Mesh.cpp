@@ -28,9 +28,9 @@ Mesh* Mesh::Create(const VertexList &vertices, const FaceList &faces, bool calcu
 
 	Mesh* mesh = new Mesh;
 	mesh->m_DataUsage = usage;
-	if(usage != STATIC_DRAW) mesh->m_Vertices = vertices;
+	mesh->m_Vertices = vertices;
 	mesh->m_Renderer = m_sRenderer;
-	if (usage != STATIC_DRAW) mesh->m_Faces = faces;
+	mesh->m_Faces = faces;
 	mesh->m_NumIndices = (unsigned int)faces.size() * 3;
 	mesh->m_NumVertices = (unsigned int)vertices.size();
 
@@ -48,7 +48,7 @@ NOWORK_API Mesh* Mesh::Create(const VertexList &vertices, DataUsage usage /*= Da
 
 	Mesh* mesh = new Mesh;
 	mesh->m_DataUsage = usage;
-	if (usage != STATIC_DRAW) mesh->m_Vertices = vertices;
+	mesh->m_Vertices = vertices;
 	mesh->m_Renderer = m_sRenderer;
 	mesh->m_NumIndices = 0;
 	mesh->m_NumVertices = (unsigned int)vertices.size();
@@ -135,10 +135,21 @@ bool Mesh::CreateVBO()
 	glEnableVertexAttribArray(MODEL_VERTEX_COLOR_LOCATION);
 	glVertexAttribPointer(MODEL_VERTEX_COLOR_LOCATION, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2 + sizeof(glm::vec2)));
 
+	glEnableVertexAttribArray(MODEL_TANGENT_LOCATION);
+	glVertexAttribPointer(MODEL_TANGENT_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2 + sizeof(glm::vec2) + sizeof(glm::vec4)));
+
 	// unbind buffers
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+	//clear buffer on static draw since we dont need it in system memory anymore
+	if (m_DataUsage == STATIC_DRAW)
+	{
+		m_Vertices.clear();
+		m_Faces.clear();
+	}
 
 	return true;
 }

@@ -26,18 +26,19 @@ public:
 		color = glm::vec4(1, 1, 1, 1);
 	}
 
-	Vertex(glm::vec3 _position, glm::vec3 _normal) : Vertex(_position, _normal, glm::vec2())
+	Vertex(glm::vec3 _position, glm::vec2 _texCoord) : Vertex(_position, glm::vec3(), _texCoord)
 	{}
 
-	Vertex(glm::vec3 _position) : Vertex(_position, glm::vec3())
+	Vertex(glm::vec3 _position) : Vertex(_position, glm::vec2())
 	{}
 
-	Vertex(glm::vec3 _position, glm::vec3 _normal, glm::vec2 _texCoord, glm::vec4 _color) :Vertex(_position, _normal, _texCoord)
+	Vertex(glm::vec3 _position, glm::vec3 _normal, glm::vec3 _tangent, glm::vec2 _texCoord, glm::vec4 _color) :Vertex(_position, _normal, _texCoord)
 	{
+		tangent = _tangent;
 		color = _color;
 	}
 
-	Vertex() : position(0), normal(0), texCoord(0)
+	Vertex() : position(0), normal(0), tangent(0), texCoord(0)
 	{
 		color = glm::vec4(1, 1, 1, 1);
 	}
@@ -46,6 +47,7 @@ public:
 	glm::vec3 normal; //Normal of the vertex
 	glm::vec2 texCoord; //Texture coordinate of the vertex
 	glm::vec4 color; //Color of the vertex
+	glm::vec3 tangent; //tangent of the vertex
 private:
 };
 

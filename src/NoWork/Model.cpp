@@ -54,7 +54,7 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(path,
-		aiProcess_CalcTangentSpace |
+		
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType | 
@@ -93,14 +93,19 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 		//get vertices
 		vertices.reserve(mesh->mNumVertices);
 		bool hasNormals = mesh->HasNormals();
+		bool hasTangent = mesh->HasTangentsAndBitangents();
 		bool hasUvCoords = mesh->mNumUVComponents[0] > 0;
 		for (int k = 0; k < mesh->mNumVertices; k++)
 		{
 			aiVector3D pos = mesh->mVertices[k];
 			aiVector3D uv = hasUvCoords ? mesh->mTextureCoords[0][k] : aiVector3D(0,0,0);
 			aiVector3D normal = hasNormals ? mesh->mNormals[k] : aiVector3D(1.0f, 1.0f, 1.0f);
+			aiVector3D tangent = hasTangent ? mesh->mTangents[k] : aiVector3D(1.0f, 0.0f, 0.0f);
+			aiColor4D color = mesh->HasVertexColors(0) ? mesh->mColors[0][k] : aiColor4D(1.0f, 1.0f, 1.0f, 1.0f);
 
-			Vertex v = Vertex(glm::vec3(pos.x, pos.y, pos.z), glm::vec3(normal.x, normal.y, normal.z), glm::vec2(uv.x, uv.y));
+			Vertex v = Vertex(glm::vec3(pos.x, pos.y, pos.z), glm::vec3(normal.x, normal.y, normal.z), 
+				glm::vec3(tangent.x, tangent.y, tangent.z), glm::vec2(uv.x, uv.y), glm::vec4(color.r, color.g, color.b, color.a));
+
 			vertices.push_back(v);
 		}
 		Mesh* m = Mesh::Create(vertices, faces, false, usage);
@@ -129,7 +134,7 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 		{
 			tex = Texture2D::Load(basePath + "/" + texPath.data);
 		}
-		model->m_Textures.push_back(tex);
+		model->m_Textures.push_back(std::shared_ptr<Texture2D>(tex));
 	}
 
 	double endTime = glfwGetTime();
@@ -148,10 +153,6 @@ Model::~Model()
 	}
 	m_Meshes.clear();
 
-	for (auto &tex : m_Textures)
-	{
-		delete tex;
-	}
 	m_Textures.clear();
 	m_MaterialIndices.clear();
 }
@@ -170,9 +171,22 @@ void Model::Render(Shader *shader)
 	for (int i = 0; i < m_Meshes.size(); i++)
 	{
 		if (m_Textures[m_MaterialIndices[i]])
-			shader->SetTexture(m_Textures[m_MaterialIndices[i]]);
+			shader->SetTexture(m_Textures[m_MaterialIndices[i]].get());
 
 		m_Meshes[i]->GetTransform()->SetModelMatrix(m_Transform.GetModelMatrix());
 		m_Meshes[i]->Render(shader);
 	}
+}
+
+NOWORK_API void Model::ReplaceTexture(int id, std::shared_ptr<Texture2D> tex)
+{
+	if (id < m_Textures.size())
+	{
+		m_Textures[id] = tex;
+	}
+}
+
+NOWORK_API std::shared_ptr<Texture2D> Model::GetMeshTexture(int meshId)
+{
+	return m_Textures[m_MaterialIndices[meshId]];
 }

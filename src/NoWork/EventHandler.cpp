@@ -18,5 +18,39 @@ void EventHandler::KeyEventCallback(GLFWwindow* window, int key, int scancode, i
 
 void APIENTRY EventHandler::GLErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam)
 {
-	LOG_ERROR("GLError: " << message, __FUNCTION__); 
+	std::string strType;
+	switch (type) {
+	case GL_DEBUG_TYPE_ERROR:
+		strType = "ERROR";
+		break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+		strType = "DEPRECATED_BEHAVIOR";
+		break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		strType = "UNDEFINED_BEHAVIOR";
+		break;
+	case GL_DEBUG_TYPE_PORTABILITY:
+		strType = "PORTABILITY";
+		break;
+	case GL_DEBUG_TYPE_PERFORMANCE:
+		strType = "PERFORMANCE";
+		break;
+	case GL_DEBUG_TYPE_OTHER:
+		strType = "OTHER";
+		break;
+	}
+	std::string strSeverity;
+	switch (severity){
+	case GL_DEBUG_SEVERITY_LOW:
+		strSeverity = "LOW";
+		break;
+	case GL_DEBUG_SEVERITY_MEDIUM:
+		strSeverity = "MEDIUM";
+		break;
+	case GL_DEBUG_SEVERITY_HIGH:
+		strSeverity = "HIGH";
+		break;
+	}
+
+	LOG_ERROR(strSeverity << " GLError: Type " << strType << ": " << message);
 }

@@ -55,11 +55,6 @@ void MyGame::OnLoadContent()
 	//create a framebuffer object for testing
 	m_FBO = Framebuffer::Create();
 
-	//create a render texture as RGBA8 and bind it to the framebuffer object as color attachment #0
-	//(currently we are not using it for anything yet, feel free to change this ;) )
-	m_RenderTex = RenderTexture::Create(1280, 720, RenderTexture::TEXTURE_2D, Texture::RGBA8, true);
-	m_FBO->BindTexture(m_RenderTex, Framebuffer::COLOR0);
-
 }
 
 void MyGame::OnLoadRender()

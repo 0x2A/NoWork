@@ -109,87 +109,99 @@ void Texture::Bind(uint32_t slot)
 	glBindTexture(m_TextureType, m_TextureId);
 }
 
+GLint GetInternalFormatLegacy(GLenum targetFormat)
+{
+	GLint internalFormat;
+	switch (targetFormat)
+	{
+	case GL_R8:
+	case GL_R8_SNORM:
+	case GL_R16:
+	case GL_R16_SNORM:
+	case GL_R16F:
+	case GL_R32F:
+	case GL_R8I:
+	case GL_R8UI:
+	case GL_R16I:
+	case GL_R16UI:
+	case GL_R32I:
+	case GL_R32UI:
+		internalFormat = GL_RED;
+		break;
+	case GL_RG8:
+	case GL_RG8_SNORM:
+	case GL_RG16:
+	case GL_RG16F:
+	case GL_RG32F:
+	case GL_RG8I:
+	case GL_RG8UI:
+	case GL_RG16I:
+	case GL_RG16UI:
+	case GL_RG32I:
+	case GL_RG32UI:
+		internalFormat = GL_RG;
+		break;
+	case GL_R3_G3_B2:
+	case GL_RGB4:
+	case GL_RGB5:
+	case GL_RGB8:
+	case GL_RGB8_SNORM:
+	case GL_RGB10:
+	case GL_RGB12:
+	case GL_RGB16_SNORM:
+	case GL_RGBA2:
+	case GL_RGBA4:
+	case GL_SRGB8:
+	case GL_RGB16F:
+	case GL_RGB32F:
+	case GL_R11F_G11F_B10F:
+	case GL_RGB9_E5:
+	case GL_RGB8I:
+	case GL_RGB8UI:
+	case GL_RGB16I:
+	case GL_RGB16UI:
+	case GL_RGB32I:
+	case GL_RGB32UI:
+		internalFormat = GL_RGB;
+		break;
+	case GL_RGB5_A1:
+	case GL_RGBA8:
+	case GL_RGBA8_SNORM:
+	case GL_RGB10_A2:
+	case GL_RGB10_A2UI:
+	case GL_RGBA12:
+	case GL_RGBA16:
+	case GL_RGBA16F:
+	case GL_RGBA32F:
+	case GL_RGBA8I:
+	case GL_RGBA8UI:
+	case GL_RGBA16I:
+	case GL_RGBA16UI:
+	case GL_RGBA32I:
+	case GL_RGBA32UI:
+		internalFormat = GL_RGBA;
+	default:
+		internalFormat = GL_RGB;
+		break;
+	}
+	return internalFormat;
+}
+
 void Texture::GetInternalFormat(GLenum textureType, GLenum targetFormat, GLint* internalFormat, GLint *type)
 {
 	if (m_UseInternalFormat)
 	{
+		
 		glGetInternalformativ(textureType, targetFormat, GL_TEXTURE_IMAGE_FORMAT, 1, internalFormat);
 		glGetInternalformativ(textureType, targetFormat, GL_TEXTURE_IMAGE_TYPE, 1, type);
+
+		if (*internalFormat == 0)
+			*internalFormat = GetInternalFormatLegacy(targetFormat);
 	}
 	else //extension GL_ARB_internalformat_query2 not available, we have to determine the values by ourself (see https://www.opengl.org/sdk/docs/man/html/glTexStorage2D.xhtml#idp50915184)
 	{
-		switch (targetFormat)
-		{
-		case GL_R8:
-		case GL_R8_SNORM:
-		case GL_R16:
-		case GL_R16_SNORM:
-		case GL_R16F:
-		case GL_R32F:
-		case GL_R8I:
-		case GL_R8UI:
-		case GL_R16I:
-		case GL_R16UI:
-		case GL_R32I:
-		case GL_R32UI:
-			*internalFormat = GL_RED;
-			break;
-		case GL_RG8:
-		case GL_RG8_SNORM:
-		case GL_RG16:
-		case GL_RG16F:
-		case GL_RG32F:
-		case GL_RG8I:
-		case GL_RG8UI:
-		case GL_RG16I:
-		case GL_RG16UI:
-		case GL_RG32I:
-		case GL_RG32UI:
-			*internalFormat = GL_RG;
-			break;
-		case GL_R3_G3_B2:
-		case GL_RGB4: 
-		case GL_RGB5:
-		case GL_RGB8:
-		case GL_RGB8_SNORM:
-		case GL_RGB10:
-		case GL_RGB12:
-		case GL_RGB16_SNORM:
-		case GL_RGBA2:
-		case GL_RGBA4:
-		case GL_SRGB8:
-		case GL_RGB16F:
-		case GL_RGB32F:
-		case GL_R11F_G11F_B10F:
-		case GL_RGB9_E5:
-		case GL_RGB8I:
-		case GL_RGB8UI:
-		case GL_RGB16I:
-		case GL_RGB16UI:
-		case GL_RGB32I:
-		case GL_RGB32UI:
-			*internalFormat = GL_RGB;
-			break;
-		case GL_RGB5_A1:
-		case GL_RGBA8:
-		case GL_RGBA8_SNORM:
-		case GL_RGB10_A2:
-		case GL_RGB10_A2UI:
-		case GL_RGBA12:
-		case GL_RGBA16:
-		case GL_RGBA16F:
-		case GL_RGBA32F:
-		case GL_RGBA8I:
-		case GL_RGBA8UI:
-		case GL_RGBA16I:
-		case GL_RGBA16UI:
-		case GL_RGBA32I:
-		case GL_RGBA32UI:
-			*internalFormat = GL_RGBA;
-		default:
-			break;
-		}
-
+				
+		*internalFormat = GetInternalFormatLegacy(targetFormat);
 		*type = GL_UNSIGNED_BYTE; //not shure if this is correct, cant find a table for this tho
 	}
 }

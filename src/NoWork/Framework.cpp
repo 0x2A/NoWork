@@ -64,7 +64,7 @@ NoWork::~NoWork()
 	glfwTerminate();
 }
 
-bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX, int posY, int flags)
+NOWORK_API bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX /*= 40*/, int posY /*= 40*/, int flags /*= Window::Flags::WINDOW_SHOWED*/, int multisampling /*= 0*/)
 {
 	//delete old renderer if there was created one before
 	if (m_Renderer)
@@ -80,6 +80,7 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, flags & Window::Flags::WINDOW_OPENGL_DEBUG_CONTEXT);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_OpenGLMajorVersion);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_OpenGLMinorVersion);
+	glfwWindowHint(GLFW_SAMPLES, multisampling);
 
 	if (m_CoreProfileOnly)
 	{
@@ -132,8 +133,8 @@ bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX,
 	{
 		glDebugMessageCallbackARB(EventHandler::GLErrorCallback, NULL);
 		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, false);
 	}
-
 
 	m_Renderer = new Renderer(this, m_Window);
 

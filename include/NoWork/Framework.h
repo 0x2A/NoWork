@@ -28,7 +28,7 @@ public:
 	NOWORK_API NoWork();
 	NOWORK_API ~NoWork();
 
-	NOWORK_API bool CreateNewWindow(std::string title, int width, int height, int posX = 40, int posY = 40, int flags = Window::Flags::WINDOW_SHOWED);
+	NOWORK_API bool CreateNewWindow(std::string title, int width, int height, int posX = 40, int posY = 40, int flags = Window::Flags::WINDOW_SHOWED, int multisampling = 0);
 	NOWORK_API void EnableVSync();
 	NOWORK_API void DisableVSync();
 	/** 
