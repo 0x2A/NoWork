@@ -86,7 +86,7 @@ void Texture2D::CopyPixelData()
 {
 	if (!NoWork::IsMainThread())
 	{
-		AddToGLQueue(m_Renderer, AsyncMode_t::AM_CopyPixData);
+		AddToGLQueue(AsyncMode_t::AM_CopyPixData);
 		return;
 	}
 

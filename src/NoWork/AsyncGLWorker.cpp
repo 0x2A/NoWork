@@ -2,11 +2,13 @@
 #include "NoWork/Renderer.h"
 
 
-void AsyncGLWorker::AddToGLQueue(Renderer* r, int mode, void* params)
+void AsyncGLWorker::AddToGLQueue(int mode, void* params /*= nullptr*/)
 {
 	AsyncGLWork_t work;
 	work.worker = this;
 	work.mode = mode;
 	work.params = params;
-	r->RegisterAsyncGLWork(work);
+	renderer->RegisterAsyncGLWork(work);
 }
+
+Renderer* AsyncGLWorker::renderer;

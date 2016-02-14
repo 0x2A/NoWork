@@ -93,7 +93,7 @@ bool Mesh::CreateVBO()
 	
 	if (!NoWork::IsMainThread())
 	{
-		AddToGLQueue(m_Renderer, 0);
+		AddToGLQueue(0);
 		return true;
 	}
 
@@ -210,7 +210,7 @@ void Mesh::UpdateBufferData(bool reallocate)
 
 	if (!NoWork::IsMainThread())
 	{
-		AddToGLQueue(m_Renderer, 1, reinterpret_cast<void*>(+reallocate));
+		AddToGLQueue(1, reinterpret_cast<void*>(+reallocate));
 		return;
 	}
 

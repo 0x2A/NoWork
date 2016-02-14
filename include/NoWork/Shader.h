@@ -23,12 +23,13 @@
 #include "nowork/Common.h"
 #include "nowork/Log.h"
 #include "nowork/Texture.h"
+#include "AsyncGLWorker.h"
 
 
 #define SHADER_SRC(x) #x
 
 
-class Shader
+class Shader : public AsyncGLWorker
 {
 	friend class NoWork;
 public:
@@ -72,6 +73,10 @@ protected:
 	NOWORK_API Shader();
 
 	static void InitializeDefaultShaders();
+
+	bool CompileShaders(const std::string& vs, const std::string& fs);
+
+	virtual void DoAsyncWork(int mode, void *params) override;
 
 private:
 	std::string m_VertexSrc;

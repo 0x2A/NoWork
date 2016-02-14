@@ -95,7 +95,7 @@ void Texture::GenerateTexture()
 {
 	if (!NoWork::IsMainThread())
 	{
-		AddToGLQueue(m_Renderer, AsyncMode_t::AM_GenerateTexture);
+		AddToGLQueue(AsyncMode_t::AM_GenerateTexture);
 		return;
 	}
 
@@ -210,7 +210,7 @@ NOWORK_API void Texture::SetLinearTextureFilter(bool state)
 {
 	if (!NoWork::IsMainThread())
 	{
-		AddToGLQueue(m_Renderer, AsyncMode_t::AM_SetLinearTextureFilter, reinterpret_cast<void *>(+state));
+		AddToGLQueue(AsyncMode_t::AM_SetLinearTextureFilter, reinterpret_cast<void *>(+state));
 		return;
 	}
 	

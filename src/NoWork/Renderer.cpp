@@ -35,6 +35,8 @@ Renderer::Renderer(NoWork* framework, GLFWwindow* window) : m_Window(window)
 	{
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_MaxAnisotropicFiltering);
 	}
+
+	AsyncGLWorker::renderer = this;
 }
 
 Renderer::~Renderer()

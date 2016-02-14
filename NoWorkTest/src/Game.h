@@ -38,5 +38,4 @@ private:
 	Model* m_Model;
 
 	Framebuffer* m_FBO;
-	RenderTexture* m_RenderTex;
 };

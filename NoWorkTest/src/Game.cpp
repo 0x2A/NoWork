@@ -111,7 +111,6 @@ void MyGame::OnShutdown()
 	DelPtr(m_SpriteSheet);
 	DelPtr(m_Model);
 	DelPtr(m_FBO);
-	DelPtr(m_RenderTex);
 	DelPtr(m_Sound);
 	DelPtr(m_AnimatedSprite);
 }

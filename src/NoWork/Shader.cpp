@@ -23,6 +23,7 @@
 #include <fstream>
 #include <streambuf>
 #include "nowork/Mesh.h"
+#include "nowork/Framework.h"
 
 NOWORK_API Shader* Shader::DefaultUnlit;
 NOWORK_API Shader* Shader::DefaultUnlitTextured;
@@ -93,49 +94,26 @@ bool ValidateProgram(unsigned int program)
 NOWORK_API  Shader* Shader::Create(const std::string& vs, const std::string& fs)
 {
 	Shader* shader = new(std::nothrow) Shader();
-	shader->m_VSObject = glCreateShader(GL_VERTEX_SHADER);
-	shader->m_FSObject = glCreateShader(GL_FRAGMENT_SHADER);
 
-	GLchar const* filesVS[]{vs.c_str()};
-	GLchar const* filesFS[]{fs.c_str()};
+	if (!NoWork::IsMainThread())
+	{
+		std::string* arr = new std::string[2];
+		arr[0] = vs;
+		arr[1] = fs;
+		shader->AddToGLQueue(0,arr);
+		return shader;
+	}
 
-	glShaderSource(shader->m_VSObject, 1, filesVS, 0);
-	glShaderSource(shader->m_FSObject, 1, filesFS, 0);
-
-	glCompileShader(shader->m_VSObject);
-	if (!ValidateShader(shader->m_VSObject))
+	if (!shader->CompileShaders(vs, fs))
 	{
 		DelPtr(shader);
 		return 0;
 	}
-	glCompileShader(shader->m_FSObject);
-	if(!ValidateShader(shader->m_FSObject))
-	{
-		DelPtr(shader);
-		return 0;
-	}
-	shader->m_ShaderObject = glCreateProgram();
-	glAttachShader(shader->m_ShaderObject, shader->m_FSObject);
-	glAttachShader(shader->m_ShaderObject, shader->m_VSObject);
-
-	shader->BindAttributeLocation(0, "vertexPosition"); //bind input variables to their location ids
-	shader->BindAttributeLocation(1, "vertexNormal");   //this is important so the variable ids match 
-	shader->BindAttributeLocation(2, "vertexUV");       //the input ids from the mesh
-	shader->BindAttributeLocation(3, "vertexColor");    //normally the driver sets them in order of definition but we cant be sure
-
-	glLinkProgram(shader->m_ShaderObject);
-	if(!ValidateProgram(shader->m_ShaderObject))
-	{
-		DelPtr(shader);
-		return 0;
-	}
-
-	glBindAttribLocation(shader->m_ShaderObject, MODEL_VERTEX_LOCATION, "vertexPosition");
-	glBindAttribLocation(shader->m_ShaderObject, MODEL_NORMAL_LOCATION, "vertexNormal");
-	glBindAttribLocation(shader->m_ShaderObject, MODEL_TEXCOORD_LOCATION, "vertexUV");
 
 	return shader;
 }
+
+
 
 NOWORK_API  Shader* Shader::Load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
@@ -345,4 +323,53 @@ int Shader::GetAttributeLocation(const std::string& name)
 	GLint loc = glGetUniformLocation(m_ShaderObject, name.c_str());
 	m_ParamLocations[name] = loc;
 	return loc;
+}
+
+void Shader::DoAsyncWork(int mode, void *params)
+{
+	std::string* arr = static_cast<std::string*>(params);
+	CompileShaders(arr[0], arr[1]);
+}
+
+bool Shader::CompileShaders(const std::string& vs, const std::string& fs)
+{
+	m_VSObject = glCreateShader(GL_VERTEX_SHADER);
+	m_FSObject = glCreateShader(GL_FRAGMENT_SHADER);
+
+	GLchar const* filesVS[]{vs.c_str()};
+	GLchar const* filesFS[]{fs.c_str()};
+
+	glShaderSource(m_VSObject, 1, filesVS, 0);
+	glShaderSource(m_FSObject, 1, filesFS, 0);
+
+	glCompileShader(m_VSObject);
+	if (!ValidateShader(m_VSObject))
+	{
+		return false;
+	}
+	glCompileShader(m_FSObject);
+	if (!ValidateShader(m_FSObject))
+	{
+		return false;
+	}
+	m_ShaderObject = glCreateProgram();
+	glAttachShader(m_ShaderObject, m_FSObject);
+	glAttachShader(m_ShaderObject, m_VSObject);
+
+	BindAttributeLocation(0, "vertexPosition"); //bind input variables to their location ids
+	BindAttributeLocation(1, "vertexNormal");   //this is important so the variable ids match 
+	BindAttributeLocation(2, "vertexUV");       //the input ids from the mesh
+	BindAttributeLocation(3, "vertexColor");    //normally the driver sets them in order of definition but we cant be sure
+
+	glLinkProgram(m_ShaderObject);
+	if (!ValidateProgram(m_ShaderObject))
+	{
+		return false;
+	}
+
+	glBindAttribLocation(m_ShaderObject, MODEL_VERTEX_LOCATION, "vertexPosition");
+	glBindAttribLocation(m_ShaderObject, MODEL_NORMAL_LOCATION, "vertexNormal");
+	glBindAttribLocation(m_ShaderObject, MODEL_TEXCOORD_LOCATION, "vertexUV");
+
+	return true;
 }
