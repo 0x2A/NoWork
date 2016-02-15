@@ -20,10 +20,12 @@
 
 
 #include "nowork/Shader.h"
-#include <fstream>
-#include <streambuf>
+
 #include "nowork/Mesh.h"
 #include "nowork/Framework.h"
+#include "NoWork/FileSystem.h"
+
+#include <regex>
 
 NOWORK_API Shader* Shader::DefaultUnlit;
 NOWORK_API Shader* Shader::DefaultUnlitTextured;
@@ -119,28 +121,11 @@ NOWORK_API  Shader* Shader::Load(const std::string& vertexShaderPath, const std:
 {
 	LOG_DEBUG("Creating shader from file '" << vertexShaderPath << "' and '" << fragmentShaderPath << "'");
 
-	std::ifstream t(vertexShaderPath, std::ios::in);
-	if (!t.is_open())
-	{
-		LOG_ERROR("Unable to open file '" << vertexShaderPath << "': " << std::strerror(errno));
-		return 0;
-	}
-
-	std::string vertexSrc((std::istreambuf_iterator<char>(t)),
-		std::istreambuf_iterator<char>());
-		
-	t.close();
-
-	t = std::ifstream(fragmentShaderPath, std::ios::in);
-	if (!t.is_open())
-	{
-		LOG_ERROR("Unable to open file '" << vertexShaderPath << "': " << std::strerror(errno));
-		return 0;
-	}
-	std::string fragmentSrc((std::istreambuf_iterator<char>(t)),
-		std::istreambuf_iterator<char>());
-
-	t.close();
+	std::string vertexSrc = FileSystem::LoadTextFile(vertexShaderPath);
+	vertexSrc = PreprocessIncludes(vertexSrc, FileSystem::GetFilename(vertexShaderPath), FileSystem::GetPath(vertexShaderPath));
+	
+	std::string fragmentSrc = FileSystem::LoadTextFile(fragmentShaderPath);
+	fragmentSrc = PreprocessIncludes(fragmentSrc, FileSystem::GetFilename(fragmentShaderPath), FileSystem::GetPath(fragmentShaderPath));
 
 	return Create(vertexSrc, fragmentSrc);
 }
@@ -373,3 +358,52 @@ bool Shader::CompileShaders(const std::string& vs, const std::string& fs)
 
 	return true;
 }
+
+std::string Shader::PreprocessIncludes(const std::string &source, const std::string &filename, const std::string& path, int level /*= 0*/)
+{
+	if (level > 32)
+	{
+		LOG_ERROR("header inclusion depth limit reached, might be caused by cyclic header inclusion. Caused in " << path);
+		return source;
+	}
+	static const std::regex re("^[ ]*#[ ]*include[ ]+[\"<](.*)[\">].*");
+	std::stringstream input;
+	std::stringstream output;
+	input << source;
+
+	size_t line_number = 1;
+	std::smatch matches;
+
+	std::string line;
+	while (std::getline(input, line))
+	{
+		bool dontPrintLine = false;
+		if (level == 0 && line_number == 1) { //dont print #line at beginning of shader code, so we dont get trouble with #version strings and stuff
+			dontPrintLine = true;
+		}
+		if (std::regex_search(line, matches, re))
+		{
+			std::string include_file = matches[1];
+			std::string include_string;
+
+			try
+			{
+				include_string = FileSystem::LoadTextFile(path + "/" + include_file);
+			}
+			catch (std::exception &e)
+			{
+				LOG_ERROR(filename << "(" << line_number << ") : fatal error: cannot open include file " << include_file);
+				return "";
+			}
+			output << PreprocessIncludes(include_string, include_file, path, level + 1) << std::endl;
+		}
+		else
+		{
+			if (!dontPrintLine) output << "#line " << line_number << " \"" << filename << "\"" << std::endl;
+			output << line << std::endl;
+		}
+		++line_number;
+	}
+	return output.str();
+}
+

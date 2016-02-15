@@ -749,6 +749,7 @@
     <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidparse.c">
       <Filter>freetype</Filter>
     </ClCompile>
+    <ClCompile Include="src\NoWork\FileSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\soil\image_DXT.h">
@@ -800,6 +801,7 @@
     <ClInclude Include="..\PhysiCam\external\freetype\include\freetype\config\ftmodule.h">
       <Filter>freetype</Filter>
     </ClInclude>
+    <ClInclude Include="include\NoWork\FileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="soil">

@@ -1,5 +1,6 @@
 #include "NoWork/Model.h"
 #include "NoWork/Log.h"
+#include "NoWork/FileSystem.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -11,39 +12,6 @@ Model::Model()
 	m_TotalVertices = 0;
 }
 
-std::string GetBasePath(const std::string& filename)
-{
-	std::string fName(filename);
-	size_t pos = fName.rfind("/");
-	if (pos == std::string::npos)
-	{
-		pos = fName.rfind("\\");
-		if (pos == std::string::npos)
-			return fName;
-	}
-
-	if (pos == 0)    // / is at the front.
-		return fName;
-
-	return fName.substr(0, pos);
-}
-
-std::string GetFilename(const std::string& filename)
-{
-	std::string fName(filename);
-	size_t pos = fName.rfind("/");
-	if (pos == std::string::npos)
-	{
-		pos = fName.rfind("\\");
-		if (pos == std::string::npos)
-			return fName;
-	}
-
-	if (pos == 0)    // / is at the front.
-		return fName;
-
-	return fName.substr(pos + 1, fName.size() - (pos + 1));
-}
 
 Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 {
@@ -120,7 +88,7 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 
 	int iNumMaterials = scene->mNumMaterials;
 
-	std::string basePath = GetBasePath(path);
+	std::string basePath = FileSystem::GetPath(path);
 
 	for (int i = 0; i < iNumMaterials; i++)
 	{

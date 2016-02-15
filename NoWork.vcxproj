@@ -343,6 +343,7 @@
     <ClCompile Include="src\NoWork\AudioSystem.cpp" />
     <ClCompile Include="src\NoWork\Camera.cpp" />
     <ClCompile Include="src\NoWork\EventHandler.cpp" />
+    <ClCompile Include="src\NoWork\FileSystem.cpp" />
     <ClCompile Include="src\NoWork\Font.cpp" />
     <ClCompile Include="src\NoWork\Framebuffer.cpp" />
     <ClCompile Include="src\NoWork\Framework.cpp" />
@@ -374,6 +375,7 @@
     <ClInclude Include="include\NoWork\Camera.h" />
     <ClInclude Include="include\NoWork\Common.h" />
     <ClInclude Include="include\NoWork\EventHandler.h" />
+    <ClInclude Include="include\NoWork\FileSystem.h" />
     <ClInclude Include="include\NoWork\Font.h" />
     <ClInclude Include="include\NoWork\Framebuffer.h" />
     <ClInclude Include="include\NoWork\Framework.h" />

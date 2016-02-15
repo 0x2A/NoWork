@@ -74,6 +74,7 @@ protected:
 
 	static void InitializeDefaultShaders();
 
+	static std::string PreprocessIncludes(const std::string &source, const std::string &filename, const std::string& path, int level = 0);
 	bool CompileShaders(const std::string& vs, const std::string& fs);
 
 	virtual void DoAsyncWork(int mode, void *params) override;
