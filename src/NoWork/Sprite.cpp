@@ -2,7 +2,7 @@
 #include "nowork/Shader.h"
 #include "nowork/SpriteSheet.h"
 
-Sprite::Sprite(Area<int> area, Texture2D* spriteTexture)
+Sprite::Sprite(Area<int> area, Texture2DPtr spriteTexture)
 {
 	m_SpriteTexture = spriteTexture;
 
@@ -22,7 +22,7 @@ void Sprite::Render()
 {
 	
 	bool useColorKey = !(m_ColorKey.x == -1 && m_ColorKey.y == -1 && m_ColorKey.z == -1); //do we use color keying?
-	Shader* shader = useColorKey ? SpriteSheet::m_SpriteKeyedShader : SpriteSheet::m_SpriteShader; //use normal shader
+	ShaderPtr shader = useColorKey ? SpriteSheet::m_SpriteKeyedShader : SpriteSheet::m_SpriteShader; //use normal shader
 
 	shader->Use();
 	shader->SetParameterVec4("texCoordParams", glm::vec4( m_glArea.X1(), m_glArea.Y1(), m_glArea.Width(), m_glArea.Height() ));
@@ -34,7 +34,7 @@ void Sprite::Render()
 		shader->SetParameterVec2("colorKeyParams", m_colorKeyParams);
 	}
 
-	Mesh* mesh = SpriteSheet::m_PlaneMesh;
+	MeshPtr mesh = SpriteSheet::m_PlaneMesh;
 	mesh->GetTransform()->SetModelMatrix(m_Transform.GetModelMatrix());
 	mesh->GetTransform()->SetScale(glm::vec3(m_AspectRatio, 1, 1));
 	mesh->Render(shader);	

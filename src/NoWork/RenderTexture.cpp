@@ -2,7 +2,7 @@
 #include "NoWork/RenderTexture.h"
 
 
-RenderTexture* RenderTexture::Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed /*= false*/)
+RenderTexturePtr RenderTexture::Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed /*= false*/)
 {
 	unsigned int tType = type;
 	if (textureFormat == GL_DEPTH_COMPONENT || textureFormat == GL_DEPTH_STENCIL)
@@ -50,7 +50,7 @@ RenderTexture* RenderTexture::Create(int width, int height, Type type, Texture::
 		break;
 	}
 
-	RenderTexture *tex = new RenderTexture(tType, bindingType);
+	RenderTexturePtr tex = RenderTexturePtr(new RenderTexture(tType, bindingType));
 	tex->m_Width = width;
 	tex->m_Height = height;
 	tex->m_TextureId = texture;

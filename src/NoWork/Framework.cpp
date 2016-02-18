@@ -58,7 +58,6 @@ NoWork::NoWork()
 
 NoWork::~NoWork()
 {
-	DelPtr(Shader::DefaultUnlit);
 	DelPtr(m_Renderer);
 	glfwDestroyWindow(m_Window);
 	glfwTerminate();

@@ -27,12 +27,11 @@
 
 #include <regex>
 
-NOWORK_API Shader* Shader::DefaultUnlit;
-NOWORK_API Shader* Shader::DefaultUnlitTextured;
-NOWORK_API Shader* Shader::DefaultBlinPhong;
-NOWORK_API Shader* Shader::ScreenAlignedTextured;
-
-Shader* Shader::ScreenAligned;
+NOWORK_API ShaderPtr Shader::DefaultUnlit;
+NOWORK_API ShaderPtr Shader::DefaultUnlitTextured;
+NOWORK_API ShaderPtr Shader::DefaultBlinPhong;
+NOWORK_API ShaderPtr Shader::ScreenAlignedTextured;
+NOWORK_API ShaderPtr Shader::ScreenAligned;
 
 
 static bool ValidateShader(GLuint shader, const char* file = 0)
@@ -93,9 +92,9 @@ bool ValidateProgram(unsigned int program)
 	return true;
 }
 
-NOWORK_API  Shader* Shader::Create(const std::string& vs, const std::string& fs)
+NOWORK_API  ShaderPtr Shader::Create(const std::string& vs, const std::string& fs)
 {
-	Shader* shader = new(std::nothrow) Shader();
+	ShaderPtr shader = ShaderPtr(new Shader);
 
 	if (!NoWork::IsMainThread())
 	{
@@ -108,8 +107,7 @@ NOWORK_API  Shader* Shader::Create(const std::string& vs, const std::string& fs)
 
 	if (!shader->CompileShaders(vs, fs))
 	{
-		DelPtr(shader);
-		return 0;
+		return nullptr;
 	}
 
 	return shader;
@@ -117,7 +115,7 @@ NOWORK_API  Shader* Shader::Create(const std::string& vs, const std::string& fs)
 
 
 
-NOWORK_API  Shader* Shader::Load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+NOWORK_API  ShaderPtr Shader::Load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
 	LOG_DEBUG("Creating shader from file '" << vertexShaderPath << "' and '" << fragmentShaderPath << "'");
 
@@ -279,7 +277,7 @@ inline void Shader::SetDiffuseColor(float r, float g, float b, float a /*= 1*/)
 	SetDiffuseColor(glm::vec4(r, g, b, a));
 }
 
-inline void Shader::SetParameterTexture(std::string name, Texture* tex, uint32_t slot)
+inline void Shader::SetParameterTexture(std::string name, TexturePtr tex, uint32_t slot)
 {
 	if (!tex) return;
 	tex->Bind(slot);
@@ -288,7 +286,7 @@ inline void Shader::SetParameterTexture(std::string name, Texture* tex, uint32_t
 
 }
 
-void Shader::SetTexture(Texture* tex)
+void Shader::SetTexture(TexturePtr tex)
 {
 	SetParameterTexture("Texture", tex, 0);
 }

@@ -4,11 +4,14 @@
 #include "nowork/Texture2D.h"
 #include "nowork/Area.h"
 
+class SpriteAnimation;
+typedef std::shared_ptr<SpriteAnimation> SpriteAnimationPtr;
+
 class SpriteAnimation
 {
 public:
 
-	SpriteAnimation(std::vector<Area<int>> frames, int frameRate, std::string name, Texture2D* spriteTexture);
+	SpriteAnimation(std::vector<Area<int>> frames, int frameRate, std::string name, Texture2DPtr spriteTexture);
 
 	NOWORK_API void Render(glm::mat4& modelMatrix);
 	NOWORK_API void Update(float deltaTime);
@@ -60,7 +63,7 @@ private:
 	
 	float m_AspectRatio;
 	
-	Texture2D* m_SpriteTexture;
+	Texture2DPtr m_SpriteTexture;
 
 	glm::vec3 m_ColorKey;
 	glm::vec2 m_colorKeyParams;

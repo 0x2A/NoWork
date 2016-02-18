@@ -2,6 +2,8 @@
 
 #include "nowork/Texture.h"
 
+class Texture2D;
+typedef std::shared_ptr<Texture2D> Texture2DPtr;
 
 class Texture2D : public Texture
 {
@@ -13,8 +15,8 @@ public:
 		AM_CopyPixData = Texture::AM_OFFSET
 	};
 
-	NOWORK_API static Texture2D* Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant = true);
-	NOWORK_API static Texture2D* Load(const std::string path,  bool constant = true);
+	NOWORK_API static Texture2DPtr Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant = true);
+	NOWORK_API static Texture2DPtr Load(const std::string path, bool constant = true);
 
 	NOWORK_API void Update(const unsigned char* pixels);
 	NOWORK_API void Update(const unsigned char* pixels, int width, int height);

@@ -8,9 +8,9 @@ Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 
 }
 
-NOWORK_API  Texture2D* Texture2D::Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant /*= true*/)
+NOWORK_API  Texture2DPtr Texture2D::Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant /*= true*/)
 {
-	Texture2D* tex = new Texture2D();
+	Texture2DPtr tex = Texture2DPtr(new Texture2D);
 	tex->GenerateTexture();  //generate and bind new texture
 
 	tex->m_Format = format;
@@ -23,7 +23,7 @@ NOWORK_API  Texture2D* Texture2D::Create(unsigned int width, unsigned int height
 	return tex;
 }
 
-Texture2D* Texture2D::Load(const std::string path, bool constant /*= true*/)
+Texture2DPtr Texture2D::Load(const std::string path, bool constant /*= true*/)
 {
 	int width, height, channels;
 	unsigned char *ht_map = SOIL_load_image(path.c_str(), &width, &height, &channels, SOIL_LOAD_AUTO);

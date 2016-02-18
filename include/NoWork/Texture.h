@@ -5,6 +5,10 @@
 
 class NoWork;
 class Renderer;
+
+class Texture;
+typedef std::shared_ptr<Texture> TexturePtr;
+
 class Texture : public AsyncGLWorker
 {
 	friend class NoWork;

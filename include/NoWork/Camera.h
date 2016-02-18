@@ -4,6 +4,10 @@
 #include "nowork/Transform.h"
 
 class Renderer;
+
+class Camera;
+typedef std::shared_ptr<Camera> CameraPtr;
+
 class Camera
 {
 public:

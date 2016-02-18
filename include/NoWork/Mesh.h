@@ -71,6 +71,9 @@ typedef std::vector<Vertex> VertexList;
 //list of faces (indices) for mesh creation
 typedef std::vector<Face> FaceList;
 
+class Mesh;
+typedef std::shared_ptr<Mesh> MeshPtr;
+
 class Mesh : public AsyncGLWorker
 {
 	friend class NoWork;
@@ -104,13 +107,13 @@ public:
 
 
 	//Creates a mesh without indices. The mesh must be triangles
-	NOWORK_API static Mesh* Create(const VertexList &vertices, DataUsage usage = DataUsage::STATIC_DRAW);
+	NOWORK_API static MeshPtr Create(const VertexList &vertices, DataUsage usage = DataUsage::STATIC_DRAW);
 
 	//Creates a mesh with indices. The mesh must be triangles
-	NOWORK_API static Mesh* Create(const VertexList &vertices, const FaceList &faces, bool calculateNormals = false, DataUsage usage = DataUsage::STATIC_DRAW);
-	NOWORK_API static Mesh* CreatePlane(DataUsage usage = DataUsage::STATIC_DRAW);
+	NOWORK_API static MeshPtr Create(const VertexList &vertices, const FaceList &faces, bool calculateNormals = false, DataUsage usage = DataUsage::STATIC_DRAW);
+	NOWORK_API static MeshPtr CreatePlane(DataUsage usage = DataUsage::STATIC_DRAW);
 
-	NOWORK_API void Render(Shader* shader, RenderMode mode = TRIANGLES);
+	NOWORK_API void Render(ShaderPtr shader, RenderMode mode = TRIANGLES);
 	NOWORK_API Transform* GetTransform() {return &m_Transform; }
 
 	NOWORK_API VertexList* GetVertexList() { return &m_Vertices; }

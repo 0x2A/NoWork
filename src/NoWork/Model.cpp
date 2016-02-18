@@ -13,7 +13,7 @@ Model::Model()
 }
 
 
-Model* Model::Load(const std::string path, Mesh::DataUsage usage)
+ModelPtr Model::Load(const std::string path, Mesh::DataUsage usage)
 {
 	LOG_DEBUG("Loading model '" << path << "'...");
 
@@ -41,7 +41,7 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 
 	int iTotalVertices = 0;
 
-	Model* model = new Model;
+	ModelPtr model = ModelPtr(new Model);
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
 		VertexList vertices;
@@ -76,7 +76,7 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 
 			vertices.push_back(v);
 		}
-		Mesh* m = Mesh::Create(vertices, faces, false, usage);
+		MeshPtr m = Mesh::Create(vertices, faces, false, usage);
 		if (!m)
 		{
 			LOG_ERROR("Unable to load submesh '" << mesh->mName.C_Str() << "' from model '" << path << "'");
@@ -97,7 +97,7 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 		int texIndex = 0;
 		aiString texPath;  // filename
 
-		Texture2D* tex = nullptr;
+		Texture2DPtr tex(nullptr);
 		if (material->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath) == AI_SUCCESS)
 		{
 			tex = Texture2D::Load(basePath + "/" + texPath.data);
@@ -115,23 +115,19 @@ Model* Model::Load(const std::string path, Mesh::DataUsage usage)
 
 Model::~Model()
 {
-	for (auto &mesh : m_Meshes)
-	{
-		delete mesh;
-	}
 	m_Meshes.clear();
 
 	m_Textures.clear();
 	m_MaterialIndices.clear();
 }
 
-Mesh* Model::GetSubmesh(size_t index)
+MeshPtr Model::GetSubmesh(size_t index)
 {
 	if (index >= m_Meshes.size()) return nullptr;
 	return m_Meshes[index];
 }
 
-void Model::Render(Shader *shader)
+void Model::Render(ShaderPtr shader)
 {
 	shader->Use();
 	shader->SetDiffuseColor(glm::vec4(1, 1, 1, 1));
@@ -139,14 +135,14 @@ void Model::Render(Shader *shader)
 	for (int i = 0; i < m_Meshes.size(); i++)
 	{
 		if (m_Textures[m_MaterialIndices[i]])
-			shader->SetTexture(m_Textures[m_MaterialIndices[i]].get());
+			shader->SetTexture(m_Textures[m_MaterialIndices[i]]);
 
 		m_Meshes[i]->GetTransform()->SetModelMatrix(m_Transform.GetModelMatrix());
 		m_Meshes[i]->Render(shader);
 	}
 }
 
-NOWORK_API void Model::ReplaceTexture(int id, std::shared_ptr<Texture2D> tex)
+NOWORK_API void Model::ReplaceTexture(int id, Texture2DPtr tex)
 {
 	if (id < m_Textures.size())
 	{

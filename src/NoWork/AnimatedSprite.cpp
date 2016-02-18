@@ -9,12 +9,12 @@ AnimatedSprite::AnimatedSprite()
 }
 
 
-void AnimatedSprite::AddAnimation(SpriteAnimation* animation)
+void AnimatedSprite::AddAnimation(SpriteAnimationPtr animation)
 {
 	m_Animations.push_back(animation);
 }
 
-void AnimatedSprite::AddAnimation(const std::vector<SpriteAnimation*>& animation)
+void AnimatedSprite::AddAnimation(const std::vector<SpriteAnimationPtr>& animation)
 {
 	for (auto animation : animation)
 	{
@@ -22,9 +22,9 @@ void AnimatedSprite::AddAnimation(const std::vector<SpriteAnimation*>& animation
 	}
 }
 
-AnimatedSprite * AnimatedSprite::Create()
+AnimatedSpritePtr AnimatedSprite::Create()
 {
-	AnimatedSprite *sprite = new AnimatedSprite;
+	AnimatedSpritePtr sprite = AnimatedSpritePtr(new AnimatedSprite);
 	return sprite;
 }
 
@@ -81,7 +81,7 @@ void AnimatedSprite::Update(double deltaTime)
 	m_Animations[m_CurrentAnimation]->Update(deltaTime);
 }
 
-SpriteAnimation* AnimatedSprite::GetAnimation(unsigned int index)
+SpriteAnimationPtr AnimatedSprite::GetAnimation(unsigned int index)
 {
 	if (index >= m_Animations.size()) //if index out of range
 		return nullptr; //return null
@@ -89,7 +89,7 @@ SpriteAnimation* AnimatedSprite::GetAnimation(unsigned int index)
 	return m_Animations[index];
 }
 
-SpriteAnimation* AnimatedSprite::GetCurrentAnimation()
+SpriteAnimationPtr AnimatedSprite::GetCurrentAnimation()
 {
 	if (m_CurrentAnimation <= -1)
 		return nullptr;

@@ -3,6 +3,8 @@
 #include "NoWork/Common.h"
 #include "NoWork/Texture.h"
 
+class RenderTexture;
+typedef std::shared_ptr<RenderTexture> RenderTexturePtr;
 
 class RenderTexture : public Texture
 {
@@ -16,7 +18,7 @@ public:
 		TEXTURE_3D = 0x0DE2,
 	};
 
-	NOWORK_API static RenderTexture* Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed = false);
+	NOWORK_API static RenderTexturePtr Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed = false);
 
 protected:
 

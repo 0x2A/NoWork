@@ -5,11 +5,14 @@
 #include "nowork/Area.h"
 #include "nowork/SceneObject.h"
 
+class Sprite;
+typedef std::shared_ptr<Sprite> SpritePtr;
+
 class Sprite : public SceneObject
 {
 public:
 
-	Sprite(Area<int> area, Texture2D* spriteTexture);
+	Sprite(Area<int> area, Texture2DPtr spriteTexture);
 
 	NOWORK_API Area<int> GetArea() { return m_Area; }
 
@@ -26,7 +29,7 @@ private:
 
 	Area<int> m_Area;
 	Area<float> m_glArea;
-	Texture2D* m_SpriteTexture;
+	Texture2DPtr m_SpriteTexture;
 	float m_AspectRatio;
 	glm::vec3 m_ColorKey;
 	glm::vec2 m_colorKeyParams;

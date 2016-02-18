@@ -26,7 +26,7 @@ Renderer::Renderer(NoWork* framework, GLFWwindow* window) : m_Window(window)
 	glEnable(GL_DEPTH_TEST);
 	glCullFace(GL_BACK);
 
-	m_Camera = new Camera(this);
+	m_Camera = std::make_shared<Camera>(this);
 
 	m_AnisotropicFilteringAvail = m_Framework->ExtensionAvailable("GL_EXT_texture_filter_anisotropic");
 	m_AnisotropicFilteringVal = 0.0f;
@@ -41,7 +41,6 @@ Renderer::Renderer(NoWork* framework, GLFWwindow* window) : m_Window(window)
 
 Renderer::~Renderer()
 {
-	DelPtr(m_Camera);
 }
 
 void Renderer::Update()
@@ -151,7 +150,7 @@ void Renderer::SetViewPort(int x, int y, int width, int height)
 	glViewport(x, y, width, height);
 }
 
-Texture* Renderer::CreateFBOTexture(int width, int height, unsigned int textureFormat, bool compressed /*= false*/)
+TexturePtr Renderer::CreateFBOTexture(int width, int height, unsigned int textureFormat, bool compressed /*= false*/)
 {
 	GLuint texture;
 	glGenTextures(1, &texture);
@@ -221,7 +220,7 @@ Texture* Renderer::CreateFBOTexture(int width, int height, unsigned int textureF
 	glTexImage2D(GL_TEXTURE_2D, 0, texIntFrmt, width, height, 0, texFrmt, GL_UNSIGNED_BYTE, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	Texture2D *tex = new Texture2D();
+	Texture2DPtr tex = Texture2DPtr(new Texture2D);
 	tex->m_Width = width;
 	tex->m_Height = height;
 	tex->m_TextureId = texture;

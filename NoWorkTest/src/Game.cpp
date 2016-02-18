@@ -108,11 +108,6 @@ void MyGame::OnRender()
 void MyGame::OnShutdown()
 {
 	//delete the mesh we created
-	DelPtr(m_SpriteSheet);
-	DelPtr(m_Model);
-	DelPtr(m_FBO);
-	DelPtr(m_Sound);
-	DelPtr(m_AnimatedSprite);
 }
 
 void MyGame::Exit()

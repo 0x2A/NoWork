@@ -3,9 +3,9 @@
 #include "NoWork/AudioSystem.h"
 
 
-NOWORK_API  AudioSource* AudioSource::Load(const std::string& name, const std::string& filename, bool ambient /*= false*/, bool stream)
+NOWORK_API  AudioSourcePtr AudioSource::Load(const std::string& name, const std::string& filename, bool ambient /*= false*/, bool stream)
 {
-	AudioSource* audioSource = new AudioSource;
+	AudioSourcePtr audioSource = std::make_shared<AudioSource>();
 	if (!AudioSystem::m_AudioSystem)
 	{
 		LOG_ERROR("Unable to load audio file '" << filename << "': audio subsystem not initialized!");

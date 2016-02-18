@@ -25,6 +25,7 @@
 #include <iostream>
 #include <sstream>
 #include <thread>
+#include <memory>
 
 #include "GL/gl3w.h"
 //only include glfw3 if we are in NoWork context

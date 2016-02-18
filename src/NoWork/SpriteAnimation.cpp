@@ -2,7 +2,7 @@
 #include "nowork/SpriteSheet.h"
 
 
-SpriteAnimation::SpriteAnimation(std::vector<Area<int>> frames, int frameRate, std::string name, Texture2D* spriteTexture)
+SpriteAnimation::SpriteAnimation(std::vector<Area<int>> frames, int frameRate, std::string name, Texture2DPtr spriteTexture)
 {
 	m_SpriteTexture = spriteTexture;
 
@@ -39,7 +39,7 @@ SpriteAnimation::SpriteAnimation(std::vector<Area<int>> frames, int frameRate, s
 void SpriteAnimation::Render(glm::mat4& modelMatrix)
 {
 	bool useColorKey = !(m_ColorKey.x == -1 && m_ColorKey.y == -1 && m_ColorKey.z == -1); //do we use color keying?
-	Shader* shader = useColorKey ? SpriteSheet::m_SpriteKeyedShader : SpriteSheet::m_SpriteShader; //use normal shader
+	ShaderPtr shader = useColorKey ? SpriteSheet::m_SpriteKeyedShader : SpriteSheet::m_SpriteShader; //use normal shader
 
 	Area<float> area = m_glFrames[m_CurrentFrame];
 	shader->Use();
@@ -52,7 +52,7 @@ void SpriteAnimation::Render(glm::mat4& modelMatrix)
 		shader->SetParameterVec2("colorKeyParams", m_colorKeyParams);
 	}
 
-	Mesh* mesh = SpriteSheet::m_PlaneMesh;
+	MeshPtr mesh = SpriteSheet::m_PlaneMesh;
 	mesh->GetTransform()->SetModelMatrix(modelMatrix);
 	mesh->GetTransform()->SetScale(glm::vec3(m_AspectRatio, 1, 1));
 	mesh->Render(shader);

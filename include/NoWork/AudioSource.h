@@ -4,13 +4,15 @@
 #include "NoWork/Common.h"
 #include "NoWork/SceneObject.h"
 
+class AudioSource;
+typedef std::shared_ptr<AudioSource> AudioSourcePtr;
 
 class AudioSource : public SceneObject
 {
 	friend class NoWork;
 public:
 
-	NOWORK_API static AudioSource* Load(const std::string& name, const std::string& filename, bool ambient = false, bool stream = true);
+	NOWORK_API static AudioSourcePtr Load(const std::string& name, const std::string& filename, bool ambient = false, bool stream = true);
 	NOWORK_API ~AudioSource();
 
 	NOWORK_API void SetGain(float f);

@@ -49,7 +49,7 @@ public:
 	Renderer(NoWork* framework, GLFWwindow* window);
 	~Renderer();
 
-	NOWORK_API Camera* GetCamera() const { return m_Camera; }
+	NOWORK_API CameraPtr GetCamera() const { return m_Camera; }
 	NOWORK_API void GetFramebufferSize(int& width, int& height) { width = m_FramebufferWidth; height = m_FramebufferHeight; }
 	NOWORK_API float GetAspectRatio() const { return m_AspectRatio; }
 	NOWORK_API GLFWwindow * GetWindow() const { return m_Window; }
@@ -62,7 +62,7 @@ public:
 	NOWORK_API void SetAlphaBlending(bool state);
 	NOWORK_API void SetWireframeMode(bool state);
 
-	NOWORK_API Texture* CreateFBOTexture(int width, int height, unsigned int textureFormat, bool compressed = false);
+	NOWORK_API TexturePtr CreateFBOTexture(int width, int height, unsigned int textureFormat, bool compressed = false);
 	NOWORK_API unsigned int CreateFrameBuffer();
 	NOWORK_API bool BindTextureToFrameBuffer(unsigned int framebuffer, Texture *texture, AttachmentType targetAttachmentType);
 	NOWORK_API void BindFrameBuffer(unsigned int framebuffer);
@@ -106,7 +106,7 @@ private:
 	float m_AnisotropicFilteringVal;
 	bool m_AnisotropicFilteringAvail;
 	
-	Camera* m_Camera = NULL;
+	CameraPtr m_Camera = NULL;
 
 	NoWork *m_Framework;
 

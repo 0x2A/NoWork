@@ -4,6 +4,9 @@
 
 #include "NoWork/RenderTexture.h"
 
+class Framebuffer;
+typedef std::shared_ptr<Framebuffer> FramebufferPtr;
+
 class Framebuffer
 {
 public:
@@ -32,9 +35,9 @@ public:
 
 	NOWORK_API ~Framebuffer();
 
-	NOWORK_API static Framebuffer* Create();
+	NOWORK_API static FramebufferPtr Create();
 
-	NOWORK_API bool BindTexture(RenderTexture* renderTexture, AttachmentType targetAttachmentType);
+	NOWORK_API bool BindTexture(RenderTexturePtr renderTexture, AttachmentType targetAttachmentType);
 	NOWORK_API void Bind();
 	NOWORK_API void Unbind();
 

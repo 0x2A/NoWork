@@ -6,6 +6,10 @@
 #include "NoWork/Mesh.h"
 
 #include "freetype-gl/freetype-gl.h"
+
+class Font;
+typedef std::shared_ptr<Font> FontPtr;
+
 class Font
 {
 	friend class NoWork;
@@ -33,7 +37,7 @@ public:
 	NOWORK_API Font();
 	NOWORK_API ~Font();
 
-	NOWORK_API static Font* Create(const std::string& path, float size = 24.0f);
+	NOWORK_API static FontPtr Create(const std::string& path, float size = 24.0f);
 
 	NOWORK_API void SetSize(int s);
 	NOWORK_API int GetSize() { return m_Size; }
@@ -56,7 +60,7 @@ private:
 	texture_atlas_t *m_Atlas;
 	texture_font_t *m_Font;
 	vertex_buffer_t *m_Buffer;
-	Shader* m_Shader;
+	ShaderPtr m_Shader;
 
 	/* Texture atlas to store individual glyphs */
 

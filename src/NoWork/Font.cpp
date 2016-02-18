@@ -62,9 +62,9 @@ void Font::Shutdown()
 {
 }
 
-NOWORK_API  Font* Font::Create(const std::string& path, float size)
+NOWORK_API  FontPtr Font::Create(const std::string& path, float size)
 {
-	Font *f = new Font;
+	FontPtr f = std::make_shared<Font>();
 
 	//setup font cache
 	const wchar_t *cache = L" !\"#$%&'()*+,-./0123456789:;<=>?"

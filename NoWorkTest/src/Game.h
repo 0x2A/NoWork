@@ -30,12 +30,12 @@ public:
 private:
 
 
-	SpriteSheet *m_SpriteSheet;
+	SpriteSheetPtr m_SpriteSheet;
 
-	AnimatedSprite *m_AnimatedSprite;
-	AudioSource *m_Sound;
+	AnimatedSpritePtr m_AnimatedSprite;
+	AudioSourcePtr m_Sound;
 
-	Model* m_Model;
+	ModelPtr m_Model;
 
-	Framebuffer* m_FBO;
+	FramebufferPtr m_FBO;
 };

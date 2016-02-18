@@ -11,15 +11,15 @@ Framebuffer::~Framebuffer()
 	glDeleteFramebuffers(1, &m_FBO);
 }
 
-Framebuffer* Framebuffer::Create()
+FramebufferPtr Framebuffer::Create()
 {
-	Framebuffer* fb = new Framebuffer;
+	FramebufferPtr fb = FramebufferPtr(new Framebuffer);
 
 	glGenFramebuffers(1, &fb->m_FBO);
 	return fb;
 }
 
-bool Framebuffer::BindTexture(RenderTexture* renderTexture, AttachmentType targetAttachmentType)
+bool Framebuffer::BindTexture(RenderTexturePtr renderTexture, AttachmentType targetAttachmentType)
 {
 	if (!renderTexture)
 		return false;

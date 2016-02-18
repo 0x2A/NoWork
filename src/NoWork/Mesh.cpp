@@ -22,11 +22,11 @@ Mesh::~Mesh()
 	glDeleteVertexArrays(1, &m_VertexArrayObject);
 }
 
-Mesh* Mesh::Create(const VertexList &vertices, const FaceList &faces, bool calculateNormals, DataUsage usage)
+MeshPtr Mesh::Create(const VertexList &vertices, const FaceList &faces, bool calculateNormals, DataUsage usage)
 {
 	LOG_DEBUG("Creating mesh with " << vertices.size() << " vertices");
 
-	Mesh* mesh = new Mesh;
+	MeshPtr mesh = MeshPtr(new Mesh);
 	mesh->m_DataUsage = usage;
 	mesh->m_Vertices = vertices;
 	mesh->m_Renderer = m_sRenderer;
@@ -42,11 +42,11 @@ Mesh* Mesh::Create(const VertexList &vertices, const FaceList &faces, bool calcu
 	return mesh;
 }
 
-NOWORK_API Mesh* Mesh::Create(const VertexList &vertices, DataUsage usage /*= DataUsage::STATIC_DRAW*/)
+NOWORK_API MeshPtr Mesh::Create(const VertexList &vertices, DataUsage usage /*= DataUsage::STATIC_DRAW*/)
 {
 	LOG_DEBUG("Creating mesh with " << vertices.size() << " vertices");
 
-	Mesh* mesh = new Mesh;
+	MeshPtr mesh = MeshPtr(new Mesh);
 	mesh->m_DataUsage = usage;
 	mesh->m_Vertices = vertices;
 	mesh->m_Renderer = m_sRenderer;
@@ -154,7 +154,7 @@ bool Mesh::CreateVBO()
 	return true;
 }
 
-void Mesh::Render(Shader* shader, RenderMode mode)
+void Mesh::Render(ShaderPtr shader, RenderMode mode)
 {
 	if (!shader)
 	{
@@ -183,7 +183,7 @@ void Mesh::Render(Shader* shader, RenderMode mode)
 	Renderer::DrawCalls++;
 }
 
-NOWORK_API Mesh* Mesh::CreatePlane(DataUsage usage /*= DataUsage::STATIC_DRAW*/)
+NOWORK_API MeshPtr Mesh::CreatePlane(DataUsage usage /*= DataUsage::STATIC_DRAW*/)
 {
 	std::vector<Vertex> vertices;
 	std::vector<Face> faces;

@@ -4,14 +4,18 @@
 #include "nowork/SpriteAnimation.h"
 #include "nowork/SceneObject.h"
 
+
+class AnimatedSprite;
+typedef std::shared_ptr<AnimatedSprite> AnimatedSpritePtr;
+
 class AnimatedSprite : public SceneObject
 {
 public:
 
-	NOWORK_API static AnimatedSprite *Create();
+	NOWORK_API static AnimatedSpritePtr Create();
 
-	NOWORK_API void AddAnimation(SpriteAnimation* animation);
-	NOWORK_API void AddAnimation(const std::vector<SpriteAnimation*>& animation);
+	NOWORK_API void AddAnimation(SpriteAnimationPtr animation);
+	NOWORK_API void AddAnimation(const std::vector<SpriteAnimationPtr>& animation);
 	
 	NOWORK_API void SelectAnimation(unsigned int index);
 	NOWORK_API unsigned int CurrentAnimation(){ return m_CurrentAnimation; }
@@ -24,8 +28,8 @@ public:
 	NOWORK_API void Update(double deltaTime);
 	NOWORK_API void Render();
 
-	NOWORK_API SpriteAnimation* GetAnimation(unsigned int index);
-	NOWORK_API SpriteAnimation* GetCurrentAnimation();
+	NOWORK_API SpriteAnimationPtr GetAnimation(unsigned int index);
+	NOWORK_API SpriteAnimationPtr GetCurrentAnimation();
 
 	NOWORK_API void Loop(bool b);
 	NOWORK_API void Loop(unsigned int index, bool b);
@@ -39,5 +43,5 @@ private:
 	bool m_Paused, m_Stopped;
 
 	int m_CurrentAnimation;
-	std::vector<SpriteAnimation*> m_Animations;
+	std::vector<SpriteAnimationPtr> m_Animations;
 };

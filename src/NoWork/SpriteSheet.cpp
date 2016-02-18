@@ -5,9 +5,9 @@
 
 
 
-Mesh * SpriteSheet::m_PlaneMesh = 0;
-Shader* SpriteSheet::m_SpriteShader = 0;
-Shader* SpriteSheet::m_SpriteKeyedShader = 0;
+MeshPtr SpriteSheet::m_PlaneMesh;
+ShaderPtr SpriteSheet::m_SpriteShader;
+ShaderPtr SpriteSheet::m_SpriteKeyedShader;
 
 const std::string spriteShaderVert = 
 		"#version 130\n"
@@ -81,7 +81,7 @@ const std::string spriteShaderKeyedFrag =
 		"    colorOut = finalCol;\n"
 		"}";
 
-SpriteSheet* SpriteSheet::Load(const std::string& path)
+SpriteSheetPtr SpriteSheet::Load(const std::string& path)
 {
 	
 	LOG_DEBUG("Loading SpriteSheet from file '" << path << "'");
@@ -113,20 +113,18 @@ SpriteSheet* SpriteSheet::Load(const std::string& path)
 	}
 	rapidjson::Value& doc = docRoot["SpriteSheet"];
 	
-	SpriteSheet *sheet = new SpriteSheet;
+	SpriteSheetPtr sheet = std::make_shared<SpriteSheet>();
 
 
 	//load the texture
 	if (!GotValue(doc, "texture", "No texture path defined", false, true))
 	{
-		DelPtr(sheet);
 		return nullptr;
 	}
 
-	Texture2D *spriteSheetTex = Texture2D::Load(doc["texture"].GetString());
+	Texture2DPtr spriteSheetTex = Texture2D::Load(doc["texture"].GetString());
 	if (!spriteSheetTex) //is the texture loaded?
 	{
-		DelPtr(sheet);
 		return nullptr;
 	}
 
@@ -148,7 +146,6 @@ SpriteSheet* SpriteSheet::Load(const std::string& path)
 		if (!ParseSprites(sheet, doc["sprites"]))
 		{
 			//something got wrong
-			DelPtr(sheet);
 			return nullptr;
 		}
 	}
@@ -157,7 +154,6 @@ SpriteSheet* SpriteSheet::Load(const std::string& path)
 		if (!ParseAnimations(sheet, doc["animations"]))
 		{
 			//something got wrong
-			DelPtr(sheet);
 			return nullptr;
 		}
 	}
@@ -187,7 +183,7 @@ bool SpriteSheet::GetArea(rapidjson::Value& doc, Area<int>* targetArea)
 	return true;
 }
 
-bool SpriteSheet::ParseSprites(SpriteSheet* sheet, rapidjson::Value& doc)
+bool SpriteSheet::ParseSprites(const SpriteSheetPtr& sheet, rapidjson::Value& doc)
 {
 	int numSprites = doc.Size();
 	sheet->m_Sprites.reserve(numSprites);
@@ -198,14 +194,14 @@ bool SpriteSheet::ParseSprites(SpriteSheet* sheet, rapidjson::Value& doc)
 		if (!GetArea(doc[i], &area))
 			continue;
 
-		Sprite *sprite = new Sprite(area, sheet->m_SpriteTexture);
+		SpritePtr sprite = SpritePtr(new Sprite(area, sheet->m_SpriteTexture));
 		sheet->m_Sprites.push_back(sprite);
 	}
 	
 	return true;
 }
 
-bool SpriteSheet::ParseAnimations(SpriteSheet* sheet, rapidjson::Value& doc)
+bool SpriteSheet::ParseAnimations(const SpriteSheetPtr& sheet, rapidjson::Value& doc)
 {
 	int numAnimations = doc.Size();
 
@@ -235,7 +231,7 @@ bool SpriteSheet::ParseAnimations(SpriteSheet* sheet, rapidjson::Value& doc)
 			frames.push_back(area);
 		}
 
-		SpriteAnimation *animation = new SpriteAnimation(frames, frameRate, name, sheet->m_SpriteTexture);
+		SpriteAnimationPtr animation = std::make_shared<SpriteAnimation>(frames, frameRate, name, sheet->m_SpriteTexture);
 		sheet->m_SpriteAnimations.push_back(animation);
 	}
 
@@ -257,22 +253,11 @@ bool SpriteSheet::GotValue(rapidjson::Value& doc, const char* name, const std::s
 
 SpriteSheet::~SpriteSheet()
 {
-	DelPtr(m_SpriteTexture);
-
-	for (auto sprite : m_Sprites)
-	{
-		delete sprite;
-	}
 	m_Sprites.clear();
-
-	for (auto sprite : m_SpriteAnimations)
-	{
-		delete sprite;
-	}
 	m_SpriteAnimations.clear();
 }
 
-Sprite* SpriteSheet::GetSprite(size_t index)
+SpritePtr SpriteSheet::GetSprite(size_t index)
 {
 	if (index >= m_Sprites.size())
 		return nullptr;
@@ -280,7 +265,7 @@ Sprite* SpriteSheet::GetSprite(size_t index)
 	return m_Sprites[index];
 }
 
-SpriteAnimation* SpriteSheet::GetAnimation(size_t index)
+SpriteAnimationPtr SpriteSheet::GetAnimation(size_t index)
 {
 	if (index >= m_SpriteAnimations.size())
 		return nullptr;
