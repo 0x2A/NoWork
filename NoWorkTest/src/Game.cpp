@@ -5,9 +5,10 @@
 const float moveSpeed = 45.f;
 bool useWireframe;
 
-//This function is called form a seperate thread.
-//So we can do time intensive stuff in here without hanging the program
-//HINT: DONT CALL FUNCTIONS THAT USE OPENGL IN HERE (i.e. Mesh::Create etc) DO THIS IN OnLoadContent!
+// This function is for preinitializing resources needed 
+// while loading content or while loading screen
+// Its running on the main thread so don't run too time 
+// intensive stuff here as it may cause a window freeze
 void MyGame::Init()
 {
 	LOG_DEBUG("Initializing game");
@@ -26,6 +27,12 @@ void MyGame::Init()
 	useWireframe = false;
 }
 
+// This function is running in a seperate thread so
+// you can run time intensive stuff here, while in the
+// main window a loading screen or similar (depending on
+// code in OnLoadRender function) is rendered. OpenGL 
+// calls are done via command stack and are therefore not
+// guaranteed to be processed in order they are called!
 void MyGame::OnLoadContent()
 {
 	//Set anisotropic filtering (if available)
@@ -57,12 +64,7 @@ void MyGame::OnLoadContent()
 
 }
 
-void MyGame::OnLoadRender()
-{
-	//TODO: print a loading message
-}
-
-
+//update function
 void MyGame::OnUpdate(double deltaTime)
 {
 	//process input so we can move the camera around with wsad, q and r
@@ -96,6 +98,12 @@ void MyGame::OnUpdate(double deltaTime)
 	m_AnimatedSprite->Update(deltaTime);
 }
 
+void MyGame::OnLoadRender()
+{
+	//TODO: print a loading message or render a loading screen
+}
+
+//main render function
 void MyGame::OnRender()
 {
 	//render a sprite
@@ -105,11 +113,13 @@ void MyGame::OnRender()
 	m_Model->Render(Shader::DefaultUnlitTextured);
 }
 
+//used to clean up resources
 void MyGame::OnShutdown()
 {
 	//delete the mesh we created
 }
 
+//exit function used to demonstrate the input key binding functionality
 void MyGame::Exit()
 {
 	//we want to exit the game if this function is called
