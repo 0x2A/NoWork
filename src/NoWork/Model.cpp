@@ -2,6 +2,7 @@
 #include "NoWork/Log.h"
 #include "NoWork/FileSystem.h"
 
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -90,19 +91,85 @@ ModelPtr Model::Load(const std::string path, Mesh::DataUsage usage)
 
 	std::string basePath = FileSystem::GetPath(path);
 
+	std::map<std::string, TexturePtr> loadedTextures;
 	for (int i = 0; i < iNumMaterials; i++)
 	{
 		const aiMaterial* material = scene->mMaterials[i];
+		
 		int a = 5;
 		int texIndex = 0;
 		aiString texPath;  // filename
+		std::string path;
 
-		Texture2DPtr tex(nullptr);
+		aiString matName;
+		material->Get(AI_MATKEY_NAME, matName);
+		MaterialPtr mat = std::make_shared<Material>(matName.C_Str(), nullptr);
 		if (material->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath) == AI_SUCCESS)
 		{
-			tex = Texture2D::Load(basePath + "/" + texPath.data);
+			path = basePath + "/" + texPath.data;
+			Texture2DPtr tex(nullptr);
+			if (!loadedTextures[path])
+			{
+				tex = Texture2D::Load(path);
+				loadedTextures[path] = tex;
+			}
+			else
+				tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			mat->SetDiffuseTexture(tex);
 		}
-		model->m_Textures.push_back(std::shared_ptr<Texture2D>(tex));
+		if (material->GetTexture(aiTextureType_NORMALS, texIndex, &texPath) == AI_SUCCESS)
+		{
+			path = basePath + "/" + texPath.data;
+			Texture2DPtr tex(nullptr);
+			if (!loadedTextures[path])
+			{
+				tex = Texture2D::Load(path);
+				loadedTextures[path] = tex;
+			}
+			else
+				tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			mat->SetNormalTexture(tex);
+		}
+		if (material->GetTexture(aiTextureType_SHININESS, texIndex, &texPath) == AI_SUCCESS)
+		{
+			path = basePath + "/" + texPath.data;
+			Texture2DPtr tex(nullptr);
+			if (!loadedTextures[path])
+			{
+				tex = Texture2D::Load(path);
+				loadedTextures[path] = tex;
+			}
+			else
+				tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			mat->SetRoughnessTexture(tex);
+		}
+		if (material->GetTexture(aiTextureType_SPECULAR, texIndex, &texPath) == AI_SUCCESS)
+		{
+			path = basePath + "/" + texPath.data;
+			Texture2DPtr tex(nullptr);
+			if (!loadedTextures[path])
+			{
+				tex = Texture2D::Load(path);
+				loadedTextures[path] = tex;
+			}
+			else
+				tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			mat->SetMetallicTexture(tex);
+		}
+		aiColor3D col;
+		material->Get(AI_MATKEY_COLOR_DIFFUSE, col);
+		float fval;
+		material->Get(AI_MATKEY_OPACITY, fval);
+		mat->SetDiffuseColor(glm::vec4(col.r, col.g, col.b, fval));
+
+		material->Get(AI_MATKEY_SHININESS, fval);
+		mat->SetRoughness(1.0f - fval);
+		
+		material->Get(AI_MATKEY_SHININESS_STRENGTH, fval);
+		mat->SetMetallic(1.0f - fval);
+		
+		model->m_Materials.push_back(mat);
+		
 	}
 
 	double endTime = glfwGetTime();
@@ -117,7 +184,7 @@ Model::~Model()
 {
 	m_Meshes.clear();
 
-	m_Textures.clear();
+	m_Materials.clear();
 	m_MaterialIndices.clear();
 }
 
@@ -130,27 +197,34 @@ MeshPtr Model::GetSubmesh(size_t index)
 void Model::Render(ShaderPtr shader)
 {
 	shader->Use();
-	shader->SetDiffuseColor(glm::vec4(1, 1, 1, 1));
-
+	bool update = false;
+	if (m_LastShader != shader)
+	{
+		m_LastShader = shader;
+		update = true;
+	}
 	for (int i = 0; i < m_Meshes.size(); i++)
 	{
-		if (m_Textures[m_MaterialIndices[i]])
-			shader->SetTexture(m_Textures[m_MaterialIndices[i]]);
+		if (m_Materials[m_MaterialIndices[i]])
+		{
+			if (update) m_Materials[m_MaterialIndices[i]]->SetShader(shader);
+			m_Materials[m_MaterialIndices[i]]->Bind();
+		}
 
 		m_Meshes[i]->GetTransform()->SetModelMatrix(m_Transform.GetModelMatrix());
 		m_Meshes[i]->Render(shader);
 	}
 }
 
-NOWORK_API void Model::ReplaceTexture(int id, Texture2DPtr tex)
+NOWORK_API void Model::ReplaceMaterial(int id, MaterialPtr tex)
 {
-	if (id < m_Textures.size())
+	if (id < m_Materials.size())
 	{
-		m_Textures[id] = tex;
+		m_Materials[id] = tex;
 	}
 }
 
-NOWORK_API std::shared_ptr<Texture2D> Model::GetMeshTexture(int meshId)
+NOWORK_API MaterialPtr Model::GetMaterial(int meshId)
 {
-	return m_Textures[m_MaterialIndices[meshId]];
+	return m_Materials[m_MaterialIndices[meshId]];
 }

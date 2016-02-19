@@ -750,6 +750,7 @@
       <Filter>freetype</Filter>
     </ClCompile>
     <ClCompile Include="src\NoWork\FileSystem.cpp" />
+    <ClCompile Include="src\NoWork\Material.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\soil\image_DXT.h">
@@ -802,6 +803,7 @@
       <Filter>freetype</Filter>
     </ClInclude>
     <ClInclude Include="include\NoWork\FileSystem.h" />
+    <ClInclude Include="include\NoWork\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="soil">

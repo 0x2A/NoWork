@@ -349,6 +349,7 @@
     <ClCompile Include="src\NoWork\Framework.cpp" />
     <ClCompile Include="src\NoWork\Input.cpp" />
     <ClCompile Include="src\NoWork\Log.cpp" />
+    <ClCompile Include="src\NoWork\Material.cpp" />
     <ClCompile Include="src\NoWork\Mesh.cpp" />
     <ClCompile Include="src\NoWork\Model.cpp" />
     <ClCompile Include="src\NoWork\Quaternion.cpp" />
@@ -382,6 +383,7 @@
     <ClInclude Include="include\NoWork\Game.h" />
     <ClInclude Include="include\NoWork\Input.h" />
     <ClInclude Include="include\NoWork\Log.h" />
+    <ClInclude Include="include\NoWork\Material.h" />
     <ClInclude Include="include\NoWork\Mesh.h" />
     <ClInclude Include="include\NoWork\Model.h" />
     <ClInclude Include="include\NoWork\NoWork.h" />
