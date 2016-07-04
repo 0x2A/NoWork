@@ -1,6 +1,0 @@
-# Ignore everything
-*
-
-# But not these files...
-!install_fmod_here.txt
-!.gitignore
