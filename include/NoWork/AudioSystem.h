@@ -1,5 +1,8 @@
 #pragma once
 
+
+#ifdef NOWORK_ENABLE_AUDIO
+
 #include "NoWork/Common.h"
 #include <fmod.hpp>
 
@@ -20,3 +23,5 @@ private:
 	static bool FMODErrorCheck(FMOD_RESULT result);
 
 };
+
+#endif

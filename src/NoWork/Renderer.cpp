@@ -24,6 +24,7 @@ Renderer::Renderer(NoWork* framework, GLFWwindow* window) : m_Window(window)
 	SetBackfaceCulling(true);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glCullFace(GL_BACK);
 
 	m_Camera = std::make_shared<Camera>(this);

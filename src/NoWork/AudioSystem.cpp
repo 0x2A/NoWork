@@ -1,6 +1,11 @@
+
+#ifdef NOWORK_ENABLE_AUDIO
+
 #include "NoWork/AudioSystem.h"
 #include "NoWork/Log.h"
 #include <fmod_errors.h>
+
+#pragma comment(lib, "fmod64_vc.lib")
 
 FMOD::System* AudioSystem::m_AudioSystem = nullptr;
 
@@ -83,3 +88,5 @@ bool AudioSystem::FMODErrorCheck(FMOD_RESULT result)
 	}
 	return true;
 }
+
+#endif

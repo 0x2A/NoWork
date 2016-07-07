@@ -49,8 +49,9 @@ NoWork::NoWork()
 
 	m_MainThreadId = std::this_thread::get_id();
 
-
+#ifdef NOWORK_ENABLE_AUDIO
 	AudioSystem::Init();
+#endif
 
 	srand((uint32_t)time(NULL));
 	rand(); //invoke rand one time cause some implementations ignore srand at first call
@@ -203,7 +204,9 @@ void NoWork::Run()
 	m_GameHandle->OnShutdown();
 	m_LoadingThread.join();
 
+#ifdef NOWORK_ENABLE_AUDIO
 	AudioSystem::Shutdown();
+#endif
 	Font::Shutdown();
 }
 
@@ -214,7 +217,9 @@ void NoWork::Update()
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
+#ifdef NOWORK_ENABLE_AUDIO
 	AudioSystem::Update();
+#endif
 	m_GameHandle->OnUpdate(deltaTime);
 
 	m_Renderer->Update();

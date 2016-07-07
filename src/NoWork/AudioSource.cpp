@@ -1,3 +1,5 @@
+#ifdef NOWORK_ENABLE_AUDIO
+
 #include "NoWork/AudioSource.h"
 #include "NoWork/Log.h"
 #include "NoWork/AudioSystem.h"
@@ -172,3 +174,5 @@ NOWORK_API void AudioSource::RemoveReverb()
 
 }
 
+
+#endif

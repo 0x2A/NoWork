@@ -33,7 +33,6 @@ private:
 	SpriteSheetPtr m_SpriteSheet;
 
 	AnimatedSpritePtr m_AnimatedSprite;
-	AudioSourcePtr m_Sound;
 
 	ModelPtr m_Model;
 

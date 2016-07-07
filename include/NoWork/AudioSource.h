@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef NOWORK_ENABLE_AUDIO
+
 #include <fmod.hpp>
 #include "NoWork/Common.h"
 #include "NoWork/SceneObject.h"
@@ -47,3 +49,5 @@ private:
 	std::string m_Filename;
 	FMOD::DSP* m_Reverb;
 };
+
+#endif
