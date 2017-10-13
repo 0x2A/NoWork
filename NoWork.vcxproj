@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -14,18 +14,19 @@
     <ProjectGuid>{3848E321-968D-42C4-B10A-B1C001E2779F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>NoWork</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -93,39 +94,12 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glfw3.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;glfw3.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalLibraryDirectories>$(SolutionDir)dep\steamworks\redistributable_bin\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2arrst.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2blues.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2error.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2font.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2ft.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2hints.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2intrp.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2read.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cf2stack.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffcmap.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffdrivr.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffgload.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffload.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffobjs.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffparse.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cff\cffpic.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidgload.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidload.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidobjs.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidparse.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\cid\cidriver.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1afm.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1driver.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1gload.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1load.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1objs.c" />
-    <ClCompile Include="..\PhysiCam\external\freetype\src\type1\t1parse.c" />
     <ClCompile Include="src\assimp\code\3DSConverter.cpp" />
     <ClCompile Include="src\assimp\code\3DSExporter.cpp" />
     <ClCompile Include="src\assimp\code\3DSLoader.cpp" />
@@ -323,6 +297,26 @@
     <ClCompile Include="src\freetype\base\ftwinfnt.c" />
     <ClCompile Include="src\freetype\bdf\bdf.c" />
     <ClCompile Include="src\freetype\cache\ftcache.c" />
+    <ClCompile Include="src\freetype\cff\cf2arrst.c" />
+    <ClCompile Include="src\freetype\cff\cf2blues.c" />
+    <ClCompile Include="src\freetype\cff\cf2error.c" />
+    <ClCompile Include="src\freetype\cff\cf2font.c" />
+    <ClCompile Include="src\freetype\cff\cf2ft.c" />
+    <ClCompile Include="src\freetype\cff\cf2hints.c" />
+    <ClCompile Include="src\freetype\cff\cf2intrp.c" />
+    <ClCompile Include="src\freetype\cff\cf2read.c" />
+    <ClCompile Include="src\freetype\cff\cf2stack.c" />
+    <ClCompile Include="src\freetype\cff\cffcmap.c" />
+    <ClCompile Include="src\freetype\cff\cffdrivr.c" />
+    <ClCompile Include="src\freetype\cff\cffgload.c" />
+    <ClCompile Include="src\freetype\cff\cffload.c" />
+    <ClCompile Include="src\freetype\cff\cffobjs.c" />
+    <ClCompile Include="src\freetype\cff\cffparse.c" />
+    <ClCompile Include="src\freetype\cid\cidgload.c" />
+    <ClCompile Include="src\freetype\cid\cidload.c" />
+    <ClCompile Include="src\freetype\cid\cidobjs.c" />
+    <ClCompile Include="src\freetype\cid\cidparse.c" />
+    <ClCompile Include="src\freetype\cid\cidriver.c" />
     <ClCompile Include="src\freetype\gzip\ftgzip.c" />
     <ClCompile Include="src\freetype\lzw\ftlzw.c" />
     <ClCompile Include="src\freetype\pcf\pcf.c" />
@@ -334,6 +328,12 @@
     <ClCompile Include="src\freetype\sfnt\sfnt.c" />
     <ClCompile Include="src\freetype\smooth\smooth.c" />
     <ClCompile Include="src\freetype\truetype\truetype.c" />
+    <ClCompile Include="src\freetype\type1\t1afm.c" />
+    <ClCompile Include="src\freetype\type1\t1driver.c" />
+    <ClCompile Include="src\freetype\type1\t1gload.c" />
+    <ClCompile Include="src\freetype\type1\t1load.c" />
+    <ClCompile Include="src\freetype\type1\t1objs.c" />
+    <ClCompile Include="src\freetype\type1\t1parse.c" />
     <ClCompile Include="src\freetype\type42\type42.c" />
     <ClCompile Include="src\freetype\winfonts\winfnt.c" />
     <ClCompile Include="src\gl3w\gl3w.c" />
