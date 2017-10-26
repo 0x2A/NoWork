@@ -103,7 +103,7 @@ void MyGame::OnRender()
 	m_AnimatedSprite->Render();
 
 	//render the model
-	m_Model->Render(Shader::DefaultUnlitTextured);
+	//m_Model->Render(Shader::DefaultUnlitTextured);
 }
 
 //used to clean up resources

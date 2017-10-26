@@ -22,17 +22,17 @@ Mesh::~Mesh()
 	glDeleteVertexArrays(1, &m_VertexArrayObject);
 }
 
-MeshPtr Mesh::Create(const VertexList &vertices, const FaceList &faces, bool calculateNormals, DataUsage usage)
+MeshPtr Mesh::Create(const Vertex *vertices, int numVertices, const Face *faces, int numFaces, bool calculateNormals, DataUsage usage)
 {
-	LOG_DEBUG("Creating mesh with " << vertices.size() << " vertices");
+	LOG_DEBUG("Creating mesh with " << numVertices << " vertices");
 
 	MeshPtr mesh = MeshPtr(new Mesh);
 	mesh->m_DataUsage = usage;
-	mesh->m_Vertices = vertices;
+	mesh->m_Vertices.assign(vertices, vertices + numVertices);
 	mesh->m_Renderer = m_sRenderer;
-	mesh->m_Faces = faces;
-	mesh->m_NumIndices = (unsigned int)faces.size() * 3;
-	mesh->m_NumVertices = (unsigned int)vertices.size();
+	mesh->m_Faces.assign(faces, faces + numFaces);
+	mesh->m_NumIndices = (unsigned int)numFaces * 3;
+	mesh->m_NumVertices = (unsigned int)numVertices;
 
 	//if (mesh->m_Faces.size() == 0 && calculateNormals || mesh->m_Faces.size() > 0)
 	if (calculateNormals)
@@ -42,16 +42,16 @@ MeshPtr Mesh::Create(const VertexList &vertices, const FaceList &faces, bool cal
 	return mesh;
 }
 
-NOWORK_API MeshPtr Mesh::Create(const VertexList &vertices, DataUsage usage /*= DataUsage::STATIC_DRAW*/)
+NOWORK_API MeshPtr Mesh::Create(const Vertex *vertices, int numVertices, DataUsage usage /*= DataUsage::STATIC_DRAW*/)
 {
-	LOG_DEBUG("Creating mesh with " << vertices.size() << " vertices");
+	LOG_DEBUG("Creating mesh with " << numVertices << " vertices");
 
 	MeshPtr mesh = MeshPtr(new Mesh);
 	mesh->m_DataUsage = usage;
-	mesh->m_Vertices = vertices;
+	mesh->m_Vertices.assign(vertices, vertices + numVertices);
 	mesh->m_Renderer = m_sRenderer;
 	mesh->m_NumIndices = 0;
-	mesh->m_NumVertices = (unsigned int)vertices.size();
+	mesh->m_NumVertices = (unsigned int)numVertices;
 
 	mesh->CreateVBO();
 	return mesh;
@@ -195,7 +195,7 @@ NOWORK_API MeshPtr Mesh::CreatePlane(DataUsage usage /*= DataUsage::STATIC_DRAW*
 
 	faces.push_back(Face(0, 1, 3));
 	faces.push_back(Face(1, 2, 3));
-	return Create(vertices, faces, false, usage);
+	return Create(&vertices[0], vertices.size(), &faces[0], faces.size(), false, usage);
 }
 
 void Mesh::Init(Renderer* renderer)

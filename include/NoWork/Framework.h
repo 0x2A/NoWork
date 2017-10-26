@@ -28,7 +28,7 @@ public:
 	NOWORK_API NoWork();
 	NOWORK_API ~NoWork();
 
-	NOWORK_API bool CreateNewWindow(std::string title, int width, int height, int posX = 40, int posY = 40, int flags = Window::Flags::WINDOW_SHOWED, int multisampling = 0);
+	NOWORK_API bool CreateNewWindow(const char* title, int width, int height, int posX = 40, int posY = 40, int flags = Window::Flags::WINDOW_SHOWED, int multisampling = 0);
 	NOWORK_API void EnableVSync();
 	NOWORK_API void DisableVSync();
 	/** 
@@ -48,7 +48,7 @@ public:
 
 	NOWORK_API void Exit();
 
-	NOWORK_API bool ExtensionAvailable(std::string name);
+	NOWORK_API bool ExtensionAvailable(const char* name);
 
 	NOWORK_API static bool IsMainThread();
 
@@ -57,7 +57,7 @@ public:
 
 private:
 
-	GLFWwindow* DetectMaxSupportedGlVersionAndCreateWindow(std::string title, int width, int height, bool fullscreen);
+	GLFWwindow* DetectMaxSupportedGlVersionAndCreateWindow(const char* title, int width, int height, bool fullscreen);
 
 	void Update();
 	

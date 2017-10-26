@@ -2,6 +2,7 @@
 #include "nowork/Log.h"
 #include <fstream>
 #include "nowork/Texture2D.h"
+#include "rapidjson/document.h"
 
 
 
@@ -9,7 +10,7 @@ MeshPtr SpriteSheet::m_PlaneMesh;
 ShaderPtr SpriteSheet::m_SpriteShader;
 ShaderPtr SpriteSheet::m_SpriteKeyedShader;
 
-const std::string spriteShaderVert = 
+const char* spriteShaderVert = 
 		"#version 130\n"
 		"in vec3 vertexPosition;\n"
 		"in vec3 vertexNormal;\n"
@@ -30,7 +31,7 @@ const std::string spriteShaderVert =
 		"    gl_Position = MVPMatrix * vec4(vertexPosition,1);\n"
 		"}";
 
-const std::string spriteShaderFrag =
+const char* spriteShaderFrag =
 		"#version 130\n"
 		"uniform vec4 DiffuseColor;\n"
 		"uniform sampler2D Texture;\n"
@@ -49,7 +50,7 @@ const std::string spriteShaderFrag =
 		"    colorOut = DiffuseColor * vec4(vertColor,1) * col;\n"
 		"}";
 
-const std::string spriteShaderKeyedFrag =
+const char* spriteShaderKeyedFrag =
 		"#version 130\n"
 		"uniform vec4 DiffuseColor;\n"
 		"uniform sampler2D Texture;\n"
@@ -81,7 +82,103 @@ const std::string spriteShaderKeyedFrag =
 		"    colorOut = finalCol;\n"
 		"}";
 
-SpriteSheetPtr SpriteSheet::Load(const std::string& path)
+
+
+
+
+bool GotValue(rapidjson::Value& doc, const char* name, const std::string& msg, bool warning /*= false*/, bool error /*= true*/)
+{
+	if (!doc.HasMember(name))
+	{
+		if (warning) LOG_WARNING("Loading SpriteSheet: " << msg)
+		else if (error) LOG_ERROR("Loading SpriteSheet: " << msg);
+
+		return false;
+	}
+	return true;
+}
+
+
+bool GetArea(rapidjson::Value& doc, Area<int>* targetArea)
+{
+	if (!GotValue(doc, "posx", "posx not defined for sprite element", false, true))
+		return false;
+	int posX = doc["posx"].GetInt();
+
+	if (!GotValue(doc, "posy", "posy not defined for sprite element", false, true))
+		return false;
+	int posY = doc["posy"].GetInt();
+
+	if (!GotValue(doc, "width", "width not defined for sprite element", false, true))
+		return false;
+	int width = doc["width"].GetInt();
+
+	if (!GotValue(doc, "height", "height not defined for sprite element", false, true))
+		return false;
+	int height = doc["height"].GetInt();
+
+	*targetArea = Area<int>(posX, posY, posX + width, posY + height);
+	return true;
+}
+
+
+bool ParseSprites(std::vector<SpritePtr>& sheet, Texture2DPtr texture, rapidjson::Value& doc)
+{
+	int numSprites = doc.Size();
+	sheet.reserve(numSprites);
+
+	for (int i = 0; i < numSprites; i++)
+	{
+		Area<int> area;
+		if (!GetArea(doc[i], &area))
+			continue;
+
+		SpritePtr sprite = SpritePtr(new Sprite(area, texture));
+		sheet.push_back(sprite);
+	}
+
+	return true;
+}
+
+bool ParseAnimations(std::vector<SpriteAnimationPtr>& sheet, Texture2DPtr texture, rapidjson::Value& doc)
+{
+	int numAnimations = doc.Size();
+
+	for (int i = 0; i < numAnimations; i++)
+	{
+		std::string str = "no frames defined for animation " + std::to_string(i);
+		if (!GotValue(doc[i], "frames", str, false, true))
+			continue;
+
+		std::string name = "";
+		int frameRate = 15;
+		if (GotValue(doc[i], "name", "no name defined for animation", true, false))
+			name = doc[i]["name"].GetString();
+
+		if (GotValue(doc[i], "framerate", "no framerate defined for animation. setting to default 15 fps.", true, false))
+			frameRate = doc[i]["framerate"].GetInt();
+
+		std::vector<Area<int>> frames;
+		rapidjson::Value& frameEntries = doc[i]["frames"];
+		frames.reserve(frameEntries.Size());
+		for (int j = 0; j < frameEntries.Size(); j++)
+		{
+			Area<int> area;
+			if (!GetArea(frameEntries[j], &area))
+				continue;
+
+			frames.push_back(area);
+		}
+
+		SpriteAnimationPtr animation = std::make_shared<SpriteAnimation>(frames, frameRate, name, texture);
+		sheet.push_back(animation);
+	}
+
+	return true;
+}
+
+
+NOWORK_API  SpriteSheetPtr SpriteSheet::Load(const char* path)
 {
 	
 	LOG_DEBUG("Loading SpriteSheet from file '" << path << "'");
@@ -102,7 +199,7 @@ SpriteSheetPtr SpriteSheet::Load(const std::string& path)
 	rapidjson::Document docRoot;
 	if (docRoot.Parse<0>(jsonSrc.c_str()).HasParseError()) //is there any error while parsing the json file
 	{
-		LOG_ERROR("Loading SpriteSheet '" << path << "':\n" << docRoot.GetParseError() << " at line " << docRoot.GetErrorLine());
+		LOG_ERROR("Loading SpriteSheet '" << path << "':\n" << docRoot.GetParseError() << " at offset " << docRoot.GetErrorOffset());
 		return nullptr;
 	}
 	
@@ -143,7 +240,7 @@ SpriteSheetPtr SpriteSheet::Load(const std::string& path)
 	//do we have any sprites defined?
 	if (GotValue(doc, "sprites", "", false, false))
 	{
-		if (!ParseSprites(sheet, doc["sprites"]))
+		if (!ParseSprites(sheet->m_Sprites, sheet->m_SpriteTexture, doc["sprites"]))
 		{
 			//something got wrong
 			return nullptr;
@@ -151,7 +248,7 @@ SpriteSheetPtr SpriteSheet::Load(const std::string& path)
 	}
 	if (GotValue(doc, "animations", "", false, false))
 	{
-		if (!ParseAnimations(sheet, doc["animations"]))
+		if (!ParseAnimations(sheet->m_SpriteAnimations, sheet->m_SpriteTexture, doc["animations"]))
 		{
 			//something got wrong
 			return nullptr;
@@ -161,95 +258,6 @@ SpriteSheetPtr SpriteSheet::Load(const std::string& path)
 	return sheet;
 }
 
-bool SpriteSheet::GetArea(rapidjson::Value& doc, Area<int>* targetArea)
-{
-	if (!GotValue(doc, "posx", "posx not defined for sprite element", false, true))
-		return false;
-	int posX = doc["posx"].GetInt();
-
-	if (!GotValue(doc, "posy", "posy not defined for sprite element", false, true))
-		return false;
-	int posY = doc["posy"].GetInt();
-
-	if (!GotValue(doc, "width", "width not defined for sprite element", false, true))
-		return false;
-	int width = doc["width"].GetInt();
-
-	if (!GotValue(doc, "height", "height not defined for sprite element", false, true))
-		return false;
-	int height = doc["height"].GetInt();
-
-	*targetArea = Area<int>(posX, posY, posX + width, posY + height);
-	return true;
-}
-
-bool SpriteSheet::ParseSprites(const SpriteSheetPtr& sheet, rapidjson::Value& doc)
-{
-	int numSprites = doc.Size();
-	sheet->m_Sprites.reserve(numSprites);
-
-	for (int i = 0; i < numSprites; i++)
-	{
-		Area<int> area;
-		if (!GetArea(doc[i], &area))
-			continue;
-
-		SpritePtr sprite = SpritePtr(new Sprite(area, sheet->m_SpriteTexture));
-		sheet->m_Sprites.push_back(sprite);
-	}
-	
-	return true;
-}
-
-bool SpriteSheet::ParseAnimations(const SpriteSheetPtr& sheet, rapidjson::Value& doc)
-{
-	int numAnimations = doc.Size();
-
-	for (int i = 0; i < numAnimations; i++)
-	{
-		std::string str = "no frames defined for animation " + std::to_string(i);
-		if (!GotValue(doc[i], "frames", str, false, true))
-			continue;
-
-		std::string name = "";
-		int frameRate = 15;
-		if (GotValue(doc[i], "name", "no name defined for animation", true, false))
-			name = doc[i]["name"].GetString();
-
-		if (GotValue(doc[i], "framerate", "no framerate defined for animation. setting to default 15 fps.", true, false))
-			frameRate = doc[i]["framerate"].GetInt();
-
-		std::vector<Area<int>> frames;
-		rapidjson::Value& frameEntries = doc[i]["frames"];
-		frames.reserve(frameEntries.Size());
-		for (int j = 0; j < frameEntries.Size(); j++)
-		{
-			Area<int> area;
-			if (!GetArea(frameEntries[j], &area))
-				continue;
-
-			frames.push_back(area);
-		}
-
-		SpriteAnimationPtr animation = std::make_shared<SpriteAnimation>(frames, frameRate, name, sheet->m_SpriteTexture);
-		sheet->m_SpriteAnimations.push_back(animation);
-	}
-
-	return true;
-}
-
-
-bool SpriteSheet::GotValue(rapidjson::Value& doc, const char* name, const std::string& msg, bool warning /*= false*/, bool error /*= true*/)
-{
-	if (!doc.HasMember(name))
-	{
-		if (warning) LOG_WARNING("Loading SpriteSheet: " << msg)
-		else if(error) LOG_ERROR("Loading SpriteSheet: " << msg);
-
-		return false;
-	}
-	return true;
-}
 
 SpriteSheet::~SpriteSheet()
 {

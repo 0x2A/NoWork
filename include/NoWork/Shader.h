@@ -37,25 +37,25 @@ class Shader : public AsyncGLWorker
 public:
 
 	NOWORK_API virtual ~Shader();
-	NOWORK_API static ShaderPtr Create(const std::string& vs, const std::string& fs);
-	NOWORK_API static ShaderPtr Load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+	NOWORK_API static ShaderPtr Create(const char* vs, const char* fs);
+	NOWORK_API static ShaderPtr Load(const char* vertexShaderPath, const char* fragmentShaderPath);
 
 	NOWORK_API void Use();
 
 	NOWORK_API void Reload();
 
 
-	NOWORK_API void SetParameterf(std::string name, float val);
-	NOWORK_API void SetParameteri(std::string name, int val);
-	NOWORK_API void SetParameterVec2(std::string name, glm::vec2 val);
-	NOWORK_API void SetParameterVec3(std::string name, glm::vec3 val);
-	NOWORK_API void SetParameterVec4(std::string name, glm::vec4 val);
-	NOWORK_API void SetParameterMat3(std::string name, glm::mat3 val);
-	NOWORK_API void SetParameterMat4(std::string name, glm::mat4 val);
-	NOWORK_API void SetParameterTexture(std::string name, TexturePtr tex, uint32_t slot);
+	NOWORK_API void SetParameterf(const char* name, float val);
+	NOWORK_API void SetParameteri(const char* name, int val);
+	NOWORK_API void SetParameterVec2(const char* name, glm::vec2 val);
+	NOWORK_API void SetParameterVec3(const char* name, glm::vec3 val);
+	NOWORK_API void SetParameterVec4(const char* name, glm::vec4 val);
+	NOWORK_API void SetParameterMat3(const char* name, glm::mat3 val);
+	NOWORK_API void SetParameterMat4(const char* name, glm::mat4 val);
+	NOWORK_API void SetParameterTexture(const char* name, TexturePtr tex, uint32_t slot);
 
-	NOWORK_API void BindAttributeLocation(unsigned int id, const std::string &name);
-	NOWORK_API int GetAttributeLocation(const std::string& name);
+	NOWORK_API void BindAttributeLocation(unsigned int id, const char* name);
+	NOWORK_API int GetAttributeLocation(const char* name);
 
 	//Sets a texture to uniform 'texture'. Useful for default shaders.
 	//Note: if you want to use more than one texture use SetParameterTexture

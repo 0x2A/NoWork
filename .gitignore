@@ -36,6 +36,8 @@ TestResult.xml
 [Rr]eleasePS/
 dlldata.c
 
+.vs
+
 *_i.c
 *_p.c
 *_i.h

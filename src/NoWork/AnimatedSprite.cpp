@@ -1,4 +1,4 @@
-#include "nowork/AnimatedSprite.h"
+#include <NoWork/AnimatedSprite.h>
 
 
 AnimatedSprite::AnimatedSprite()

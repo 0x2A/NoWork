@@ -1,6 +1,9 @@
 #include "NoWork/Font.h"
 #include "NoWork/Log.h"
 #include "NoWork/Framework.h"
+#include <freetype-gl.h>
+#include <texture-atlas.h>
+#include <vertex-buffer.h>
 
 
 
@@ -12,7 +15,7 @@ typedef struct {
 	float r, g, b, a; // color
 } vertex_t;
 
-const static std::string fontShaderVertSrc = SHADER_SRC(
+const static char* fontShaderVertSrc = SHADER_SRC(
 	#version 130\n
 
 	in vec3 vertex;
@@ -27,7 +30,7 @@ in vec4 color;
 		texcoord = tex_coord;
 		col = color;
 	});
-const static std::string fontShaderFragSrc = SHADER_SRC(
+const static char* fontShaderFragSrc = SHADER_SRC(
 	#version 130\n
 
 	in vec2 texcoord;
@@ -62,17 +65,17 @@ void Font::Shutdown()
 {
 }
 
-NOWORK_API  FontPtr Font::Create(const std::string& path, float size)
+NOWORK_API  FontPtr Font::Create(const char* path, float size /*= 24.0f*/)
 {
 	FontPtr f = std::make_shared<Font>();
 
 	//setup font cache
-	const wchar_t *cache = L" !\"#$%&'()*+,-./0123456789:;<=>?"
-		L"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
-		L"`abcdefghijklmnopqrstuvwxyz{|}~";
+	const char *cache = " !\"#$%&'()*+,-./0123456789:;<=>?"
+		"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
+		"`abcdefghijklmnopqrstuvwxyz{|}~";
 
 	f->m_Atlas = texture_atlas_new(512, 512, 1);
-	f->m_Font = texture_font_new_from_file(f->m_Atlas, size, path.c_str());
+	f->m_Font = texture_font_new_from_file(f->m_Atlas, size, path);
 	size_t i, missed = texture_font_load_glyphs(f->m_Font, cache);
 	if (missed > 0)
 		LOG_WARNING("Fontcache: missed " << missed << " glyphs!");
@@ -88,23 +91,24 @@ void Font::SetSize(int s)
 	m_Size = s;
 }
 
-NOWORK_API void Font::PrintText(const std::string t, glm::vec2 pos, glm::vec4 color /*= glm::vec4(1,1,1,1)*/, glm::vec2 scale /*= glm::vec2(1, 1)*/)
+NOWORK_API void Font::PrintText(const char* t, glm::vec2 pos, glm::vec4 color /*= glm::vec4(1,1,1,1)*/, glm::vec2 scale /*= glm::vec2(1, 1)*/)
 {
 	glm::vec2 screenScale = 2.0f / (glm::vec2)m_Framework->ScreenSize();
 	screenScale *= scale;
 	pos = pos * screenScale;
 
 	size_t i;
+	std::string tStr(t);
 	float r = color.r, g = color.g, b = color.b, a = color.a;
-	for (i = 0; i < t.size(); ++i)
+	for (i = 0; i < tStr.size(); ++i)
 	{
-		texture_glyph_t *glyph = texture_font_get_glyph(m_Font, t[i]);
+		texture_glyph_t *glyph = texture_font_get_glyph(m_Font, &tStr[i]);
 		if (!glyph) continue;
 
 		float kerning = 0.0f;
 		if (i > 0)
 		{
-			kerning = texture_glyph_get_kerning(glyph, t[i - 1]);
+			kerning = texture_glyph_get_kerning(glyph, &tStr[i - 1]);
 		}
 		pos.x += kerning * screenScale.x;
 		float x0 = (pos.x + glyph->offset_x * screenScale.x) - 1.0f;
@@ -140,25 +144,26 @@ NOWORK_API void Font::Render()
 	glEnable(GL_DEPTH_TEST);
 }
 
-NOWORK_API void Font::PrintShadowedText(const std::string t, glm::vec2 pos, glm::vec4 color /*= glm::vec4(1, 1, 1, 1)*/, glm::vec2 scale /*= glm::vec2(1, 1)*/, glm::vec2 shadowOffset /*= glm::vec2(1,1)*/)
+NOWORK_API void Font::PrintShadowedText(const char* t, glm::vec2 pos, glm::vec4 color /*= glm::vec4(1, 1, 1, 1)*/, glm::vec2 scale /*= glm::vec2(1, 1)*/, glm::vec2 shadowOffset /*= glm::vec2(1,1)*/)
 {
 	glm::vec4 shadowColor = color * 0.25f;
 	PrintText(t, glm::vec2(pos.x + shadowOffset.x, pos.y - shadowOffset.y), shadowColor, scale);
 	PrintText(t, pos, color, scale);
 }
 
-NOWORK_API float Font::TextWidth(const std::string t)
+NOWORK_API float Font::TextWidth(const char* t)
 {
 	float w = 0;
-	for (size_t i = 0; i < t.size(); ++i)
+	std::string tStr(t);
+	for (size_t i = 0; i < tStr.size(); ++i)
 	{
-		texture_glyph_t *glyph = texture_font_get_glyph(m_Font, t[i]);
+		texture_glyph_t *glyph = texture_font_get_glyph(m_Font, &tStr[i]);
 		if (!glyph) continue;
 
 		float kerning = 0.0f;
 		if (i > 0)
 		{
-			kerning = texture_glyph_get_kerning(glyph, t[i - 1]);
+			kerning = texture_glyph_get_kerning(glyph, &tStr[i - 1]);
 		}
 		w += kerning;
 		w += glyph->offset_x + glyph->width + 1;

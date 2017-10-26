@@ -1,58 +1,58 @@
 
 #include "NoWork/Material.h"
 
-Material::Material(std::string name, ShaderPtr shader)
+Material::Material(const char* name, ShaderPtr shader)
 {
 	m_Name = name;
 	m_Shader = shader;
 }
 
-void Material::SetCustomTexture(std::string name, TexturePtr texture)
+void Material::SetCustomTexture(const char* name, TexturePtr texture)
 {
 	m_CustomTextures[name] = texture;
 }
 
-void Material::SetCustomValuef(std::string name, float v)
+void Material::SetCustomValuef(const char* name, float v)
 {
 	m_CustomfloatValues[name] = v;
 }
 
-float Material::GetCustomValuef(std::string name)
+float Material::GetCustomValuef(const char* name)
 {
 	return m_CustomfloatValues[name];
 }
 
-void Material::SetCustomValueVec2(std::string name, glm::vec2 v)
+void Material::SetCustomValueVec2(const char* name, glm::vec2 v)
 {
 	m_CustomVec2Values[name] = v;
 }
 
-glm::vec2 Material::GetCustomValueVec2(std::string name)
+glm::vec2 Material::GetCustomValueVec2(const char* name)
 {
 	return m_CustomVec2Values[name];
 }
 
-void Material::SetCustomValueVec3(std::string name, glm::vec3 v)
+void Material::SetCustomValueVec3(const char* name, glm::vec3 v)
 {
 	m_CustomVec3Values[name] = v;
 }
 
-glm::vec3 Material::GetCustomValueVec3(std::string name)
+glm::vec3 Material::GetCustomValueVec3(const char* name)
 {
 	return m_CustomVec3Values[name];
 }
 
-void Material::SetCustomValueVec4(std::string name, glm::vec4 v)
+void Material::SetCustomValueVec4(const char* name, glm::vec4 v)
 {
 	m_CustomVec4Values[name] = v;
 }
 
-glm::vec4 Material::GetCustomValueVec4(std::string name)
+glm::vec4 Material::GetCustomValueVec4(const char* name)
 {
 	return m_CustomVec4Values[name];
 }
 
-TexturePtr Material::GetCustomTexture(std::string name)
+TexturePtr Material::GetCustomTexture(const char* name)
 {
 	return m_CustomTextures[name];
 }

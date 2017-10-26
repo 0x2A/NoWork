@@ -1,6 +1,6 @@
 #include "nowork/Texture2D.h"
 #include "nowork/Log.h"
-#include "soil/SOIL.h"
+#include <soil.h>
 #include "NoWork/NoWork.h"
 
 Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
@@ -23,10 +23,10 @@ NOWORK_API  Texture2DPtr Texture2D::Create(unsigned int width, unsigned int heig
 	return tex;
 }
 
-Texture2DPtr Texture2D::Load(const std::string path, bool constant /*= true*/)
+NOWORK_API  Texture2DPtr Texture2D::Load(const char* path, bool constant /*= true*/, bool hdr)
 {
 	int width, height, channels;
-	unsigned char *ht_map = SOIL_load_image(path.c_str(), &width, &height, &channels, SOIL_LOAD_AUTO);
+	unsigned char *ht_map = SOIL_load_image(path, &width, &height, &channels, hdr ? SOIL_HDR_RGBE : SOIL_LOAD_AUTO);
 
 	if (!ht_map)
 	{

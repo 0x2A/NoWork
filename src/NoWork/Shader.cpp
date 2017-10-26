@@ -92,7 +92,7 @@ bool ValidateProgram(unsigned int program)
 	return true;
 }
 
-NOWORK_API  ShaderPtr Shader::Create(const std::string& vs, const std::string& fs)
+NOWORK_API  ShaderPtr Shader::Create(const char* vs, const char* fs)
 {
 	ShaderPtr shader = ShaderPtr(new Shader);
 
@@ -115,7 +115,7 @@ NOWORK_API  ShaderPtr Shader::Create(const std::string& vs, const std::string& f
 
 
 
-NOWORK_API  ShaderPtr Shader::Load(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+NOWORK_API  ShaderPtr Shader::Load(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
 	LOG_DEBUG("Creating shader from file '" << vertexShaderPath << "' and '" << fragmentShaderPath << "'");
 
@@ -125,7 +125,7 @@ NOWORK_API  ShaderPtr Shader::Load(const std::string& vertexShaderPath, const st
 	std::string fragmentSrc = FileSystem::LoadTextFile(fragmentShaderPath);
 	fragmentSrc = PreprocessIncludes(fragmentSrc, FileSystem::GetFilename(fragmentShaderPath), FileSystem::GetPath(fragmentShaderPath));
 
-	return Create(vertexSrc, fragmentSrc);
+	return Create(vertexSrc.c_str(), fragmentSrc.c_str());
 }
 
 
@@ -147,7 +147,7 @@ Shader::~Shader()
 
 void Shader::InitializeDefaultShaders()
 {
-	const std::string defaultUnlitVertSrc =
+	const char* defaultUnlitVertSrc =
 		"#version 130\n"
 		"in vec3 vertexPosition;\n"
 		"in vec3 vertexNormal;\n"
@@ -169,7 +169,7 @@ void Shader::InitializeDefaultShaders()
 		"    gl_Position = MVPMatrix * vec4(vertexPosition,1);\n"
 		"}";
 
-	const std::string defaultUnlitFragSrc =
+	const char* defaultUnlitFragSrc =
 		"#version 130\n"
 		"uniform vec4 DiffuseColor;\n"
 		"\n"
@@ -183,7 +183,7 @@ void Shader::InitializeDefaultShaders()
 		"    colorOut = DiffuseColor * vertColor;\n"
 		"}";
 
-	const std::string defaultUnlitFragTexturedSrc =
+	const char* defaultUnlitFragTexturedSrc =
 		"#version 130\n"
 		"uniform vec4 DiffuseColor;\n"
 		"uniform sampler2D Texture;\n"
@@ -199,7 +199,7 @@ void Shader::InitializeDefaultShaders()
 		"    colorOut = DiffuseColor * vertColor * col;\n"
 		"}";
 
-	const std::string screenAlignedVertSrc =
+	const char* screenAlignedVertSrc =
 		"#version 130\n"
 		"in vec3 vertexPosition;\n"
 		"in vec3 vertexNormal;\n"
@@ -235,49 +235,49 @@ Shader inline implementation:
  Shader::Shader()
 {}
 
-inline void Shader::SetParameterf(std::string name, float val)
+void Shader::SetParameterf(const char* name, float val)
 {
 	glUniform1f(GetAttributeLocation(name), val);
 }
-inline void Shader::SetParameteri(std::string name, int val)
+void Shader::SetParameteri(const char* name, int val)
 {
 	glUniform1i(GetAttributeLocation(name), val);
 }
-inline void Shader::SetParameterVec2(std::string name, glm::vec2 val)
+void Shader::SetParameterVec2(const char* name, glm::vec2 val)
 {
 	glUniform2f(GetAttributeLocation(name), val.x, val.y);
 }
-inline void Shader::SetParameterVec3(std::string name, glm::vec3 val)
+void Shader::SetParameterVec3(const char* name, glm::vec3 val)
 {
 	glUniform3f(GetAttributeLocation(name), val.x, val.y, val.z);
 }
 
-inline void Shader::SetParameterVec4(std::string name, glm::vec4 val)
+void Shader::SetParameterVec4(const char* name, glm::vec4 val)
 {
 	glUniform4f(GetAttributeLocation(name), val.x, val.y, val.z, val.w);
 }
 
-inline void Shader::SetParameterMat3(std::string name, glm::mat3 val)
+void Shader::SetParameterMat3(const char* name, glm::mat3 val)
 {
 	glUniformMatrix3fv(GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
 }
 
-inline void Shader::SetParameterMat4(std::string name, glm::mat4 val)
+void Shader::SetParameterMat4(const char* name, glm::mat4 val)
 {
 	glUniformMatrix4fv(GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
 }
 
-inline void Shader::SetDiffuseColor(glm::vec4 val)
+void Shader::SetDiffuseColor(glm::vec4 val)
 {
 	SetParameterVec4("DiffuseColor", val);
 }
 
-inline void Shader::SetDiffuseColor(float r, float g, float b, float a /*= 1*/)
+void Shader::SetDiffuseColor(float r, float g, float b, float a /*= 1*/)
 {
 	SetDiffuseColor(glm::vec4(r, g, b, a));
 }
 
-inline void Shader::SetParameterTexture(std::string name, TexturePtr tex, uint32_t slot)
+void Shader::SetParameterTexture(const char* name, TexturePtr tex, uint32_t slot)
 {
 	if (!tex) return;
 	tex->Bind(slot);
@@ -291,19 +291,19 @@ void Shader::SetTexture(TexturePtr tex)
 	SetParameterTexture("Texture", tex, 0);
 }
 
-NOWORK_API void Shader::BindAttributeLocation(unsigned int id, const std::string &name)
+NOWORK_API void Shader::BindAttributeLocation(unsigned int id, const char* name)
 {
-	glBindAttribLocation(m_ShaderObject, id, name.c_str());
+	glBindAttribLocation(m_ShaderObject, id, name);
 }
 
-int Shader::GetAttributeLocation(const std::string& name)
+int Shader::GetAttributeLocation(const char* name)
 {
 	auto res = m_ParamLocations.find(name);
 	if (res != m_ParamLocations.end()) //key already requested?
 		return res->second;
 
 	//not requested yet
-	GLint loc = glGetUniformLocation(m_ShaderObject, name.c_str());
+	GLint loc = glGetUniformLocation(m_ShaderObject, name);
 	m_ParamLocations[name] = loc;
 	return loc;
 }
@@ -386,7 +386,9 @@ std::string Shader::PreprocessIncludes(const std::string &source, const std::str
 
 			try
 			{
-				include_string = FileSystem::LoadTextFile(path + "/" + include_file);
+				std::string tpath(path);
+				tpath += "/" + include_file;
+				include_string = FileSystem::LoadTextFile(tpath.c_str());
 			}
 			catch (std::exception &e)
 			{

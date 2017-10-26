@@ -1,7 +1,6 @@
 #pragma once
 
 #include "nowork/Common.h"
-#include "rapidjson/document.h"
 #include "nowork/Texture2D.h"
 #include "nowork/Mesh.h"
 #include "nowork/Shader.h"
@@ -19,7 +18,7 @@ public:
 	
 	NOWORK_API ~SpriteSheet();
 
-	NOWORK_API static SpriteSheetPtr Load(const std::string& path);
+	NOWORK_API static SpriteSheetPtr Load(const char* path);
 	
 	NOWORK_API SpritePtr GetSprite(size_t index);
 	NOWORK_API SpriteAnimationPtr GetAnimation(size_t index);
@@ -42,11 +41,7 @@ protected:
 
 private:
 
-	static bool ParseSprites(const SpriteSheetPtr& sheet, rapidjson::Value& doc);
-	static bool ParseAnimations(const SpriteSheetPtr& sheet, rapidjson::Value& doc);
-
-	static bool GotValue(rapidjson::Value& doc, const char* name, const std::string& msg, bool warning = false, bool error = true);
-	static bool GetArea(rapidjson::Value& doc, Area<int>* targetArea);
+	
 	
 	Texture2DPtr m_SpriteTexture;
 	std::vector<SpritePtr> m_Sprites;

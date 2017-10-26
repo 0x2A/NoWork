@@ -14,7 +14,7 @@ Model::Model()
 }
 
 
-ModelPtr Model::Load(const std::string path, Mesh::DataUsage usage)
+NOWORK_API  ModelPtr Model::Load(const char* path, Mesh::DataUsage usage /*= Mesh::DataUsage::STATIC_DRAW*/)
 {
 	LOG_DEBUG("Loading model '" << path << "'...");
 
@@ -77,7 +77,7 @@ ModelPtr Model::Load(const std::string path, Mesh::DataUsage usage)
 
 			vertices.push_back(v);
 		}
-		MeshPtr m = Mesh::Create(vertices, faces, false, usage);
+		MeshPtr m = Mesh::Create(&vertices[0], vertices.size(), &faces[0], faces.size(), false, usage);
 		if (!m)
 		{
 			LOG_ERROR("Unable to load submesh '" << mesh->mName.C_Str() << "' from model '" << path << "'");
@@ -110,7 +110,7 @@ ModelPtr Model::Load(const std::string path, Mesh::DataUsage usage)
 			Texture2DPtr tex(nullptr);
 			if (!loadedTextures[path])
 			{
-				tex = Texture2D::Load(path);
+				tex = Texture2D::Load(path.c_str());
 				loadedTextures[path] = tex;
 			}
 			else
@@ -123,7 +123,7 @@ ModelPtr Model::Load(const std::string path, Mesh::DataUsage usage)
 			Texture2DPtr tex(nullptr);
 			if (!loadedTextures[path])
 			{
-				tex = Texture2D::Load(path);
+				tex = Texture2D::Load(path.c_str());
 				loadedTextures[path] = tex;
 			}
 			else
@@ -136,7 +136,7 @@ ModelPtr Model::Load(const std::string path, Mesh::DataUsage usage)
 			Texture2DPtr tex(nullptr);
 			if (!loadedTextures[path])
 			{
-				tex = Texture2D::Load(path);
+				tex = Texture2D::Load(path.c_str());
 				loadedTextures[path] = tex;
 			}
 			else
@@ -149,7 +149,7 @@ ModelPtr Model::Load(const std::string path, Mesh::DataUsage usage)
 			Texture2DPtr tex(nullptr);
 			if (!loadedTextures[path])
 			{
-				tex = Texture2D::Load(path);
+				tex = Texture2D::Load(path.c_str());
 				loadedTextures[path] = tex;
 			}
 			else

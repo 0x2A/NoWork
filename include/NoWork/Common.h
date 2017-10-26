@@ -4,10 +4,14 @@
 #define NOWORK_VERSION	"1.6"
 
 //Either export or import dll functions
+#ifdef NOWORK_DLL
 #ifdef _NOWORK_INTERNAL_
 #define NOWORK_API   __declspec( dllexport ) 
 #else
 #define NOWORK_API   __declspec( dllimport ) 
+#endif
+#else
+#define NOWORK_API	
 #endif
 
 #ifdef _WIN32
@@ -27,19 +31,19 @@
 #include <thread>
 #include <memory>
 
-#include "GL/gl3w.h"
+#include <NoWork/GL/gl3w.h>
 //only include glfw3 if we are in NoWork context
 #ifdef _NOWORK_INTERNAL_
 #include <glfw/glfw3.h>
 #endif
 
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtx/quaternion.hpp"
-#include "glm/gtx/string_cast.hpp"
-#include "glm/gtx/rotate_vector.hpp"
+#include <NoWork/glm/glm.hpp>
+#include <NoWork/glm/gtc/matrix_transform.hpp>
+#include <NoWork/glm/gtx/transform.hpp>
+#include <NoWork/glm/gtc/type_ptr.hpp>
+#include <NoWork/glm/gtx/quaternion.hpp>
+#include <NoWork/glm/gtx/string_cast.hpp>
+#include <NoWork/glm/gtx/rotate_vector.hpp>
 
 using namespace glm;
 

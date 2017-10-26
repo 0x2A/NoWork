@@ -64,7 +64,7 @@ NoWork::~NoWork()
 	glfwTerminate();
 }
 
-NOWORK_API bool NoWork::CreateNewWindow(std::string title, int width, int height, int posX /*= 40*/, int posY /*= 40*/, int flags /*= Window::Flags::WINDOW_SHOWED*/, int multisampling /*= 0*/)
+NOWORK_API bool NoWork::CreateNewWindow(const char* title, int width, int height, int posX /*= 40*/, int posY /*= 40*/, int flags /*= Window::Flags::WINDOW_SHOWED*/, int multisampling /*= 0*/)
 {
 	//delete old renderer if there was created one before
 	if (m_Renderer)
@@ -87,7 +87,7 @@ NOWORK_API bool NoWork::CreateNewWindow(std::string title, int width, int height
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	}
 
-	m_Window = glfwCreateWindow(width, height, title.c_str(), (flags & Window::Flags::WINDOW_FULLSCREEN) ? glfwGetPrimaryMonitor() : NULL, NULL);
+	m_Window = glfwCreateWindow(width, height, title, (flags & Window::Flags::WINDOW_FULLSCREEN) ? glfwGetPrimaryMonitor() : NULL, NULL);
 	if (!m_Window)
 	{
 		LOG_ERROR("OpenGL version " << (int)m_OpenGLMajorVersion << "." << (int)m_OpenGLMinorVersion << " not supported!");
@@ -148,9 +148,9 @@ NOWORK_API bool NoWork::CreateNewWindow(std::string title, int width, int height
 	return true;
 }
 
-bool NoWork::ExtensionAvailable(std::string name)
+NOWORK_API bool NoWork::ExtensionAvailable(const char* name)
 {
-	if (!glfwExtensionSupported(name.c_str()))
+	if (!glfwExtensionSupported(name))
 	{
 		LOG_WARNING(name << " not supported!");
 		return false;
@@ -245,7 +245,7 @@ void NoWork::ContentLoaderFunc()
 	m_Loading = false;
 }
 
-GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(std::string title, int width, int height, bool fullscreen)
+GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(const char* title, int width, int height, bool fullscreen)
 {
 	int index = 0;
 	int elCount = sizeof(glVersions) / sizeof(glversion_t);
@@ -271,7 +271,7 @@ GLFWwindow* NoWork::DetectMaxSupportedGlVersionAndCreateWindow(std::string title
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_OpenGLMajorVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_OpenGLMinorVersion);
 
-		GLFWwindow *window = glfwCreateWindow(width, height, title.c_str(), fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+		GLFWwindow *window = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
 		if (window)
 		{
 			glfwSetErrorCallback(&EventHandler::ErrorCallback);

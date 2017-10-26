@@ -12,7 +12,7 @@ public:
 	Area(T posX1, T posY1, T posX2, T posY2) : m_Vals(posX1, posY1, posX2, posY2)
 	{}
 
-	Area(glm::detail::tvec4<T> vals) : m_Vals(vals)
+	Area(glm::tvec4<T> vals) : m_Vals(vals)
 	{}
 
 	T Width()
@@ -47,5 +47,5 @@ public:
 
 
 private:
-	glm::detail::tvec4<T> m_Vals;
+	glm::tvec4<T> m_Vals;
 };

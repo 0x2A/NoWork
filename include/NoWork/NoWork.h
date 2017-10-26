@@ -16,4 +16,3 @@
 #include "NoWork/Material.h"
 #include "NoWork/Framebuffer.h"
 #include "NoWork/Font.h"
-#include "soil/SOIL.h"

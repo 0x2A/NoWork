@@ -15,7 +15,7 @@ class Model : public SceneObject
 public:
 
 	NOWORK_API ~Model();
-	NOWORK_API static ModelPtr Load(const std::string path, Mesh::DataUsage usage = Mesh::DataUsage::STATIC_DRAW);
+	NOWORK_API static ModelPtr Load(const char* path, Mesh::DataUsage usage = Mesh::DataUsage::STATIC_DRAW);
 
 	NOWORK_API MeshPtr GetSubmesh(size_t index);
 

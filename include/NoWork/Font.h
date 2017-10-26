@@ -5,10 +5,16 @@
 #include "NoWork/Texture2D.h"
 #include "NoWork/Mesh.h"
 
-#include "freetype-gl/freetype-gl.h"
 
 class Font;
 typedef std::shared_ptr<Font> FontPtr;
+
+namespace ftgl
+{
+	struct texture_atlas_t;
+	struct texture_font_t;
+	struct vertex_buffer_t;
+}
 
 class Font
 {
@@ -37,16 +43,16 @@ public:
 	NOWORK_API Font();
 	NOWORK_API ~Font();
 
-	NOWORK_API static FontPtr Create(const std::string& path, float size = 24.0f);
+	NOWORK_API static FontPtr Create(const char* path, float size = 24.0f);
 
 	NOWORK_API void SetSize(int s);
 	NOWORK_API int GetSize() { return m_Size; }
 
-	NOWORK_API void PrintText(const std::string t, glm::vec2 pos, glm::vec4 color = glm::vec4(1,1,1,1), glm::vec2 scale = glm::vec2(1, 1));
-	NOWORK_API void PrintShadowedText(const std::string t, glm::vec2 pos, glm::vec4 color = glm::vec4(1, 1, 1, 1), glm::vec2 scale = glm::vec2(1, 1), glm::vec2 shadowOffset = glm::vec2(1,1));
+	NOWORK_API void PrintText(const char* t, glm::vec2 pos, glm::vec4 color = glm::vec4(1,1,1,1), glm::vec2 scale = glm::vec2(1, 1));
+	NOWORK_API void PrintShadowedText(const char* t, glm::vec2 pos, glm::vec4 color = glm::vec4(1, 1, 1, 1), glm::vec2 scale = glm::vec2(1, 1), glm::vec2 shadowOffset = glm::vec2(1,1));
 	NOWORK_API void Render();
 
-	NOWORK_API float TextWidth(const std::string t);
+	NOWORK_API float TextWidth(const char* t);
 
 protected:
 	static bool Init(NoWork* framework);
@@ -57,9 +63,9 @@ private:
 
 	NOWORK_API static NoWork* m_Framework;
 
-	texture_atlas_t *m_Atlas;
-	texture_font_t *m_Font;
-	vertex_buffer_t *m_Buffer;
+	ftgl::texture_atlas_t *m_Atlas;
+	ftgl::texture_font_t *m_Font;
+	ftgl::vertex_buffer_t *m_Buffer;
 	ShaderPtr m_Shader;
 
 	/* Texture atlas to store individual glyphs */

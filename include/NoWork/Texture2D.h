@@ -16,7 +16,7 @@ public:
 	};
 
 	NOWORK_API static Texture2DPtr Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant = true);
-	NOWORK_API static Texture2DPtr Load(const std::string path, bool constant = true);
+	NOWORK_API static Texture2DPtr Load(const char* path, bool constant = true, bool hdr = false);
 
 	NOWORK_API void Update(const unsigned char* pixels);
 	NOWORK_API void Update(const unsigned char* pixels, int width, int height);
