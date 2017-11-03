@@ -28,7 +28,7 @@ void Camera::BuildProjectionMatrix()
 	}
 	else
 	{
-		m_ProjectionMatrix = glm::perspective(m_Fov, m_Renderer->GetAspectRatio(), m_ClipNear, m_ClipFar);
+		m_ProjectionMatrix = glm::perspective(glm::radians(m_Fov), m_Renderer->GetAspectRatio(), m_ClipNear, m_ClipFar);
 	}
 }
 

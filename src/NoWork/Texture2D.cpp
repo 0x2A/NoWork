@@ -8,7 +8,7 @@ Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 
 }
 
-NOWORK_API  Texture2DPtr Texture2D::Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant /*= true*/)
+  Texture2DPtr Texture2D::Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant /*= true*/)
 {
 	Texture2DPtr tex = Texture2DPtr(new Texture2D);
 	tex->GenerateTexture();  //generate and bind new texture
@@ -23,10 +23,11 @@ NOWORK_API  Texture2DPtr Texture2D::Create(unsigned int width, unsigned int heig
 	return tex;
 }
 
-NOWORK_API  Texture2DPtr Texture2D::Load(const char* path, bool constant /*= true*/, bool hdr)
+  Texture2DPtr Texture2D::Load(const char* path, bool constant /*= true*/)
 {
 	int width, height, channels;
-	unsigned char *ht_map = SOIL_load_image(path, &width, &height, &channels, hdr ? SOIL_HDR_RGBE : SOIL_LOAD_AUTO);
+	
+	unsigned char *ht_map = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_AUTO);
 
 	if (!ht_map)
 	{
@@ -50,8 +51,22 @@ NOWORK_API  Texture2DPtr Texture2D::Load(const char* path, bool constant /*= tru
 		format = Texture::RGBA8;
 		break;
 	}
+
 	return Create(width, height, format, ht_map, constant);
 }
+
+  Texture2DPtr Texture2D::LoadHDR(const char* path)
+  {
+	  Texture2DPtr tex = Texture2DPtr(new Texture2D);
+	  if (!NoWork::IsMainThread())
+	  {
+		  tex->AddToGLQueue(AsyncMode_t::AM_LoadHDR, (void*)path);
+		  return tex;
+	  }
+
+	  tex->LoadHDRInternal(path);
+	  return tex;
+  }
 
 void Texture2D::Update(const unsigned char* pixels)
 {
@@ -79,7 +94,31 @@ void Texture2D::DoAsyncWork(int mode, void *params)
 	case Texture2D::AM_CopyPixData:
 		CopyPixelData();
 		break;
+	case Texture2D::AM_LoadHDR:
+		LoadHDRInternal((const char*)params);
+		break;
 	}
+}
+
+void Texture2D::LoadHDRInternal(const char* path)
+{
+	int width, height, channels;
+	unsigned char *ht_map = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_AUTO);
+	if (!ht_map)
+	{
+		LOG_ERROR("Unable to load texture '" << path << "': " << SOIL_last_result());
+		return;
+	}
+
+	m_Width = width;
+	m_Height = height;
+
+	SOIL_free_image_data(ht_map);
+
+	m_TextureId = SOIL_load_OGL_HDR_texture(path, SOIL_HDR_RGBE, 0, 0, SOIL_FLAG_COMPRESS_TO_DXT | SOIL_FLAG_MIPMAPS);
+	
+	glBindTexture(GL_TEXTURE_2D, m_TextureId);
+	SetLinearTextureFilter(true);
 }
 
 void Texture2D::CopyPixelData()

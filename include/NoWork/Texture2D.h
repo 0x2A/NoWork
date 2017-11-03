@@ -12,11 +12,13 @@ public:
 
 	enum AsyncMode_t : int
 	{
-		AM_CopyPixData = Texture::AM_OFFSET
+		AM_CopyPixData = Texture::AM_OFFSET,
+		AM_LoadHDR
 	};
 
 	NOWORK_API static Texture2DPtr Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant = true);
-	NOWORK_API static Texture2DPtr Load(const char* path, bool constant = true, bool hdr = false);
+	NOWORK_API static Texture2DPtr Load(const char* path, bool constant = true);
+	NOWORK_API static Texture2DPtr LoadHDR(const char* path);
 
 	NOWORK_API void Update(const unsigned char* pixels);
 	NOWORK_API void Update(const unsigned char* pixels, int width, int height);
@@ -27,6 +29,8 @@ protected:
 	virtual void DoAsyncWork(int mode, void *params) override;
 
 private:
+
+	void LoadHDRInternal(const char* path);
 
 	void CopyPixelData();
 

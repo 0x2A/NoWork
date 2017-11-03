@@ -3,7 +3,7 @@
 #include <fstream>
 #include <streambuf>
 
-const char* FileSystem::GetPath(const char* path)
+std::string FileSystem::GetPath(const char* path)
 {
 	std::string fName(path);
 	size_t pos = fName.rfind("/");
@@ -17,10 +17,10 @@ const char* FileSystem::GetPath(const char* path)
 	if (pos == 0)    // / is at the front.
 		return fName.c_str();
 
-	return fName.substr(0, pos).c_str();
+	return fName.substr(0, pos);
 }
 
-const char* FileSystem::GetFilename(const char* path)
+std::string FileSystem::GetFilename(const char* path)
 {
 	std::string fName(path);
 	size_t pos = fName.rfind("/");
@@ -34,10 +34,10 @@ const char* FileSystem::GetFilename(const char* path)
 	if (pos == 0)    // / is at the front.
 		return fName.c_str();
 
-	return fName.substr(pos + 1, fName.size() - (pos + 1)).c_str();
+	return fName.substr(pos + 1, fName.size() - (pos + 1));
 }
 
-const char* FileSystem::LoadTextFile(const char* path)
+std::string FileSystem::LoadTextFile(const char* path)
 {
 	std::ifstream t(path, std::ios::in);
 	if (!t.is_open())
@@ -51,6 +51,6 @@ const char* FileSystem::LoadTextFile(const char* path)
 		std::istreambuf_iterator<char>());
 
 	t.close();
-	return src.c_str();
+	return src;
 }
 
