@@ -36,19 +36,22 @@ void MyGame::OnLoadContent()
 
 	//load a spritesheet from json file
 	m_SpriteSheet = SpriteSheet::Load("data/miku.json");
-	//disable linear filtering (pixelated look)
-	m_SpriteSheet->SetLinearFiltering(false);
-	//remove the backround using color keying
-	m_SpriteSheet->SetColorKey(glm::vec3(0.588f,0.784f,0.98f));
+	
+	if (m_SpriteSheet)
+	{
+		//disable linear filtering (pixelated look)
+		m_SpriteSheet->SetLinearFiltering(false);
+		//remove the backround using color keying
+		m_SpriteSheet->SetColorKey(glm::vec3(0.588f, 0.784f, 0.98f));
+	
+		//create an animated sprite
+		m_AnimatedSprite = AnimatedSprite::Create();
+		m_AnimatedSprite->AddAnimation(m_SpriteSheet->GetAnimations()); //add all animations from the spritesheet to the animated sprite
+		m_AnimatedSprite->Play(0); //play the first animation
 
-	//create an animated sprite
-	m_AnimatedSprite = AnimatedSprite::Create();
-	m_AnimatedSprite->AddAnimation(m_SpriteSheet->GetAnimations()); //add all animations from the spritesheet to the animated sprite
-	m_AnimatedSprite->Play(0); //play the first animation
-
-	//scale the sprite down a bit
-	m_AnimatedSprite->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
-
+		//scale the sprite down a bit
+		m_AnimatedSprite->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
+	}
 	//load a model from file
 	m_Model = Model::Load("data/altair/altair.3ds");
 
@@ -62,13 +65,16 @@ void MyGame::OnUpdate(double deltaTime)
 {
 	//process input so we can move the camera around with wsad, q and r
 	auto camera = m_Renderer->GetCamera();
-	if (Input::KeyDown(KEY_1))
-		m_AnimatedSprite->SelectAnimation(0);
-	if (Input::KeyDown(KEY_2))
-		m_AnimatedSprite->SelectAnimation(1);
-	if (Input::KeyDown(KEY_3))
-		m_AnimatedSprite->SelectAnimation(2);
 
+	if (m_AnimatedSprite)
+	{
+		if (Input::KeyDown(KEY_1))
+			m_AnimatedSprite->SelectAnimation(0);
+		if (Input::KeyDown(KEY_2))
+			m_AnimatedSprite->SelectAnimation(1);
+		if (Input::KeyDown(KEY_3))
+			m_AnimatedSprite->SelectAnimation(2);
+	}
 	if (Input::KeyHeld(KEY_W))
 		camera->GetTransform()->Translate(glm::vec3(0, 0, moveSpeed*deltaTime));
 	if (Input::KeyHeld(KEY_S))
@@ -88,7 +94,7 @@ void MyGame::OnUpdate(double deltaTime)
 	}
 
 	//update the animated sprite
-	m_AnimatedSprite->Update(deltaTime);
+	if(m_AnimatedSprite) m_AnimatedSprite->Update(deltaTime);
 }
 
 void MyGame::OnLoadRender()
@@ -100,7 +106,8 @@ void MyGame::OnLoadRender()
 void MyGame::OnRender()
 {
 	//render a sprite
-	m_AnimatedSprite->Render();
+	if (m_AnimatedSprite)
+		m_AnimatedSprite->Render();
 
 	//render the model
 	//m_Model->Render(Shader::DefaultUnlitTextured);
@@ -110,6 +117,7 @@ void MyGame::OnRender()
 void MyGame::OnShutdown()
 {
 	//delete the mesh we created
+	m_FBO->Unbind();
 }
 
 //exit function used to demonstrate the input key binding functionality

@@ -43,18 +43,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)dep\glfw\include;$(solutionDir)dep\FMOD\api\lowlevel\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(SolutionDir)dep\FMOD\api\lowlevel\lib;$(SolutionDir)dep\assimp-3.1.1\lib\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)dep\assimp-3.1.1\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_p</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)dep\gl3w\include;$(SolutionDir)dep\glfw\include;$(solutionDir)dep\FMOD\api\lowlevel\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)dep\glfw\lib-msvc120;$(SolutionDir)dep\FMOD\api\lowlevel\lib;$(SolutionDir)dep\assimp-3.1.1\lib\Release;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(SolutionDir)dep\assimp-3.1.1\lib\Release;$(LibraryPath)</LibraryPath>
+    <OutDir>intermediate\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_p</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -63,23 +63,28 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>OPENTHREADS_EXPORTS;GLM_ENABLE_EXPERIMENTAL;OPENALPP_EXPORTS;HAVE_STDINT_H;ALUT_BUILD_LIBRARY;HAVE_SLEEP;HAVE_WINDOWS_H;HAVE_STAT;WIN32;FREETYPE_GL_USE_VAO;_DEBUG;_CONSOLE;_LIB;_NOWORK_INTERNAL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)lib\windows\rapidjson\include;$(SolutionDir)lib\windows\glm\include;$(SolutionDir)lib\windows\glfw\include;$(SolutionDir)lib\windows\freetype-gl\include;$(SolutionDir)lib\windows\assimp\include;$(SolutionDir)lib\windows\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp-vc140-mt.lib;IrrXML.lib;zlibstatic.lib;SOIL.lib;glfw3.lib;freetype-gl.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc140-mt.lib;IrrXML.lib;zlibstatic.lib;SOIL.lib;glfw3.lib;freetype-gl.lib;OpenGL32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <NoEntryPoint>false</NoEntryPoint>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\windows\assimp\lib;$(SolutionDir)lib\windows\freetype-gl\lib;$(SolutionDir)lib\windows\glfw\lib;$(SolutionDir)lib\windows\soil\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)ext\assimp-4.1.0\lib\vs2017;$(SolutionDir)ext\freetype-gl\lib\vs2017;$(SolutionDir)ext\glfw-3.3\lib\vs2017;$(SolutionDir)ext\soil\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command> lib /out:$(OutDir)$(ProjectName)$(TargetExt) $(OutDir)$(TargetName)$(TargetExt) $(ProjectDir)lib\windows\assimp\lib\$(Configuration)\assimp-vc140-mt.lib $(ProjectDir)lib\windows\assimp\lib\$(Configuration)\IrrXML.lib $(ProjectDir)lib\windows\assimp\lib\$(Configuration)\zlibstatic.lib $(ProjectDir)lib\windows\freetype-gl\lib\$(Configuration)\*.lib $(ProjectDir)lib\windows\glfw\lib\$(Configuration)\*.lib $(ProjectDir)lib\windows\Soil\lib\$(Configuration)\*.lib</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -90,7 +95,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>OPENTHREADS_EXPORTS;GLM_ENABLE_EXPERIMENTAL;OPENALPP_EXPORTS;HAVE_STDINT_H;ALUT_BUILD_LIBRARY;HAVE_SLEEP;HAVE_WINDOWS_H;HAVE_STAT;WIN32;FREETYPE_GL_USE_VAO;NDEBUG;_CONSOLE;_LIB;_NOWORK_INTERNAL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)lib\windows\rapidjson\include;$(SolutionDir)lib\windows\glm\include;$(SolutionDir)lib\windows\glfw\include;$(SolutionDir)lib\windows\freetype-gl\include;$(SolutionDir)lib\windows\assimp\include;$(SolutionDir)lib\windows\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
@@ -99,13 +104,17 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp-vc140-mt.lib;IrrXML.lib;zlibstatic.lib;SOIL.lib;glfw3.lib;freetype-gl.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc140-mt.lib;IrrXML.lib;zlibstatic.lib;SOIL.lib;glfw3.lib;freetype-gl.lib;OpenGL32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\windows\assimp\lib;$(SolutionDir)lib\windows\freetype-gl\lib;$(SolutionDir)lib\windows\glfw\lib;$(SolutionDir)lib\windows\soil\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)ext\assimp-4.1.0\lib\vs2017;$(SolutionDir)ext\freetype-gl\lib\vs2017;$(SolutionDir)ext\glfw-3.3\lib\vs2017;$(SolutionDir)ext\soil\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command> lib /out:$(OutDir)$(ProjectName)$(TargetExt) $(OutDir)$(TargetName)$(TargetExt) $(ProjectDir)lib\windows\assimp\lib\$(Configuration)\assimp-vc140-mt.lib $(ProjectDir)lib\windows\assimp\lib\$(Configuration)\IrrXML.lib $(ProjectDir)lib\windows\assimp\lib\$(Configuration)\zlibstatic.lib $(ProjectDir)lib\windows\freetype-gl\lib\$(Configuration)\*.lib $(ProjectDir)lib\windows\glfw\lib\$(Configuration)\*.lib $(ProjectDir)lib\windows\Soil\lib\$(Configuration)\*.lib</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\NoWork\AnimatedSprite.cpp" />
