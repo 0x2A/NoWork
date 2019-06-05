@@ -13,6 +13,9 @@
 
 #include <time.h>
 
+#include "NoWork/imgui/imgui.h"
+#include "NoWork/imgui/imgui_impl_glfw.h"
+#include "NoWork/imgui/imgui_impl_opengl3.h"
 
 
 typedef struct
@@ -27,7 +30,6 @@ const glversion_t glVersions[] = { { 1, 1 }, { 1, 2 }, { 1, 3 }, { 1, 4 }, { 1, 
 
 
 std::thread::id NoWork::m_MainThreadId;
-
 
 NoWork::NoWork()
 {
@@ -55,6 +57,8 @@ NoWork::NoWork()
 
 	srand((uint32_t)time(NULL));
 	rand(); //invoke rand one time cause some implementations ignore srand at first call
+
+	EventHandler::m_Framework = this;
 }
 
 NoWork::~NoWork()
@@ -62,6 +66,7 @@ NoWork::~NoWork()
 	DelPtr(m_Renderer);
 	glfwDestroyWindow(m_Window);
 	glfwTerminate();
+
 }
 
 NOWORK_API bool NoWork::CreateNewWindow(const char* title, int width, int height, int posX /*= 40*/, int posY /*= 40*/, int flags /*= Window::Flags::WINDOW_SHOWED*/, int multisampling /*= 0*/)
@@ -125,9 +130,25 @@ NOWORK_API bool NoWork::CreateNewWindow(const char* title, int width, int height
 		"Hardware vendor: " << glGetString(GL_VENDOR) << "\n" <<
 		"Hardware name: " << glGetString(GL_RENDERER));
 
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+	// Setup Platform/Renderer bindings
+	const char* glsl_version = "#version 400";
+	ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	Input::Init(this);
 	glfwSetKeyCallback(m_Window, EventHandler::KeyEventCallback);
+	glfwSetWindowSizeCallback(m_Window, EventHandler::WindowSizeChangedCallback);
 
 	if (ExtensionAvailable("GL_ARB_debug_output"))
 	{
@@ -179,8 +200,15 @@ void NoWork::Run()
 
 	while (!glfwWindowShouldClose(m_Window))
 	{
+		glfwPollEvents();
+
 		Renderer::DrawCalls = 0;
 		Input::Update();
+
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
 		m_Renderer->DoAsyncGLQueue();
 		if (m_Loading)
@@ -195,14 +223,34 @@ void NoWork::Run()
 			m_Renderer->Render();
 			m_GameHandle->OnRender();
 		}
+		// Rendering
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+		// Update and Render additional Platform Windows
+		// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+		//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+		//if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
+
+		//glfwMakeContextCurrent(m_Window);
 		glfwSwapBuffers(m_Window);
-		glfwPollEvents();
+		
 
 	}
 
 	m_GameHandle->OnShutdown();
 	m_LoadingThread.join();
+
+	// Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
 #ifdef NOWORK_ENABLE_AUDIO
 	AudioSystem::Shutdown();
@@ -305,4 +353,9 @@ NOWORK_API glm::ivec2 NoWork::ScreenSize()
 	int w, h;
 	m_Renderer->GetFramebufferSize(w, h);
 	return glm::ivec2(w, h);
+}
+
+NOWORK_API GameBase* NoWork::GetGameHandle()
+{
+	return m_GameHandle;
 }

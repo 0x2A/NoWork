@@ -1,14 +1,16 @@
+#pragma once
+
 #include <NoWork/NoWork.h>
 
-
-class MyGame : public GameBase
+class Editor : public GameBase
 {
 public:
+
 	//This function is called form a seperate thread.
 	//So we can do time intensive stuff in here without hanging the program
 	//HINT: DONT CALL FUNCTIONS THAT USE OPENGL IN HERE (i.e. Mesh::Create etc) DO THIS IN OnLoadContent!
 	virtual void Init();
-	
+
 	//Here we can load resources, meshes etc. (its thread save)
 	virtual void OnLoadContent();
 
@@ -27,17 +29,11 @@ public:
 
 	virtual void OnLoadRender() override;
 
-
 	virtual void OnWindowResize(int newWidth, int newHeight) override;
 
+
 private:
-
-
-	SpriteSheetPtr m_SpriteSheet;
-
-	AnimatedSpritePtr m_AnimatedSprite;
-
-	ModelPtr m_Model;
-
-	FramebufferPtr m_FBO;
+	
+	void RenderMainWindow();
+	void RenderMainMenu();
 };

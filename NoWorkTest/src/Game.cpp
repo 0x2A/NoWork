@@ -1,6 +1,7 @@
 #include "Game.h"
-
-
+#include "NoWork/imgui/imgui.h"
+#include <chrono>
+#include <thread>
 
 const float moveSpeed = 45.f;
 bool useWireframe;
@@ -58,6 +59,9 @@ void MyGame::OnLoadContent()
 	//create a framebuffer object for testing
 	m_FBO = Framebuffer::Create();
 
+	//sleep for 5 seconds to simulate loading time
+	//std::this_thread::sleep_for(std::chrono::seconds(5));
+
 }
 
 //update function
@@ -100,15 +104,46 @@ void MyGame::OnUpdate(double deltaTime)
 void MyGame::OnLoadRender()
 {
 	//TODO: print a loading message or render a loading screen
+	
+}
+
+void MyGame::OnWindowResize(int newWidth, int newHeight)
+{
+	throw std::logic_error("The method or operation is not implemented.");
 }
 
 //main render function
 void MyGame::OnRender()
 {
+	static int counter = 0;
+
 	//render a sprite
 	if (m_AnimatedSprite)
 		m_AnimatedSprite->Render();
 
+	auto screenSize = m_Framework->ScreenSize();
+	
+	ImGui::ShowDemoWindow();
+	/*
+
+	ImGui::Begin("MainWindow", 0, ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar| ImGuiWindowFlags_NoDecoration); // Create a window called "Hello, world!" and append into it.
+	
+	ImGui::End();
+
+	ImGui::Begin("Child Window", 0,
+		ImGuiWindowFlags_NoCollapse); // Create a window called "Hello, world!" and append into it.
+
+	ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+
+	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+		counter++;
+	ImGui::SameLine();
+	ImGui::Text("counter = %d", counter);
+
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::End();*/
 	//render the model
 	//m_Model->Render(Shader::DefaultUnlitTextured);
 }

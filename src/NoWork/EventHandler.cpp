@@ -2,7 +2,11 @@
 
 #include "nowork/Input.h"
 #include "nowork/Log.h"
+#include "NoWork/Framework.h"
+#include "NoWork/Game.h"
 
+
+NoWork * EventHandler::m_Framework = NULL;
 
 void EventHandler::ErrorCallback(int error, const char* description)
 {
@@ -53,4 +57,12 @@ void APIENTRY EventHandler::GLErrorCallback(GLenum source, GLenum type, GLuint i
 	}
 
 	LOG_ERROR(strSeverity << " GLError: Type " << strType << ": " << message);
+}
+
+void EventHandler::WindowSizeChangedCallback(GLFWwindow* window, int width, int height)
+{
+	if (m_Framework)
+	{
+		m_Framework->GetGameHandle()->OnWindowResize(width, height);
+	}
 }

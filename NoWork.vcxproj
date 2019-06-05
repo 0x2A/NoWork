@@ -63,7 +63,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>OPENTHREADS_EXPORTS;GLM_ENABLE_EXPERIMENTAL;OPENALPP_EXPORTS;HAVE_STDINT_H;ALUT_BUILD_LIBRARY;HAVE_SLEEP;HAVE_WINDOWS_H;HAVE_STAT;WIN32;FREETYPE_GL_USE_VAO;_DEBUG;_CONSOLE;_LIB;_NOWORK_INTERNAL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;$(SolutionDir)ext\wxWidgets-3.1.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -95,7 +95,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>OPENTHREADS_EXPORTS;GLM_ENABLE_EXPERIMENTAL;OPENALPP_EXPORTS;HAVE_STDINT_H;ALUT_BUILD_LIBRARY;HAVE_SLEEP;HAVE_WINDOWS_H;HAVE_STAT;WIN32;FREETYPE_GL_USE_VAO;NDEBUG;_CONSOLE;_LIB;_NOWORK_INTERNAL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;$(SolutionDir)ext\wxWidgets-3.1.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
@@ -117,6 +117,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="src\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\NoWork\AnimatedSprite.cpp" />
     <ClCompile Include="src\NoWork\AsyncGLWorker.cpp" />
     <ClCompile Include="src\NoWork\AudioSource.cpp" />
