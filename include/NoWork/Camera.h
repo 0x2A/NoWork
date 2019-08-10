@@ -36,6 +36,11 @@ public:
 	NOWORK_API glm::mat4 GetViewMatrix() const { return m_ViewMatrix; }
 	NOWORK_API void SetViewMatrix(glm::mat4 val) { m_ViewMatrix = val; }
 
+	NOWORK_API inline void UpdateViewProjectionMatrix()
+	{
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
 	NOWORK_API float GetFov() const;
 	NOWORK_API void SetFov(float);
 	NOWORK_API Transform* GetTransform() { return &m_Transform; }
@@ -56,6 +61,9 @@ public:
 
 	NOWORK_API void SetClearColor(glm::vec3 c) { m_ClearColor = c; }
 	NOWORK_API glm::vec3 GetClearColor() { return m_ClearColor; }
+
+
+	NOWORK_API glm::vec3 WorldPosition();
 
 	NOWORK_API void Update();
 	void Render();

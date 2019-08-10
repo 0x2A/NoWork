@@ -32,6 +32,11 @@ void Camera::BuildProjectionMatrix()
 	}
 }
 
+glm::vec3 Camera::WorldPosition()
+{
+	return glm::vec3(glm::inverse(m_ViewMatrix) * glm::vec4(0, 0, 0, 1));
+}
+
 void Camera::Update()
 {
 	// The right vector will always be parallel to the xz-plane.
@@ -41,7 +46,7 @@ void Camera::Update()
 	m_ViewMatrix = m_Transform.GetModelMatrix();
 
 	BuildProjectionMatrix();
-	m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	UpdateViewProjectionMatrix();
 
 }
 

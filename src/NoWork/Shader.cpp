@@ -269,6 +269,12 @@ void Shader::SetParameterf(const char* name, float val)
 {
 	glUniform1f(GetAttributeLocation(name), val);
 }
+
+NOWORK_API void Shader::SetParameterfv(const char* name, int num, float *val)
+{
+	glUniform1fv(GetAttributeLocation(name), num, val);
+}
+
 void Shader::SetParameteri(const char* name, int val)
 {
 	glUniform1i(GetAttributeLocation(name), val);
@@ -296,6 +302,10 @@ void Shader::SetParameterMat4(const char* name, glm::mat4 val)
 {
 	glUniformMatrix4fv(GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
 }
+NOWORK_API void Shader::SetParameterMat4v(const char* name, int num, glm::mat4* val)
+{
+	glUniformMatrix4fv(GetAttributeLocation(name), num, GL_FALSE, glm::value_ptr(val[0]));
+}
 
 void Shader::SetDiffuseColor(glm::vec4 val)
 {
@@ -314,6 +324,24 @@ void Shader::SetParameterTexture(const char* name, TexturePtr tex, uint32_t slot
 	
 	glUniform1i(GetAttributeLocation(name), slot);
 
+}
+
+void Shader::SetParameterTexturev(const char* name, int num, TexturePtr *tex, uint32_t *slots)
+{
+	if (!tex) return;
+	for (int i = 0; i < num; i++)
+		tex[i]->Bind(slots[i]);
+
+	glUniform1iv(GetAttributeLocation(name), num, (GLint*)slots);
+}
+
+void Shader::SetParameterTexturev(const char* name, int num, RenderTexturePtr *tex, uint32_t *slots)
+{
+	if (!tex) return;
+	for (int i = 0; i < num; i++)
+		tex[i]->Bind(slots[i]);
+
+	glUniform1iv(GetAttributeLocation(name), num, (GLint*)slots);
 }
 
 void Shader::SetTexture(TexturePtr tex)

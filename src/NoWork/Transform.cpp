@@ -37,9 +37,9 @@
 
  void ViewTransform::Rotate(const glm::vec3 &dir, bool world /*= false*/)
 {
-	glm::mat4 rotMatrix = glm::rotate(-dir.x, glm::vec3(1, 0, 0));
-	rotMatrix *= glm::rotate(-dir.y, glm::vec3(0, 1, 0));
-	rotMatrix *= glm::rotate(-dir.z, glm::vec3(0, 0, 1));
+	glm::mat4 rotMatrix = glm::rotate(-glm::radians(dir.x), glm::vec3(1, 0, 0));
+	rotMatrix *= glm::rotate(-glm::radians(dir.y), glm::vec3(0, 1, 0));
+	rotMatrix *= glm::rotate(-glm::radians(dir.z), glm::vec3(0, 0, 1));
 
 	if (world)
 		m_Transform = m_Transform * rotMatrix;
@@ -119,22 +119,15 @@
 
  void Transform::Rotate(float x, float y, float z, bool world)
 {
-	glm::mat4 rotMatrix = glm::rotate(x, glm::vec3(1, 0, 0));
-	rotMatrix *= glm::rotate(y, glm::vec3(0, 1, 0));
-	rotMatrix *= glm::rotate(z, glm::vec3(0, 0, 1));
-
-	if (world)
-		m_Transform = rotMatrix * m_Transform;
-	else
-		m_Transform = m_Transform * rotMatrix;
+	Rotate(glm::vec3(x, y, z));
 
 }
 
  void Transform::Rotate(const glm::vec3 &rot, bool world)
 {
-	glm::mat4 rotMatrix = glm::rotate(rot.x, glm::vec3(1, 0, 0));
-	rotMatrix *= glm::rotate(rot.y, glm::vec3(0, 1, 0));
-	rotMatrix *= glm::rotate(rot.z, glm::vec3(0, 0, 1));
+	glm::mat4 rotMatrix = glm::rotate(glm::radians(rot.x), glm::vec3(1, 0, 0));
+	rotMatrix *= glm::rotate(glm::radians(rot.y), glm::vec3(0, 1, 0));
+	rotMatrix *= glm::rotate(glm::radians(rot.z), glm::vec3(0, 0, 1));
 
 	if (world)
 		m_Transform = rotMatrix * m_Transform;

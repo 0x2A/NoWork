@@ -23,6 +23,7 @@
 #include "nowork/Common.h"
 #include "nowork/Log.h"
 #include "nowork/Texture.h"
+#include "nowork/RenderTexture.h"
 #include "AsyncGLWorker.h"
 
 
@@ -46,13 +47,17 @@ public:
 
 
 	NOWORK_API void SetParameterf(const char* name, float val);
+	NOWORK_API void SetParameterfv(const char* name, int num, float *val);
 	NOWORK_API void SetParameteri(const char* name, int val);
 	NOWORK_API void SetParameterVec2(const char* name, glm::vec2 val);
 	NOWORK_API void SetParameterVec3(const char* name, glm::vec3 val);
 	NOWORK_API void SetParameterVec4(const char* name, glm::vec4 val);
 	NOWORK_API void SetParameterMat3(const char* name, glm::mat3 val);
 	NOWORK_API void SetParameterMat4(const char* name, glm::mat4 val);
+	NOWORK_API void SetParameterMat4v(const char* name, int num, glm::mat4* val);
 	NOWORK_API void SetParameterTexture(const char* name, TexturePtr tex, uint32_t slot);
+	NOWORK_API void SetParameterTexturev(const char* name, int num, TexturePtr *tex, uint32_t *slots);
+	NOWORK_API void SetParameterTexturev(const char* name, int num, RenderTexturePtr *tex, uint32_t *slots);
 
 	NOWORK_API void BindAttributeLocation(unsigned int id, const char* name);
 	NOWORK_API int GetAttributeLocation(const char* name);
