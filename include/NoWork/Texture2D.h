@@ -17,7 +17,7 @@ public:
 	};
 
 	NOWORK_API static Texture2DPtr Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant = true);
-	NOWORK_API static Texture2DPtr Load(const char* path, bool constant = true);
+	NOWORK_API static Texture2DPtr Load(const char* path, bool load_srgb = true, bool constant = true); //if load_srgb is true, images will be loaded gamma corrected. For lookup textures like normal map or specular set this to false
 	NOWORK_API static Texture2DPtr LoadHDR(const char* path);
 
 	NOWORK_API void Update(const unsigned char* pixels);

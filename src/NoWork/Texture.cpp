@@ -162,6 +162,7 @@ GLint GetInternalFormatLegacy(GLenum targetFormat)
 	case GL_RGB16UI:
 	case GL_RGB32I:
 	case GL_RGB32UI:
+	case GL_SRGB:
 		internalFormat = GL_RGB;
 		break;
 	case GL_RGB5_A1:

@@ -23,7 +23,7 @@ Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 	return tex;
 }
 
-  Texture2DPtr Texture2D::Load(const char* path, bool constant /*= true*/)
+  Texture2DPtr Texture2D::Load(const char* path, bool load_srgb, bool constant /*= true*/)
 {
 	int width, height, channels;
 	
@@ -45,7 +45,7 @@ Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 		format = Texture::RG8;
 		break;
 	case 3:
-		format = Texture::RGB8;
+		format = load_srgb ? Texture::SRGB : Texture::RGB8;
 		break;
 	case 4:
 		format = Texture::RGBA8;

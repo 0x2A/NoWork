@@ -21,6 +21,7 @@ public:
 		RGB4 = 0x804F,
 		RGB5 = 0x8050,
 		RGB8 = 0x8051,
+		SRGB = 0x8C40,
 		RGB10 = 0x8052,
 		RGB12 = 0x8053,
 		RGB16 = 0x8054,
