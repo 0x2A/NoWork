@@ -1,7 +1,7 @@
 #pragma once
 
 
-#define NOWORK_VERSION	"1.6.1"
+#define NOWORK_VERSION	"1.7"
 
 //Either export or import dll functions
 #ifdef NOWORK_DLL
@@ -46,6 +46,9 @@
 #include <NoWork/glm/gtx/rotate_vector.hpp>
 
 using namespace glm;
+
+#define GRADTORAD(x) (( x * M_PI ) / 180.0f)
+#define RADTOGRAD(x) (( x * 180.0f ) / M_PI)
 
 template<class T>
 inline void DelPtr(T* ptr)

@@ -56,7 +56,7 @@ void MyGame::OnLoadContent()
 	m_Model = Model::Load("data/altair/altair.3ds");
 
 	//create a framebuffer object for testing
-	m_FBO = Framebuffer::Create();
+	m_FBO = Framebuffer::Create(1280, 720);
 
 }
 
