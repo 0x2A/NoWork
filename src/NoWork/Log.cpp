@@ -42,9 +42,9 @@ void Log::PrintMsgHeader(std::ostream &ss, std::string category, std::string fun
 	ss << ": ";
 }
 
-void Log::Print(std::ostream &os, std::string functionName /* = "" */, int line /* = -1 */)
+void Log::Print(const std::ostream &os, std::string functionName /* = "" */, int line /* = -1 */)
 {
-	std::ostringstream& s = dynamic_cast<std::ostringstream&>(os);
+	const std::ostringstream& s = dynamic_cast<const std::ostringstream&>(os);
 	if (s)
 	{
 		m_Mutex.lock();
@@ -55,7 +55,7 @@ void Log::Print(std::ostream &os, std::string functionName /* = "" */, int line 
 }
 
 
-void Log::Debug(std::ostream &os, std::string functionName, int line)
+void Log::Debug(const std::ostream &os, std::string functionName, int line)
 {
 #ifdef _DEBUG
 	Print(os, functionName, line);
@@ -63,9 +63,9 @@ void Log::Debug(std::ostream &os, std::string functionName, int line)
 }
 
 
-void Log::Warning(std::ostream &message, std::string functionName /* = "" */, int line /* = -1 */)
+void Log::Warning(const std::ostream &message, std::string functionName /* = "" */, int line /* = -1 */)
 {
-	std::ostringstream& s = dynamic_cast<std::ostringstream&>(message);
+	const std::ostringstream& s = dynamic_cast<const std::ostringstream&>(message);
 	if (s)
 	{
 		m_Mutex.lock();
@@ -78,9 +78,9 @@ void Log::Warning(std::ostream &message, std::string functionName /* = "" */, in
 }
 
 
-void Log::Error(std::ostream &message, std::string functionName /* = "" */, int line /* = -1 */)
+void Log::Error(const std::ostream &message, std::string functionName /* = "" */, int line /* = -1 */)
 {
-	std::ostringstream& s = dynamic_cast<std::ostringstream&>(message);
+	const std::ostringstream& s = dynamic_cast<const std::ostringstream&>(message);
 	if (s)
 	{
 		m_Mutex.lock();
@@ -92,9 +92,9 @@ void Log::Error(std::ostream &message, std::string functionName /* = "" */, int 
 	}
 }
 
-void Log::ScriptError(std::ostream &message, std::string functionName /*= ""*/)
+void Log::ScriptError(const std::ostream &message, std::string functionName /*= ""*/)
 {
-	std::ostringstream& s = dynamic_cast<std::ostringstream&>(message);
+	const std::ostringstream& s = dynamic_cast<const std::ostringstream&>(message);
 	if (s)
 	{
 		m_Mutex.lock();

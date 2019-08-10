@@ -98,11 +98,11 @@ public:
 	NOWORK_API Log();
 	NOWORK_API ~Log();
 		
-	NOWORK_API static void Print(std::ostream &os, std::string functionName = "", int line = -1);
-	NOWORK_API static void Debug(std::ostream &os, std::string functionName = "", int line = -1);
-	NOWORK_API static void Warning(std::ostream &os, std::string functionName = "", int line = -1);
-	NOWORK_API static void Error(std::ostream &message, std::string functionName = "", int line = -1);
-	NOWORK_API static void ScriptError(std::ostream &message, std::string functionName = "");
+	NOWORK_API static void Print(const std::ostream &os, std::string functionName = "", int line = -1);
+	NOWORK_API static void Debug(const std::ostream &os, std::string functionName = "", int line = -1);
+	NOWORK_API static void Warning(const std::ostream &os, std::string functionName = "", int line = -1);
+	NOWORK_API static void Error(const std::ostream &message, std::string functionName = "", int line = -1);
+	NOWORK_API static void ScriptError(const std::ostream &message, std::string functionName = "");
 	NOWORK_API static void Clear();
 	NOWORK_API static void SetTextColor(Color color);
 
