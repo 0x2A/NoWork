@@ -23,7 +23,11 @@ public:
 protected:
 
 	NOWORK_API RenderTexture(unsigned int texType = GL_TEXTURE_2D, unsigned int texBindingType = GL_TEXTURE_BINDING_2D);
+
+	virtual void DoAsyncWork(int mode, void *params) override;
+
 private:
+	void Generate();
 
 	int m_InternalFormat;
 	int m_Type;

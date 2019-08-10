@@ -4,6 +4,8 @@
 #include "nowork/Camera.h"
 #include "NoWork/Mesh.h"
 #include "NoWork/AsyncGLWorker.h"
+#include "NoWork/Framebuffer.h"
+
 
 #include <queue>
 #include <mutex>
@@ -62,11 +64,6 @@ public:
 	NOWORK_API void SetAlphaBlending(bool state);
 	NOWORK_API void SetWireframeMode(bool state);
 
-	NOWORK_API TexturePtr CreateFBOTexture(int width, int height, unsigned int textureFormat, bool compressed = false);
-	NOWORK_API unsigned int CreateFrameBuffer();
-	NOWORK_API bool BindTextureToFrameBuffer(unsigned int framebuffer, Texture *texture, AttachmentType targetAttachmentType);
-	NOWORK_API void BindFrameBuffer(unsigned int framebuffer);
-	NOWORK_API void UnBindFrameBuffer();
 
 	NOWORK_API void SetViewPort(int x, int y, int width, int height);
 
@@ -83,6 +80,13 @@ public:
 	NOWORK_API void SetDepthTest(bool t);
 
 	//NOWORK_API void SetCamera(Camera* val) { m_Camera = val; }
+
+	NOWORK_API void RenderFullscreenQuad(ShaderPtr shader, glm::vec2 resolution = glm::vec2(-1, -1));
+	NOWORK_API void Blit(RenderTexturePtr source, FramebufferPtr framebuffer, ShaderPtr shader);
+	NOWORK_API void Blit(RenderTexturePtr source, FramebufferPtr framebuffer);
+	NOWORK_API void Blit(RenderTexturePtr source);
+
+	NOWORK_API FramebufferPtr GetWindowFramebuffer() { return m_WindowFramebuffer; }
 
 	NOWORK_API static int DrawCalls;
 
@@ -111,4 +115,7 @@ private:
 	NoWork *m_Framework;
 
 	int m_Viewport[4];
+
+	MeshPtr m_FullscreenQuad;
+	FramebufferPtr m_WindowFramebuffer;
 };

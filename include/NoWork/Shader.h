@@ -69,6 +69,7 @@ public:
 	NOWORK_API static ShaderPtr DefaultBlinPhong;
 	NOWORK_API static ShaderPtr ScreenAligned;
 	NOWORK_API static ShaderPtr ScreenAlignedTextured;
+	NOWORK_API static ShaderPtr BlitScreenShader;
 
 protected:
 

@@ -38,6 +38,14 @@ Renderer::Renderer(NoWork* framework, GLFWwindow* window) : m_Window(window)
 	}
 
 	AsyncGLWorker::renderer = this;
+
+	m_FullscreenQuad = Mesh::CreatePlane(Mesh::STATIC_DRAW);
+	m_FullscreenQuad->m_Renderer = this; //dirty workaround, but they need each other :O
+
+	m_WindowFramebuffer = FramebufferPtr(new Framebuffer);
+	m_WindowFramebuffer->m_FBO = 0;
+	m_WindowFramebuffer->m_BoundAttachmentTypes.push_back(Framebuffer::BACK);
+	m_WindowFramebuffer->m_Size = glm::ivec2(m_FramebufferWidth, m_FramebufferHeight);
 }
 
 Renderer::~Renderer()
@@ -91,56 +99,6 @@ void Renderer::SetWireframeMode(bool state)
 	}
 }
 
-unsigned int Renderer::CreateFrameBuffer()
-{
-	GLuint fbo;
-	glGenFramebuffers(1, &fbo);
-	return fbo;
-}
-
-bool Renderer::BindTextureToFrameBuffer(unsigned int framebuffer, Texture *texture, AttachmentType targetAttachmentType)
-{
-	if (!texture)
-		return false;
-
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	switch (texture->GetType())
-	{
-	case GL_TEXTURE_1D:
-		glFramebufferTexture1D(GL_FRAMEBUFFER, targetAttachmentType, texture->GetType(), texture->GetTextureId(), 0);
-		break;
-	case GL_TEXTURE_2D:
-		glFramebufferTexture2D(GL_FRAMEBUFFER, targetAttachmentType, texture->GetType(), texture->GetTextureId(), 0);
-		break;
-	case GL_TEXTURE_3D:
-		glFramebufferTexture3D(GL_FRAMEBUFFER, targetAttachmentType, texture->GetType(), texture->GetTextureId(), 0, 0);
-		break;
-	default:
-		glFramebufferTexture(GL_FRAMEBUFFER, targetAttachmentType, texture->GetTextureId(), 0);
-	}
-
-	// check FBO status
-	GLenum FBOstatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (FBOstatus != GL_FRAMEBUFFER_COMPLETE)
-	{
-		LOG_ERROR("GLError: GL_FRAMEBUFFER_COMPLETE failed, CANNOT use FBO\n");
-		return false;
-	}
-
-	// switch back to window-system-provided framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-}
-
-void Renderer::BindFrameBuffer(unsigned int framebuffer)
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-}
-
-void Renderer::UnBindFrameBuffer()
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
 
 void Renderer::SetViewPort(int x, int y, int width, int height)
 {
@@ -151,87 +109,6 @@ void Renderer::SetViewPort(int x, int y, int width, int height)
 	glViewport(x, y, width, height);
 }
 
-TexturePtr Renderer::CreateFBOTexture(int width, int height, unsigned int textureFormat, bool compressed /*= false*/)
-{
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	// GL_LINEAR does not make sense for depth texture. However, next tutorial shows usage of GL_LINEAR and PCF. Using GL_NEAREST
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 0x2600);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 0x2600);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, 0x812F);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 0x812F);
-
-
-	if (textureFormat == GL_DEPTH_COMPONENT || textureFormat == GL_DEPTH_STENCIL)
-	{
-		// This is to allow usage of shadow2DProj function in the shader
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-	}
-
-	GLuint texIntFrmt = textureFormat;
-	GLuint texFrmt = GL_RGB;
-
-	switch (textureFormat)
-	{
-	case Texture::DEPTH:
-		texIntFrmt = GL_DEPTH_COMPONENT24;
-		texFrmt = GL_DEPTH_COMPONENT;
-		break;
-	case Texture::DEPTH_STENCIL:
-		texIntFrmt = GL_DEPTH_STENCIL;
-		break;
-	case Texture::R8:
-	case Texture::R16:
-	case Texture::R16F:
-	case Texture::R32F:
-		texFrmt = GL_RED;
-		if (compressed)
-			texIntFrmt = GL_COMPRESSED_RED;
-		break;
-	case Texture::RG8:
-	case Texture::RG16:
-	case Texture::RG16F:
-	case Texture::RG32F:
-		texFrmt = GL_RG;
-		if (compressed)
-			texIntFrmt = GL_COMPRESSED_RG;
-		break;
-	case Texture::RGB8:
-	case Texture::RGB10:
-	case Texture::RGB16F:
-	case Texture::RGB32F:
-		texFrmt = GL_RGB;
-		if (compressed)
-			texIntFrmt = GL_COMPRESSED_RGB;
-		break;
-	case Texture::RGBA8:
-	case Texture::RGBA16:
-	case Texture::RGBA16F:
-	case Texture::RGBA32F:
-		texFrmt = GL_RGBA;
-		if (compressed)
-			texIntFrmt = GL_COMPRESSED_RGBA;
-		break;
-	}
-
-	glTexImage2D(GL_TEXTURE_2D, 0, texIntFrmt, width, height, 0, texFrmt, GL_UNSIGNED_BYTE, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	Texture2DPtr tex = Texture2DPtr(new Texture2D);
-	tex->m_Width = width;
-	tex->m_Height = height;
-	tex->m_TextureId = texture;
-	tex->m_Format = (Texture::Format)texIntFrmt;
-	tex->m_InternalFormat = texFrmt;
-	tex->m_Renderer = this;
-	tex->m_Type = GL_TEXTURE_2D;
-
-	return tex;
-}
 
 void Renderer::SetAnisotropicFiltering(float val)
 {
@@ -280,3 +157,30 @@ NOWORK_API void Renderer::SetDepthTest(bool t)
 		glDisable(GL_DEPTH_TEST);
 }
 
+NOWORK_API void Renderer::RenderFullscreenQuad(ShaderPtr shader, glm::vec2 resolution /*= glm::vec2(-1,-1)*/)
+{
+	if (resolution.x > 0 && resolution.y > 0)
+	{
+		glViewport(0, 0, resolution.x, resolution.y);
+	}
+	m_FullscreenQuad->Render(shader);
+}
+
+NOWORK_API void Renderer::Blit(RenderTexturePtr source, FramebufferPtr framebuffer /*= nullptr*/)
+{
+	Blit(source, framebuffer, Shader::BlitScreenShader);
+}
+
+NOWORK_API void Renderer::Blit(RenderTexturePtr source)
+{
+	Blit(source, m_WindowFramebuffer);
+}
+
+NOWORK_API void Renderer::Blit(RenderTexturePtr source, FramebufferPtr framebuffer, ShaderPtr shader)
+{
+	framebuffer->Bind();
+	shader->Use();
+	shader->SetParameterTexture("texture0", source, 0);
+	//ClearScreen(GL_COLOR_BUFFER_BIT);
+	RenderFullscreenQuad(shader);
+}

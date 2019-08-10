@@ -32,6 +32,7 @@ NOWORK_API ShaderPtr Shader::DefaultUnlitTextured;
 NOWORK_API ShaderPtr Shader::DefaultBlinPhong;
 NOWORK_API ShaderPtr Shader::ScreenAlignedTextured;
 NOWORK_API ShaderPtr Shader::ScreenAligned;
+NOWORK_API ShaderPtr Shader::BlitScreenShader;
 
 
 static bool ValidateShader(GLuint shader, const char* file = 0)
@@ -217,12 +218,41 @@ void Shader::InitializeDefaultShaders()
 		"    gl_Position = vec4(vertexPosition.xy, 0, 1);\n"
 		"}";
 
+	const char* BlitScreenShaderVertSrc = R"(
+
+		#version 130
+		in vec4 vertexPosition;
+		in vec2 vertexUV;
+
+		out vec2 texCoord;
+
+		void main(void)
+		{
+			texCoord = vertexUV;
+			gl_Position = vertexPosition;
+		};
+		)";
+	const char* BlitScreenShaderFragSrc = R"(
+
+		#version 130
+		uniform sampler2D texture0;
+
+		in vec2 texCoord;
+		out vec4 colorOut;
+
+		void main(void)
+		{
+			colorOut = vec4(texture(texture0,texCoord).xyz, 1);
+		};
+		)";
 
 	DefaultUnlit = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragSrc);
 	DefaultUnlitTextured = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragTexturedSrc);
 	DefaultBlinPhong = NULL; //TODO
 	ScreenAligned = Shader::Create(screenAlignedVertSrc, defaultUnlitFragSrc);
 	ScreenAlignedTextured = Shader::Create(screenAlignedVertSrc, defaultUnlitFragTexturedSrc);
+	BlitScreenShader = Shader::Create(BlitScreenShaderVertSrc, BlitScreenShaderFragSrc);
+
 }
 
 
