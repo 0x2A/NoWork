@@ -38,7 +38,7 @@ class Shader : public AsyncGLWorker
 public:
 
 	NOWORK_API virtual ~Shader();
-	NOWORK_API static ShaderPtr Create(const char* vs, const char* fs);
+	NOWORK_API static ShaderPtr Create(const char* name, const char* vs, const char* fs);
 	NOWORK_API static ShaderPtr Load(const char* vertexShaderPath, const char* fragmentShaderPath);
 
 	NOWORK_API void Use();
@@ -90,6 +90,8 @@ protected:
 private:
 	std::string m_VertexSrc;
 	std::string m_FragmentSrc;
+
+	std::string m_Name;
 
 	unsigned int m_ShaderObject;
 	unsigned int m_VSObject;

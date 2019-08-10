@@ -18,6 +18,7 @@ Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 	tex->m_Height = height;
 	tex->m_Constant = constant;
 	tex->m_Pixels = pixels;
+	tex->m_srgb = (format == Texture::SRGB8 || format == Texture::SRGBA8);
 	tex->CopyPixelData();
 
 	return tex;
@@ -45,7 +46,7 @@ Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 		format = Texture::RG8;
 		break;
 	case 3:
-		format = load_srgb ? Texture::SRGB : Texture::RGB8;
+		format = load_srgb ? Texture::SRGB8 : Texture::RGB8;
 		break;
 	case 4:
 		format = Texture::RGBA8;
@@ -82,7 +83,8 @@ void Texture2D::Update(const unsigned char* pixels, int width, int height)
 	}
 
 	glBindTexture(GL_TEXTURE_2D, m_TextureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_InternalFormat, m_Type, pixels);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels);
+	//glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_InternalFormat, m_Type, pixels);
 }
 
 void Texture2D::DoAsyncWork(int mode, void *params)
@@ -133,7 +135,7 @@ void Texture2D::CopyPixelData()
 
 	glBindTexture(GL_TEXTURE_2D, m_TextureId);
 
-	if (m_UseTexStorage && m_Constant) //static and extension available? Use faster method
+	if (m_UseTexStorage /*&& !m_Constant && !m_srgb*/) //static and extension available? Use faster method
 	{
 		glTexStorage2D(GL_TEXTURE_2D, 1, m_Format, m_Width, m_Height);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels);

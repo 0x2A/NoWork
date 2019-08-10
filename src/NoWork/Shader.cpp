@@ -93,9 +93,10 @@ bool ValidateProgram(unsigned int program)
 	return true;
 }
 
-NOWORK_API  ShaderPtr Shader::Create(const char* vs, const char* fs)
+NOWORK_API  ShaderPtr Shader::Create(const char* name, const char* vs, const char* fs)
 {
 	ShaderPtr shader = ShaderPtr(new Shader);
+	shader->m_Name = name;
 
 	if (!NoWork::IsMainThread())
 	{
@@ -126,7 +127,25 @@ NOWORK_API  ShaderPtr Shader::Load(const char* vertexShaderPath, const char* fra
 	std::string fragmentSrc = FileSystem::LoadTextFile(fragmentShaderPath);
 	fragmentSrc = PreprocessIncludes(fragmentSrc, FileSystem::GetFilename(fragmentShaderPath), FileSystem::GetPath(fragmentShaderPath));
 
-	return Create(vertexSrc.c_str(), fragmentSrc.c_str());
+	// Remove directory if present.
+	// Do this before extension removal incase directory has a period character.
+
+	std::string filename = vertexShaderPath;
+
+	const size_t last_slash_idx = filename.find_last_of("\\/");
+	if (std::string::npos != last_slash_idx)
+	{
+		filename.erase(0, last_slash_idx + 1);
+	}
+
+	// Remove extension if present.
+	const size_t period_idx = filename.rfind('.');
+	if (std::string::npos != period_idx)
+	{
+		filename.erase(period_idx);
+	}
+
+	return Create(filename.c_str(), vertexSrc.c_str(), fragmentSrc.c_str());
 }
 
 
@@ -246,12 +265,12 @@ void Shader::InitializeDefaultShaders()
 		};
 		)";
 
-	DefaultUnlit = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragSrc);
-	DefaultUnlitTextured = Shader::Create(defaultUnlitVertSrc, defaultUnlitFragTexturedSrc);
+	DefaultUnlit = Shader::Create("defaultUnlit", defaultUnlitVertSrc, defaultUnlitFragSrc);
+	DefaultUnlitTextured = Shader::Create("defaultUnlitTextured", defaultUnlitVertSrc, defaultUnlitFragTexturedSrc);
 	DefaultBlinPhong = NULL; //TODO
-	ScreenAligned = Shader::Create(screenAlignedVertSrc, defaultUnlitFragSrc);
-	ScreenAlignedTextured = Shader::Create(screenAlignedVertSrc, defaultUnlitFragTexturedSrc);
-	BlitScreenShader = Shader::Create(BlitScreenShaderVertSrc, BlitScreenShaderFragSrc);
+	ScreenAligned = Shader::Create("ScreenAligned", screenAlignedVertSrc, defaultUnlitFragSrc);
+	ScreenAlignedTextured = Shader::Create("screenAlignedTextured", screenAlignedVertSrc, defaultUnlitFragTexturedSrc);
+	BlitScreenShader = Shader::Create("BlitScreenShader", BlitScreenShaderVertSrc, BlitScreenShaderFragSrc);
 
 }
 
@@ -363,6 +382,11 @@ int Shader::GetAttributeLocation(const char* name)
 	//not requested yet
 	GLint loc = glGetUniformLocation(m_ShaderObject, name);
 	m_ParamLocations[name] = loc;
+
+	if (loc < 0)
+	{
+		LOG_WARNING("Shader '" + m_Name + "' has no uniform attribute ' " + name + "'");
+	}
 	return loc;
 }
 

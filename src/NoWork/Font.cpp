@@ -81,7 +81,7 @@ NOWORK_API  FontPtr Font::Create(const char* path, float size /*= 24.0f*/)
 		LOG_WARNING("Fontcache: missed " << missed << " glyphs!");
 
 	f->m_Buffer = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
-	f->m_Shader = Shader::Create(fontShaderVertSrc, fontShaderFragSrc);
+	f->m_Shader = Shader::Create("fontShader", fontShaderVertSrc, fontShaderFragSrc);
 
 	return f;
 }

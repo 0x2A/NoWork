@@ -167,6 +167,7 @@ GLint GetInternalFormatLegacy(GLenum targetFormat)
 		break;
 	case GL_RGB5_A1:
 	case GL_RGBA8:
+	case GL_SRGB8_ALPHA8:
 	case GL_RGBA8_SNORM:
 	case GL_RGB10_A2:
 	case GL_RGB10_A2UI:

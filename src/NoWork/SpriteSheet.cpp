@@ -230,10 +230,10 @@ NOWORK_API  SpriteSheetPtr SpriteSheet::Load(const char* path)
 		m_PlaneMesh = Mesh::CreatePlane();
 
 	if (!m_SpriteShader)
-		m_SpriteShader = Shader::Create(spriteShaderVert, spriteShaderFrag);
+		m_SpriteShader = Shader::Create("SpriteShader", spriteShaderVert, spriteShaderFrag);
 	
 	if (!m_SpriteKeyedShader)
-		m_SpriteKeyedShader = Shader::Create(spriteShaderVert, spriteShaderKeyedFrag);
+		m_SpriteKeyedShader = Shader::Create("KeyedSpriteShader", spriteShaderVert, spriteShaderKeyedFrag);
 
 	sheet->m_SpriteTexture = spriteSheetTex;
 

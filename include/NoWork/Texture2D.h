@@ -40,4 +40,5 @@ private:
 	int m_Type;
 	Texture::Format m_Format;
 	bool m_Constant;
+	bool m_srgb;
 };
