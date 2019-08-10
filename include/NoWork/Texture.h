@@ -78,7 +78,7 @@ public:
 		RGB16_SNORM = 0x8F9A,
 		RGBA16_SNORM = 0x8F9B,
 		RGB10_A2UI = 0x906F,
-		DEPTH = 0x1801,
+		DEPTH = 0x1902,
 		DEPTH_STENCIL = 0x84F9,
 		COMPRESSED_RED = 0x8225,
 		COMPRESSED_RG = 0x8226,
@@ -90,6 +90,7 @@ public:
 	{
 		AM_GenerateTexture = 0,
 		AM_SetLinearTextureFilter,
+		AM_SetTextureComparison,
 		AM_OFFSET
 	};
 
@@ -105,6 +106,7 @@ public:
 	NOWORK_API static void GetInternalFormat(unsigned int textureType, unsigned int targetFormat, int* internalFormat, int *type);
 
 	NOWORK_API void SetLinearTextureFilter(bool state);
+	NOWORK_API void SetTextureComparison(unsigned int compareMode, unsigned int compareFunc);
 
 	NOWORK_API unsigned int GetTextureId(){ return m_TextureId; }
 	NOWORK_API unsigned int GetType() { return m_TextureType; }

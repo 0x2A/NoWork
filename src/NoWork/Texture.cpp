@@ -234,6 +234,21 @@ NOWORK_API void Texture::SetLinearTextureFilter(bool state)
 	}
 }
 
+NOWORK_API void Texture::SetTextureComparison(unsigned int compareMode, unsigned int compareFunc)
+{
+	if (!NoWork::IsMainThread())
+	{
+		unsigned int* arr = new unsigned int[2];
+		arr[0] = compareMode;
+		arr[1] = compareFunc;
+		AddToGLQueue(AsyncMode_t::AM_SetTextureComparison, arr);
+		return;
+	}
+
+	SetParameteri(GL_TEXTURE_COMPARE_MODE, compareMode);
+	SetParameteri(GL_TEXTURE_COMPARE_FUNC, compareFunc);
+}
+
 Texture::~Texture()
 {
 	glDeleteTextures(1, &m_TextureId);
@@ -248,6 +263,12 @@ void Texture::DoAsyncWork(int mode, void *params)
 		break;
 	case AsyncMode_t::AM_SetLinearTextureFilter:
 		SetLinearTextureFilter((bool)params);
+		break;
+	case AsyncMode_t::AM_SetTextureComparison:
+	{
+		unsigned int* arr = static_cast<unsigned int*>(params);
+		SetTextureComparison(arr[0], arr[1]);
+	}
 		break;
 	default:
 		break;
