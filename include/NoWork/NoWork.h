@@ -1,6 +1,6 @@
 #pragma once
 
-
+#define GLM_ENABLE_EXPERIMENTAL
 #include "nowork/Common.h"
 #include "nowork/Quaternion.h"
 #include "nowork/Framework.h"
@@ -9,6 +9,7 @@
 #include "nowork/Log.h"
 #include "nowork/Mesh.h"
 #include "nowork/Texture2D.h"
+#include "NoWork/TextureCube.h"
 #include "nowork/SpriteSheet.h"
 #include "nowork/AnimatedSprite.h"
 #include "NoWork/AudioSource.h"

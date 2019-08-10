@@ -142,6 +142,7 @@
     <ClCompile Include="src\NoWork\SpriteSheet.cpp" />
     <ClCompile Include="src\NoWork\Texture.cpp" />
     <ClCompile Include="src\NoWork\Texture2D.cpp" />
+    <ClCompile Include="src\NoWork\TextureCube.cpp" />
     <ClCompile Include="src\NoWork\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +175,7 @@
     <ClInclude Include="include\NoWork\SpriteSheet.h" />
     <ClInclude Include="include\NoWork\Texture.h" />
     <ClInclude Include="include\NoWork\Texture2D.h" />
+    <ClInclude Include="include\NoWork\TextureCube.h" />
     <ClInclude Include="include\NoWork\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
