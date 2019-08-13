@@ -10,6 +10,7 @@ typedef std::shared_ptr<Material> MaterialPtr;
 
 class NOWORK_API  Material
 {
+	friend class NoWork;
 public:
 
 	Material(const char* name = "", ShaderPtr shader = nullptr);
@@ -52,6 +53,15 @@ public:
 
 	const char* GetName() const { return m_Name; }
 	void Name(const char* val) { m_Name = val; }
+
+
+	static MaterialPtr FallbackMaterial;
+
+protected:
+
+
+	static void InitializeDefaultRessources();
+
 private:
 	Texture2DPtr m_TexDiffuse;
 	Texture2DPtr m_TexNormal;

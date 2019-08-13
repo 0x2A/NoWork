@@ -1,6 +1,17 @@
 
 #include "NoWork/Material.h"
 
+
+MaterialPtr Material::FallbackMaterial;
+
+void Material::InitializeDefaultRessources()
+{
+	FallbackMaterial = std::make_shared<Material>("DefaultFallback", Shader::DefaultBlinPhong);
+	FallbackMaterial->SetDiffuseColor(vec4(1.0, 0.1, 1.0, 1.0));
+	FallbackMaterial->SetRoughness(1);
+	FallbackMaterial->SetMetallic(0);
+}
+
 Material::Material(const char* name, ShaderPtr shader)
 {
 	m_Name = name;
@@ -67,6 +78,8 @@ void Material::Bind()
 {
 	if (!m_Shader) return;
 
+	m_Shader->Use();
+
 	//do we have textures?
 	m_Shader->SetParameterVec4("hasTexture", glm::vec4((bool)m_TexDiffuse, (bool)m_TexNormal,
 		(bool)m_TexMetallic, (bool)m_TexRoughness));
@@ -104,6 +117,7 @@ void Material::Bind()
 		m_Shader->SetParameterVec4(v.first, v.second);
 	}
 }
+
 
 void Material::SetDiffuseTexture(Texture2DPtr tex)
 {

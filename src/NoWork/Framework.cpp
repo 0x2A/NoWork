@@ -172,6 +172,7 @@ void NoWork::Run()
 	m_GameHandle->m_Renderer = m_Renderer;
 
 	Shader::InitializeDefaultShaders();
+	Material::InitializeDefaultRessources();
 	m_GameHandle->Init();
 
 	m_Loading = true;

@@ -4,6 +4,7 @@
 #include "nowork/Transform.h"
 #include "nowork/Shader.h"
 #include "NoWork/AsyncGLWorker.h"
+#include "NoWork/Material.h"
 
 #define MODEL_VERTEX_LOCATION 0
 #define MODEL_NORMAL_LOCATION 1
@@ -113,7 +114,9 @@ public:
 	NOWORK_API static MeshPtr Create(const Vertex *vertices, int numVertices, const Face *faces, int numFaces, bool calculateNormals = false, DataUsage usage = DataUsage::STATIC_DRAW);
 	NOWORK_API static MeshPtr CreatePlane(DataUsage usage = DataUsage::STATIC_DRAW);
 
+	NOWORK_API void Render(MaterialPtr shader, RenderMode mode = TRIANGLES);
 	NOWORK_API void Render(ShaderPtr shader, RenderMode mode = TRIANGLES);
+
 	NOWORK_API Transform* GetTransform() {return &m_Transform; }
 
 	NOWORK_API VertexList* GetVertexList() { return &m_Vertices; }

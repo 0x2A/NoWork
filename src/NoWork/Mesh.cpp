@@ -154,16 +154,30 @@ bool Mesh::CreateVBO()
 	return true;
 }
 
-void Mesh::Render(ShaderPtr shader, RenderMode mode)
+void Mesh::Render(MaterialPtr material, RenderMode mode)
+{
+	if (!material)
+	{
+		LOG_ERROR("Invalid material! Cant render!");
+		return;
+	}
+
+//	if (m_Vertices.size() == 0)
+//		return;
+
+	material->Bind();
+	auto shader = material->GetShader();
+	Render(shader);
+	
+}
+
+NOWORK_API void Mesh::Render(ShaderPtr shader, RenderMode mode /*= TRIANGLES*/)
 {
 	if (!shader)
 	{
 		LOG_ERROR("Invalid shader! Cant render!");
 		return;
 	}
-
-//	if (m_Vertices.size() == 0)
-//		return;
 
 	glBindVertexArray(m_VertexArrayObject);
 
@@ -179,7 +193,7 @@ void Mesh::Render(ShaderPtr shader, RenderMode mode)
 	else
 		glDrawArrays(mode, 0, m_NumVertices);
 
-	//glBindVertexArray(0);
+	//glBindVertexArray(0);	
 	Renderer::DrawCalls++;
 }
 

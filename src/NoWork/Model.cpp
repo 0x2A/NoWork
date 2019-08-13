@@ -194,25 +194,29 @@ MeshPtr Model::GetSubmesh(size_t index)
 	return m_Meshes[index];
 }
 
-void Model::Render(ShaderPtr shader)
+NOWORK_API void Model::Render()
 {
-	shader->Use();
 	bool update = false;
-	if (m_LastShader != shader)
-	{
-		m_LastShader = shader;
-		update = true;
-	}
+	
 	for (int i = 0; i < m_Meshes.size(); i++)
 	{
+		MaterialPtr material;
 		if (m_Materials[m_MaterialIndices[i]])
 		{
-			if (update) m_Materials[m_MaterialIndices[i]]->SetShader(shader);
-			m_Materials[m_MaterialIndices[i]]->Bind();
+			/*auto shader = m_Materials[m_MaterialIndices[i]]->GetShader();
+			if (m_LastShader != shader)
+			{
+				m_LastShader = shader;
+				update = true;
+			}
+			if (update) shader->Use();*/
+			material = m_Materials[m_MaterialIndices[i]];
 		}
+		else
+			material = Material::FallbackMaterial;
 
 		m_Meshes[i]->GetTransform()->SetModelMatrix(m_Transform.GetModelMatrix());
-		m_Meshes[i]->Render(shader);
+		m_Meshes[i]->Render(material);
 	}
 }
 

@@ -25,7 +25,7 @@ public:
 
 	NOWORK_API MaterialPtr GetMaterial(int meshId);
 	
-	NOWORK_API void Render(ShaderPtr shader);
+	NOWORK_API void Render();
 
 	NOWORK_API void ReplaceMaterial(int id, MaterialPtr tex);
 

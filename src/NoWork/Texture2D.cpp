@@ -49,7 +49,7 @@ Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 		format = load_srgb ? Texture::SRGB8 : Texture::RGB8;
 		break;
 	case 4:
-		format = Texture::RGBA8;
+		format = load_srgb ? Texture::SRGBA8 : Texture::RGBA8;
 		break;
 	}
 
