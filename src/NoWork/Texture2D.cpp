@@ -2,6 +2,12 @@
 #include "nowork/Log.h"
 #include <soil.h>
 #include "NoWork/NoWork.h"
+#ifdef _NOWORK_INTERNAL_
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_STATIC
+#endif
+#include "noWork/stb_image.h"
+
 
 Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 {
@@ -64,7 +70,7 @@ Texture2D::Texture2D() : Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 		  tex->AddToGLQueue(AsyncMode_t::AM_LoadHDR, (void*)path);
 		  return tex;
 	  }
-
+	  tex->m_Constant = true;
 	  tex->LoadHDRInternal(path);
 	  return tex;
   }
@@ -87,6 +93,22 @@ void Texture2D::Update(const unsigned char* pixels, int width, int height)
 	//glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_InternalFormat, m_Type, pixels);
 }
 
+void Texture2D::GenerateMipMaps()
+{
+	if (!NoWork::IsMainThread())
+	{
+		AddToGLQueue(AsyncMode_t::AM_GenMipMaps);
+		return;
+	}
+
+	glBindTexture(GL_TEXTURE_2D, m_TextureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Texture2D::DoAsyncWork(int mode, void *params)
 {
 	Texture::DoAsyncWork(mode, params);
@@ -99,28 +121,34 @@ void Texture2D::DoAsyncWork(int mode, void *params)
 	case Texture2D::AM_LoadHDR:
 		LoadHDRInternal((const char*)params);
 		break;
+	case Texture2D::AM_GenMipMaps:
+		GenerateMipMaps();
+		break;
 	}
 }
 
 void Texture2D::LoadHDRInternal(const char* path)
 {
-	int width, height, channels;
-	unsigned char *ht_map = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_AUTO);
-	if (!ht_map)
+	stbi_set_flip_vertically_on_load(true);
+	int width, height, nrComponents;
+	float *data = stbi_loadf(path, &width, &height, &nrComponents, 0);
+
+	if (!data)
 	{
-		LOG_ERROR("Unable to load texture '" << path << "': " << SOIL_last_result());
+		LOG_ERROR("Unable to load hdr texture '" << path << "'");
 		return;
 	}
 
 	m_Width = width;
 	m_Height = height;
 
-	SOIL_free_image_data(ht_map);
-
-	m_TextureId = SOIL_load_OGL_HDR_texture(path, SOIL_HDR_RGBE, 0, 0, SOIL_FLAG_COMPRESS_TO_DXT | SOIL_FLAG_MIPMAPS);
-	
-	glBindTexture(GL_TEXTURE_2D, m_TextureId);
+	GenerateTexture();  //generate and bind new texture
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	SetLinearTextureFilter(true);
+
+	stbi_image_free(data);
 }
 
 void Texture2D::CopyPixelData()

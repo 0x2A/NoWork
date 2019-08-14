@@ -29,7 +29,7 @@ NOWORK_API  ModelPtr Model::Load(const char* path, Mesh::DataUsage usage /*= Mes
 		aiProcess_SortByPType | 
 		aiProcess_PreTransformVertices | 
 		aiProcess_SplitLargeMeshes |
-		aiProcess_FindInvalidData | aiProcess_GenUVCoords | aiProcess_FlipUVs);
+		aiProcess_FindInvalidData | aiProcess_GenUVCoords | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 	
 	if (!scene)
@@ -64,6 +64,7 @@ NOWORK_API  ModelPtr Model::Load(const char* path, Mesh::DataUsage usage /*= Mes
 		bool hasNormals = mesh->HasNormals();
 		bool hasTangent = mesh->HasTangentsAndBitangents();
 		bool hasUvCoords = mesh->mNumUVComponents[0] > 0;
+		
 		for (int k = 0; k < mesh->mNumVertices; k++)
 		{
 			aiVector3D pos = mesh->mVertices[k];
