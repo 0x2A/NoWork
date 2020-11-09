@@ -166,21 +166,30 @@ NOWORK_API void Renderer::RenderFullscreenQuad(ShaderPtr shader, glm::vec2 resol
 	m_FullscreenQuad->Render(shader);
 }
 
-NOWORK_API void Renderer::Blit(RenderTexturePtr source, FramebufferPtr framebuffer /*= nullptr*/)
+NOWORK_API void Renderer::Blit(TexturePtr source, FramebufferPtr framebuffer /*= nullptr*/)
 {
 	Blit(source, framebuffer, Shader::BlitScreenShader);
 }
 
-NOWORK_API void Renderer::Blit(RenderTexturePtr source)
+NOWORK_API void Renderer::Blit(TexturePtr source)
 {
 	Blit(source, m_WindowFramebuffer);
 }
 
-NOWORK_API void Renderer::Blit(RenderTexturePtr source, FramebufferPtr framebuffer, ShaderPtr shader)
+NOWORK_API void Renderer::Blit(TexturePtr source, FramebufferPtr framebuffer, ShaderPtr shader)
 {
 	framebuffer->Bind();
 	shader->Use();
 	shader->SetParameterTexture("texture0", source, 0);
 	//ClearScreen(GL_COLOR_BUFFER_BIT);
 	RenderFullscreenQuad(shader);
+}
+
+NOWORK_API void Renderer::Blit(FramebufferPtr source, FramebufferPtr dest)
+{
+	assert(source->m_BoundAttachmentTypes.size() > 0 && dest->m_BoundAttachmentTypes.size() > 0);
+	auto texSize = source->m_BoundTextures[source->m_BoundAttachmentTypes[0]]->GetSize();
+	auto texSizeDest = dest->m_BoundTextures[dest->m_BoundAttachmentTypes[0]]->GetSize();
+	glBlitNamedFramebuffer(source->m_FBO, dest->m_FBO, 0, 0, texSize.x, texSize.y, 0, 0, texSizeDest.x, texSizeDest.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glInvalidateNamedFramebufferData(source->m_FBO, (GLsizei)source->m_BoundAttachmentTypes.size(), (GLenum*)&source->m_BoundAttachmentTypes[0]);
 }

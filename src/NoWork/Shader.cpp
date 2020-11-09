@@ -35,7 +35,7 @@ NOWORK_API ShaderPtr Shader::ScreenAligned;
 NOWORK_API ShaderPtr Shader::BlitScreenShader;
 
 
-static bool ValidateShader(GLuint shader, const char* file = 0)
+bool Shader::ValidateShader(GLuint shader, const char* file)
 {
 	const unsigned int BUFFER_SIZE = 512;
 	char buffer[BUFFER_SIZE];
@@ -59,20 +59,13 @@ static bool ValidateShader(GLuint shader, const char* file = 0)
 	return true;
 }
 
-bool ValidateProgram(unsigned int program)
+bool Shader::ValidateProgram(unsigned int program)
 {
 	const unsigned int BUFFER_SIZE = 512;
 	char buffer[BUFFER_SIZE];
 	memset(buffer, 0, BUFFER_SIZE);
 	GLsizei length = 0;
 
-	GLint loc = glGetUniformLocation(program, "ShadowTexture");
-	if (loc != -1)
-	{
-		glUseProgram(program);
-		glUniform1i(loc, 7);
-		glUseProgram(0);
-	}
 
 	glValidateProgram(program);
 	GLint status;
@@ -157,11 +150,16 @@ void Shader::Use()
 
 Shader::~Shader()
 {
-	glDetachShader(m_ShaderObject, m_VSObject);
-	glDetachShader(m_ShaderObject, m_FSObject);
+	if(m_VSObject != 0)
+		glDetachShader(m_ShaderObject, m_VSObject);
+	if(m_FSObject != 0)
+		glDetachShader(m_ShaderObject, m_FSObject);
 
-	glDeleteShader(m_FSObject);
-	glDeleteShader(m_VSObject);
+	if(m_FSObject != 0)
+		glDeleteShader(m_FSObject);
+	if(m_FSObject != 0)
+		glDeleteShader(m_VSObject);
+
 	glDeleteProgram(m_ShaderObject);
 }
 
@@ -181,12 +179,14 @@ void Shader::InitializeDefaultShaders()
 		"\n"
 		"out vec2 texCoord;\n"
 		"out vec4 vertColor;\n"
+		"out vec3 worldNormal;\n"
 		"\n"
 		"void main( void )\n"
 		"{\n"
 		"    texCoord = vertexUV;\n"
 		"    vertColor = vertexColor;\n"
 		"    gl_Position = MVPMatrix * vec4(vertexPosition,1);\n"
+		"    worldNormal = normalize(vec3(ModelMatrix * vec4(vertexNormal,0)));"
 		"}";
 
 	const char* defaultUnlitFragSrc =
@@ -219,6 +219,24 @@ void Shader::InitializeDefaultShaders()
 		"    colorOut = DiffuseColor * vertColor * col;\n"
 		"}";
 
+	const char* defaultBlinPhongFragSrc = 
+		"#version 130\n"
+		"uniform vec4 DiffuseColor;\n"
+		"uniform sampler2D Texture;\n"
+		"uniform vec3 LightPos;\n"
+		"\n"
+		"in vec2 texCoord;\n"
+		"in vec4 vertColor;\n"
+		"in vec3 worldNormal;\n"
+		"\n"
+		"out vec4 colorOut;\n"
+		"\n"
+		"void main(void)\n"
+		"{\n"
+		"   float ndotl = clamp(dot(normalize(worldNormal), normalize(LightPos)), 0, 1);"
+		"   colorOut = DiffuseColor * vertColor * ndotl;\n"
+		"}"
+		;
 	const char* screenAlignedVertSrc =
 		"#version 130\n"
 		"in vec3 vertexPosition;\n"
@@ -267,7 +285,10 @@ void Shader::InitializeDefaultShaders()
 
 	DefaultUnlit = Shader::Create("defaultUnlit", defaultUnlitVertSrc, defaultUnlitFragSrc);
 	DefaultUnlitTextured = Shader::Create("defaultUnlitTextured", defaultUnlitVertSrc, defaultUnlitFragTexturedSrc);
-	DefaultBlinPhong = NULL; //TODO
+	DefaultBlinPhong = Shader::Create("defaultBlinPhong", defaultUnlitVertSrc, defaultBlinPhongFragSrc);
+	DefaultBlinPhong->Use();
+	DefaultBlinPhong->SetParameterVec3("LightPos", glm::vec3(2,1,0));
+
 	ScreenAligned = Shader::Create("ScreenAligned", screenAlignedVertSrc, defaultUnlitFragSrc);
 	ScreenAlignedTextured = Shader::Create("screenAlignedTextured", screenAlignedVertSrc, defaultUnlitFragTexturedSrc);
 	BlitScreenShader = Shader::Create("BlitScreenShader", BlitScreenShaderVertSrc, BlitScreenShaderFragSrc);
@@ -282,7 +303,10 @@ Shader inline implementation:
 
 
  Shader::Shader()
-{}
+{
+	 m_VSObject = 0;
+	 m_FSObject = 0;
+ }
 
 void Shader::SetParameterf(const char* name, float val)
 {

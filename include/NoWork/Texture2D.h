@@ -18,7 +18,13 @@ public:
 	};
 
 	NOWORK_API static Texture2DPtr Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant = true);
+	NOWORK_API static Texture2DPtr Create(unsigned int width, unsigned int height, Texture::Format format, int levels = 0);
 	NOWORK_API static Texture2DPtr Load(const char* path, bool load_srgb = true, bool constant = true); //if load_srgb is true, images will be loaded gamma corrected. For lookup textures like normal map or specular set this to false
+	
+	//Loads raw data from memory, must be layed out as RGBA8888!
+	NOWORK_API static Texture2DPtr LoadRawFromMemory(unsigned char* data, unsigned int width, unsigned int height, bool load_srgb = true, bool constant = true); //if load_srgb is true, images will be loaded gamma corrected. For lookup textures like normal map or specular set this to false
+	//Load image file from memory (jpg, png, ....)
+	NOWORK_API static Texture2DPtr LoadFromMemory(unsigned char* data, int bufferLength, bool load_srgb = true, bool constant = true); //if load_srgb is true, images will be loaded gamma corrected. For lookup textures like normal map or specular set this to false
 	NOWORK_API static Texture2DPtr LoadHDR(const char* path);
 
 	NOWORK_API void Update(const unsigned char* pixels);
@@ -41,7 +47,6 @@ private:
 
 	int m_InternalFormat;
 	int m_Type;
-	Texture::Format m_Format;
 	bool m_Constant;
 	bool m_srgb;
 };

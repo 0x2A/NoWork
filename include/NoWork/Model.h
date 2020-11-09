@@ -23,9 +23,18 @@ public:
 
 	NOWORK_API int SubmeshMaterialIndex(int meshId){ return m_MaterialIndices[meshId]; }
 
-	NOWORK_API MaterialPtr GetMaterial(int meshId);
+	NOWORK_API MaterialPtr GetMaterialFromSubmesh(int meshId);
+
+	NOWORK_API MaterialPtr GetMaterial(int materialId);
+	
+	NOWORK_API int GetNumMaterials(){
+		return m_Materials.size();
+	}
 	
 	NOWORK_API void Render();
+
+	//Render Model with specified shader, overwriting shaders defined in materials
+	NOWORK_API void Render(ShaderPtr shader);
 
 	NOWORK_API void ReplaceMaterial(int id, MaterialPtr tex);
 

@@ -32,6 +32,8 @@ public:
 	NOWORK_API static TextureCubePtr Create(unsigned int width, unsigned int height, Texture::Format format,
 		CubeMapPixelData pixels, bool constant = true);
 
+	NOWORK_API static TextureCubePtr Create(unsigned int width, unsigned int height, Texture::Format format, int levels = 0);
+
 	NOWORK_API static TextureCubePtr Load(const std::string& pathPosX, const std::string& pathNegX,
 		const std::string& pathPosY, const std::string& pathNegY, 
 		const std::string& pathPosZ, const std::string& pathNegZ,
@@ -51,6 +53,5 @@ private:
 	CubeMapPixelData m_Pixels;
 	int m_InternalFormat;
 	int m_Type;
-	Texture::Format m_Format;
 	bool m_Constant;
 };

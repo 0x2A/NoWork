@@ -3,6 +3,7 @@
 #include "NoWork/Log.h"
 #include <soil.h>
 #include "NoWork/Framework.h"
+#include "NoWork/utils.h"
 
 TextureCube::TextureCube() : Texture(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BINDING_CUBE_MAP)
 {
@@ -19,6 +20,23 @@ TextureCubePtr TextureCube::Create(unsigned int width, unsigned int height, Text
 	tex->m_Height = height;
 	tex->m_Constant = constant;
 	tex->m_Pixels = pixels;
+	tex->m_MipMapLevels = 0;
+	
+	tex->CopyPixelData();
+
+	return tex;
+}
+
+NOWORK_API TextureCubePtr TextureCube::Create(unsigned int width, unsigned int height, Texture::Format format, int levels)
+{
+	TextureCubePtr tex = TextureCubePtr(new TextureCube);
+	tex->GenerateTexture();  //generate and bind new texture
+
+	tex->m_Format = format;
+	tex->m_Width = width;
+	tex->m_Height = height;
+	tex->m_MipMapLevels = levels;
+	tex->m_Pixels = CubeMapPixelData();
 	tex->CopyPixelData();
 
 	return tex;
@@ -133,36 +151,77 @@ void TextureCube::CopyPixelData()
 
 	GetInternalFormat(GL_TEXTURE_CUBE_MAP, m_Format, &m_InternalFormat, &m_Type); //get internal base format and data type for target texture format
 
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureId);
 
+	if(m_MipMapLevels <= 0)
+		m_MipMapLevels = Utility::numMipmapLevels(m_Width, m_Height);	
 
 	if (m_UseTexStorage && m_Constant) //static and extension available? Use faster method
 	{
-		glTexStorage2D(GL_TEXTURE_CUBE_MAP, 12, m_Format, m_Width, m_Height);
-		glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels.posX);
-		glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels.negX);
-		glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels.posY);
-		glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels.negY);
-		glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels.posZ);
-		glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels.negZ);
+		
+		glTextureStorage2D(m_TextureId, m_MipMapLevels, m_Format, m_Width, m_Height);
+
+		// face:
+		// 0 = positive x face
+		// 1 = negative x face
+		// 2 = positive y face
+		// 3 = negative y face
+		// 4 = positive z face
+		// 5 = negative z face
+		if(m_Pixels.posX != nullptr)
+			glTextureSubImage3D( m_TextureId, m_MipMapLevels, 0, 0, 
+				0,   // the offset to desired cubemap face, which offset goes to which face above
+				m_Width, m_Height, 1, m_InternalFormat, m_Type, m_Pixels.posX);
+		if (m_Pixels.negX != nullptr)
+			glTextureSubImage3D(m_TextureId, m_MipMapLevels, 0, 0,
+				1,   // the offset to desired cubemap face, which offset goes to which face above
+				m_Width, m_Height, 1, m_InternalFormat, m_Type, m_Pixels.negX);
+		if (m_Pixels.posY != nullptr)
+			glTextureSubImage3D(m_TextureId, m_MipMapLevels, 0, 0,
+				2,   // the offset to desired cubemap face, which offset goes to which face above
+				m_Width, m_Height, 1, m_InternalFormat, m_Type, m_Pixels.posY);
+		if (m_Pixels.negY != nullptr)
+			glTextureSubImage3D(m_TextureId, m_MipMapLevels, 0, 0,
+				3,   // the offset to desired cubemap face, which offset goes to which face above
+				m_Width, m_Height, 1, m_InternalFormat, m_Type, m_Pixels.negY);
+		if (m_Pixels.posZ != nullptr)
+			glTextureSubImage3D(m_TextureId, m_MipMapLevels, 0, 0,
+				4,   // the offset to desired cubemap face, which offset goes to which face above
+				m_Width, m_Height, 1, m_InternalFormat, m_Type, m_Pixels.posZ);
+		if (m_Pixels.negZ != nullptr)
+			glTextureSubImage3D(m_TextureId, m_MipMapLevels, 0, 0,
+				5,   // the offset to desired cubemap face, which offset goes to which face above
+				m_Width, m_Height, 1, m_InternalFormat, m_Type, m_Pixels.negZ);
 	}
 	else
 	{
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureId);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 10);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.posX);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.negX);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.posY);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.negY);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.posZ);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.negZ);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, m_MipMapLevels);
+		if(m_Pixels.posX != nullptr)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.posX);
+		if(m_Pixels.negX != nullptr)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.negX);
+		if(m_Pixels.posY != nullptr)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.posY);
+		if(m_Pixels.negY != nullptr)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.negY);
+		if(m_Pixels.posZ != nullptr)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.posZ);
+		if(m_Pixels.negZ != nullptr)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels.negZ);
 	}
 
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	glTextureParameteri(m_TextureId, GL_TEXTURE_MIN_FILTER, m_MipMapLevels > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+	glTextureParameteri(m_TextureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	SetLinearTextureFilter(true); //Set texture filtering to linear
+	glTextureParameteri(m_TextureId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_TextureId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_TextureId, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	if(m_Pixels.posX != nullptr) //only create mipMaps if we had pixel data
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+	//SetLinearTextureFilter(true); //Set texture filtering to linear
 
 	SOIL_free_image_data(m_Pixels.posX);
 	SOIL_free_image_data(m_Pixels.negX);

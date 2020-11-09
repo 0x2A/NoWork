@@ -16,9 +16,11 @@ public:
 		TEXTURE_1D = 0x0DE0,
 		TEXTURE_2D = 0x0DE1,
 		TEXTURE_3D = 0x0DE2,
+		TEXTURE_CUBE = 0x8513
 	};
 
-	NOWORK_API static RenderTexturePtr Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed = false);
+	NOWORK_API static RenderTexturePtr Create(int width, int height, Type type, Texture::Format textureFormat, int samples = 0, bool compressed = false);
+
 
 protected:
 
@@ -31,5 +33,5 @@ private:
 
 	int m_InternalFormat;
 	int m_Type;
-	Texture::Format m_Format;
+	int m_Samples;
 };

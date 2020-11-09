@@ -14,7 +14,7 @@ void Texture::Init(NoWork* framework, Renderer* renderer)
 	m_Renderer = renderer;
 
 	//check if extensions are available
-	m_UseDSA = false;//framework->ExtensionAvailable("GL_EXT_direct_state_access"); //looks like some drivers still have problems with this since its very new
+	m_UseDSA = framework->ExtensionAvailable("GL_EXT_direct_state_access"); //looks like some drivers still have problems with this since its very new
 	m_UseTexStorage = framework->ExtensionAvailable("GL_ARB_texture_storage"); 
 	m_UseInternalFormat = framework->ExtensionAvailable("GL_ARB_internalformat_query2");
 
@@ -25,6 +25,7 @@ Texture::Texture(GLuint textType, GLenum texBindingType)
 	m_TextureType = textType;
 	m_TextureBindingType = texBindingType;
 	m_TextureId = 0;
+	m_MipMapLevels = 1;
 }
 
 void Texture::SetParameteri(GLenum pName, GLint param)
@@ -99,14 +100,12 @@ void Texture::GenerateTexture()
 		return;
 	}
 
-	glGenTextures(1, &m_TextureId);
-	glBindTexture(m_TextureType, m_TextureId);
+	glCreateTextures(m_TextureType, 1, &m_TextureId);
 }
 
 void Texture::Bind(uint32_t slot)
 {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(m_TextureType, m_TextureId);
+	glBindTextureUnit(slot, m_TextureId);
 }
 
 GLint GetInternalFormatLegacy(GLenum targetFormat)
@@ -221,7 +220,7 @@ NOWORK_API void Texture::SetLinearTextureFilter(bool state)
 		float aniFilter = m_Renderer->GetAnisotropicFilterValue();
 		if (aniFilter > 0.0f)
 		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniFilter);
+			glTextureParameterf(m_TextureId, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniFilter);
 		}
 		else
 		{

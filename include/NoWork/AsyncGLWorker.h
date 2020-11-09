@@ -1,8 +1,10 @@
 #pragma once
 
+#include <memory>
 
 
-class AsyncGLWorker
+
+class AsyncGLWorker: public std::enable_shared_from_this<AsyncGLWorker>
 {
 	friend class Renderer;
 
@@ -17,7 +19,7 @@ protected:
 
 struct AsyncGLWork_t
 {
-	AsyncGLWorker* worker;
+	std::shared_ptr<AsyncGLWorker> worker;
 	int mode;
 	void *params;
 };

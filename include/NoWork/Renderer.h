@@ -82,9 +82,11 @@ public:
 	//NOWORK_API void SetCamera(Camera* val) { m_Camera = val; }
 
 	NOWORK_API void RenderFullscreenQuad(ShaderPtr shader, glm::vec2 resolution = glm::vec2(-1, -1));
-	NOWORK_API void Blit(RenderTexturePtr source, FramebufferPtr framebuffer, ShaderPtr shader);
-	NOWORK_API void Blit(RenderTexturePtr source, FramebufferPtr framebuffer);
-	NOWORK_API void Blit(RenderTexturePtr source);
+	NOWORK_API void Blit(TexturePtr source, FramebufferPtr framebuffer, ShaderPtr shader);
+	NOWORK_API void Blit(TexturePtr source, FramebufferPtr framebuffer);
+	NOWORK_API void Blit(TexturePtr source);
+	NOWORK_API void Blit(FramebufferPtr source, FramebufferPtr dest);
+
 
 	NOWORK_API FramebufferPtr GetWindowFramebuffer() { return m_WindowFramebuffer; }
 

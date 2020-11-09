@@ -104,7 +104,7 @@ bool Input::MouseButtonDown(long btn)
 
 bool Input::MouseButtonHeld(long btn)
 {
-	return (glfwGetMouseButton(m_Framework->GetWindow(), btn) != GLFW_PRESS);
+	return (glfwGetMouseButton(m_Framework->GetWindow(), btn) == GLFW_PRESS);
 }
 
 NOWORK_API void Input::GrabMouse(bool s)

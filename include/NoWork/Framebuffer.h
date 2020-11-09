@@ -37,7 +37,7 @@ public:
 
 	NOWORK_API ~Framebuffer();
 
-	NOWORK_API static FramebufferPtr Create(int width, int height);
+	NOWORK_API static FramebufferPtr Create(int width, int height, int samples = 0);
 
 	NOWORK_API bool BindTexture(RenderTexturePtr renderTexture, AttachmentType targetAttachmentType);
 	NOWORK_API void Bind();
@@ -62,6 +62,7 @@ private:
 
 	unsigned int m_FBO;
 	glm::ivec2 m_Size;
+	int m_Samples;
 	std::unordered_map<AttachmentType, RenderTexturePtr> m_BoundTextures;
 	std::vector<AttachmentType> m_BoundAttachmentTypes;
 };

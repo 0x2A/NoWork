@@ -115,6 +115,10 @@ public:
 
 	NOWORK_API glm::ivec2 GetSize() { return glm::ivec2(m_Width, m_Height); }
 
+
+	NOWORK_API Texture::Format GetFormat() { return m_Format; }
+
+	NOWORK_API uint GetMipMapLevels() { return m_MipMapLevels;}
 protected:
 
 	Texture(unsigned int texType = GL_TEXTURE_2D, unsigned int texBindingType = GL_TEXTURE_BINDING_2D); //values for GL_TEXTURE_2D and GL_TEXTURE_BINDING_2D, maybe we should include opengl headers
@@ -131,4 +135,7 @@ protected:
 	unsigned int m_TextureType, m_TextureBindingType;
 	unsigned int m_TextureId;
 	unsigned int m_Width, m_Height;
+	unsigned int m_MipMapLevels;
+
+	Texture::Format m_Format;
 };

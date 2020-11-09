@@ -87,7 +87,10 @@ protected:
 
 	virtual void DoAsyncWork(int mode, void *params) override;
 
-private:
+
+	static bool ValidateProgram(unsigned int program);	
+	static bool ValidateShader(GLuint shader, const char* file = 0);
+
 	std::string m_VertexSrc;
 	std::string m_FragmentSrc;
 

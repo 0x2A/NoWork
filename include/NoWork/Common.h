@@ -64,3 +64,5 @@ inline void DelArr(T* ptr)
 	delete []ptr;
 	ptr = nullptr;
 }
+
+

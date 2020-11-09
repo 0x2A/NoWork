@@ -14,7 +14,7 @@
     <ProjectGuid>{3848E321-968D-42C4-B10A-B1C001E2779F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>NoWork</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -122,6 +122,7 @@
     <ClCompile Include="src\NoWork\AudioSource.cpp" />
     <ClCompile Include="src\NoWork\AudioSystem.cpp" />
     <ClCompile Include="src\NoWork\Camera.cpp" />
+    <ClCompile Include="src\NoWork\ComputeShader.cpp" />
     <ClCompile Include="src\NoWork\EventHandler.cpp" />
     <ClCompile Include="src\NoWork\FileSystem.cpp" />
     <ClCompile Include="src\NoWork\Font.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="src\NoWork\Texture2D.cpp" />
     <ClCompile Include="src\NoWork\TextureCube.cpp" />
     <ClCompile Include="src\NoWork\Transform.cpp" />
+    <ClCompile Include="src\NoWork\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\NoWork\AnimatedSprite.h" />
@@ -153,6 +155,7 @@
     <ClInclude Include="include\NoWork\AudioSystem.h" />
     <ClInclude Include="include\NoWork\Camera.h" />
     <ClInclude Include="include\NoWork\Common.h" />
+    <ClInclude Include="include\NoWork\ComputeShader.h" />
     <ClInclude Include="include\NoWork\EventHandler.h" />
     <ClInclude Include="include\NoWork\FileSystem.h" />
     <ClInclude Include="include\NoWork\Font.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="include\NoWork\Texture2D.h" />
     <ClInclude Include="include\NoWork\TextureCube.h" />
     <ClInclude Include="include\NoWork\Transform.h" />
+    <ClInclude Include="include\NoWork\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

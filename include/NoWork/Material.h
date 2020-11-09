@@ -41,10 +41,12 @@ public:
 	void SetMetallicTexture(Texture2DPtr tex);
 	Texture2DPtr GetMetallicTexture();
 	void SetMetallic(float m);
+	float GetMetallic(){return m_Metallic;}
 
 	void SetRoughnessTexture(Texture2DPtr tex);
 	Texture2DPtr GetRoughnessTexture();
 	void SetRoughness(float m);
+	float GetRoughness() { return m_Roughness; }
 
 	void SetShader(ShaderPtr shader);
 	ShaderPtr GetShader();

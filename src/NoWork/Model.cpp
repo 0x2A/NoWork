@@ -107,54 +107,103 @@ NOWORK_API  ModelPtr Model::Load(const char* path, Mesh::DataUsage usage /*= Mes
 		MaterialPtr mat = std::make_shared<Material>(matName.C_Str(), nullptr);
 		if (material->GetTexture(aiTextureType_DIFFUSE, texIndex, &texPath) == AI_SUCCESS)
 		{
-			path = basePath + "/" + texPath.data;
 			Texture2DPtr tex(nullptr);
-			if (!loadedTextures[path])
+			if(auto texture = scene->GetEmbeddedTexture(texPath.C_Str())) 
 			{
-				tex = Texture2D::Load(path.c_str());
-				loadedTextures[path] = tex;
+				//returned pointer is not null, read texture from memory
+				if(texture->mHeight <= 0) //seems to be compressed texture, try to load it with image library
+					tex = Texture2D::LoadFromMemory((unsigned char*)texture->pcData, texture->mWidth, true, true);
+				else
+					tex = Texture2D::LoadRawFromMemory((unsigned char*)texture->pcData, texture->mWidth, texture->mHeight, true, true);
 			}
 			else
-				tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			{
+				path = basePath + "/" + texPath.data;
+				
+				if (!loadedTextures[path])
+				{
+					tex = Texture2D::Load(path.c_str());
+					loadedTextures[path] = tex;
+				}
+				else
+					tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			}
+			
 			mat->SetDiffuseTexture(tex);
 		}
 		if (material->GetTexture(aiTextureType_NORMALS, texIndex, &texPath) == AI_SUCCESS)
 		{
-			path = basePath + "/" + texPath.data;
 			Texture2DPtr tex(nullptr);
-			if (!loadedTextures[path])
+			if (auto texture = scene->GetEmbeddedTexture(texPath.C_Str()))
 			{
-				tex = Texture2D::Load(path.c_str());
-				loadedTextures[path] = tex;
+				//returned pointer is not null, read texture from memory
+				if (texture->mHeight <= 0) //seems to be compressed texture, try to load it with image library
+					tex = Texture2D::LoadFromMemory((unsigned char*)texture->pcData, texture->mWidth, false, true);
+				else
+					tex = Texture2D::LoadRawFromMemory((unsigned char*)texture->pcData, texture->mWidth, texture->mHeight, false, true);
 			}
 			else
-				tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			{
+				path = basePath + "/" + texPath.data;
+				
+				if (!loadedTextures[path])
+				{
+					tex = Texture2D::Load(path.c_str(), false);
+					loadedTextures[path] = tex;
+				}
+				else
+					tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			}
 			mat->SetNormalTexture(tex);
 		}
 		if (material->GetTexture(aiTextureType_SHININESS, texIndex, &texPath) == AI_SUCCESS)
 		{
-			path = basePath + "/" + texPath.data;
 			Texture2DPtr tex(nullptr);
-			if (!loadedTextures[path])
+			if (auto texture = scene->GetEmbeddedTexture(texPath.C_Str()))
 			{
-				tex = Texture2D::Load(path.c_str());
-				loadedTextures[path] = tex;
+				//returned pointer is not null, read texture from memory
+				if (texture->mHeight <= 0) //seems to be compressed texture, try to load it with image library
+					tex = Texture2D::LoadFromMemory((unsigned char*)texture->pcData, texture->mWidth, false, true);
+				else
+					tex = Texture2D::LoadRawFromMemory((unsigned char*)texture->pcData, texture->mWidth, texture->mHeight, false, true);
 			}
 			else
-				tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			{
+				path = basePath + "/" + texPath.data;
+				
+				if (!loadedTextures[path])
+				{
+					tex = Texture2D::Load(path.c_str(), false);
+					loadedTextures[path] = tex;
+				}
+				else
+					tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			}
 			mat->SetRoughnessTexture(tex);
 		}
 		if (material->GetTexture(aiTextureType_SPECULAR, texIndex, &texPath) == AI_SUCCESS)
 		{
-			path = basePath + "/" + texPath.data;
 			Texture2DPtr tex(nullptr);
-			if (!loadedTextures[path])
+			if (auto texture = scene->GetEmbeddedTexture(texPath.C_Str()))
 			{
-				tex = Texture2D::Load(path.c_str());
-				loadedTextures[path] = tex;
+				//returned pointer is not null, read texture from memory
+				if (texture->mHeight <= 0) //seems to be compressed texture, try to load it with image library
+					tex = Texture2D::LoadFromMemory((unsigned char*)texture->pcData, texture->mWidth, false, true);
+				else
+					tex = Texture2D::LoadRawFromMemory((unsigned char*)texture->pcData, texture->mWidth, texture->mHeight, false, true);
 			}
 			else
-				tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			{
+				path = basePath + "/" + texPath.data;
+				
+				if (!loadedTextures[path])
+				{
+					tex = Texture2D::Load(path.c_str(), false);
+					loadedTextures[path] = tex;
+				}
+				else
+					tex = std::dynamic_pointer_cast<Texture2D>(loadedTextures[path]);
+			}
 			mat->SetMetallicTexture(tex);
 		}
 		aiColor3D col;
@@ -168,6 +217,8 @@ NOWORK_API  ModelPtr Model::Load(const char* path, Mesh::DataUsage usage /*= Mes
 		
 		material->Get(AI_MATKEY_SHININESS_STRENGTH, fval);
 		mat->SetMetallic(1.0f - fval);
+
+		mat->SetShader(Shader::DefaultBlinPhong);
 		
 		model->m_Materials.push_back(mat);
 		
@@ -221,6 +272,29 @@ NOWORK_API void Model::Render()
 	}
 }
 
+NOWORK_API void Model::Render(ShaderPtr shader)
+{
+		
+	for (int i = 0; i < m_Meshes.size(); i++)
+	{
+		MaterialPtr material;
+		if (m_Materials[m_MaterialIndices[i]])
+		{
+			material = m_Materials[m_MaterialIndices[i]];
+		}
+		else
+			material = Material::FallbackMaterial;
+
+		auto lastShader = material->GetShader();
+		material->SetShader(shader);
+
+		m_Meshes[i]->GetTransform()->SetModelMatrix(m_Transform.GetModelMatrix());
+		m_Meshes[i]->Render(material);
+
+		material->SetShader(lastShader);
+	}
+}
+
 NOWORK_API void Model::ReplaceMaterial(int id, MaterialPtr tex)
 {
 	if (id < m_Materials.size())
@@ -229,7 +303,13 @@ NOWORK_API void Model::ReplaceMaterial(int id, MaterialPtr tex)
 	}
 }
 
-NOWORK_API MaterialPtr Model::GetMaterial(int meshId)
+NOWORK_API MaterialPtr Model::GetMaterialFromSubmesh(int meshId)
 {
+
 	return m_Materials[m_MaterialIndices[meshId]];
+}
+
+NOWORK_API MaterialPtr Model::GetMaterial(int materialId)
+{
+	return m_Materials[materialId];
 }

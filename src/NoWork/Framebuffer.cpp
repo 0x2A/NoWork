@@ -12,18 +12,19 @@ Framebuffer::~Framebuffer()
 	glDeleteFramebuffers(1, &m_FBO);
 }
 
-FramebufferPtr Framebuffer::Create(int width, int height)
+FramebufferPtr Framebuffer::Create(int width, int height, int samples)
 {
 	FramebufferPtr fb = FramebufferPtr(new Framebuffer);
 	fb->m_Size.x = width;
 	fb->m_Size.y = height;
+	fb->m_Samples = samples;
 
 	if (!NoWork::IsMainThread())
 	{
 		fb->AddToGLQueue(0, nullptr);
 		return fb;
 	}
-	glGenFramebuffers(1, &fb->m_FBO);
+	glCreateFramebuffers(1, &fb->m_FBO);
 	return fb;
 }
 
@@ -44,24 +45,18 @@ bool Framebuffer::BindTexture(RenderTexturePtr renderTexture, AttachmentType tar
 	if (renderTexture->GetSize() != m_Size)
 		LOG_WARNING("Bound render texture does not match framebuffer size! TextureId:" << renderTexture->GetTextureId() << " FramebufferId:" << m_FBO);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-	switch (renderTexture->GetType())
-	{
-	case GL_TEXTURE_1D:
-		glFramebufferTexture1D(GL_FRAMEBUFFER, targetAttachmentType, renderTexture->GetType(), renderTexture->GetTextureId(), 0);
-		break;
-	case GL_TEXTURE_2D:
-		glFramebufferTexture2D(GL_FRAMEBUFFER, targetAttachmentType, renderTexture->GetType(), renderTexture->GetTextureId(), 0);
-		break;
-	case GL_TEXTURE_3D:
-		glFramebufferTexture3D(GL_FRAMEBUFFER, targetAttachmentType, renderTexture->GetType(), renderTexture->GetTextureId(), 0, 0);
-		break;
-	default:
-		glFramebufferTexture(GL_FRAMEBUFFER, targetAttachmentType, renderTexture->GetTextureId(), 0);
-	}
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
+	if(m_Samples > 0 || targetAttachmentType == Renderer::DEPTH_ATTACHMENT || targetAttachmentType == Renderer::DEPTH_STENCIL_ATTACHMENT || targetAttachmentType == Renderer::STENCIL_ATTACHMENT)
+	{
+		glNamedFramebufferRenderbuffer(m_FBO, targetAttachmentType, GL_RENDERBUFFER, renderTexture->GetTextureId());
+	}
+	else
+	{
+		glNamedFramebufferTexture(m_FBO, targetAttachmentType, renderTexture->GetTextureId(), 0);
+	}
 	// check FBO status
-	GLenum FBOstatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	GLenum FBOstatus = glCheckNamedFramebufferStatus(m_FBO, GL_FRAMEBUFFER);
 	if (FBOstatus != GL_FRAMEBUFFER_COMPLETE)
 	{
 		LOG_ERROR("GLError: GL_FRAMEBUFFER_COMPLETE failed, CANNOT use FBO\n");
@@ -77,7 +72,7 @@ bool Framebuffer::BindTexture(RenderTexturePtr renderTexture, AttachmentType tar
 	}
 
 	// switch back to window-system-provided framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return true;
 }
@@ -98,7 +93,7 @@ void Framebuffer::Unbind()
 RenderTexturePtr Framebuffer::CreateAndAttachTexture(AttachmentType targetAttachmentType,
 	RenderTexture::Type type, Texture::Format textureFormat, bool compressed /*= false*/)
 {
-	RenderTexturePtr tex = RenderTexture::Create(m_Size.x, m_Size.y, type, textureFormat, compressed);
+	RenderTexturePtr tex = RenderTexture::Create(m_Size.x, m_Size.y, type, textureFormat, m_Samples, compressed);
 	if (!BindTexture(tex, targetAttachmentType))
 	{
 		LOG_ERROR("Failed to attach texture to Framebuffer: " << targetAttachmentType);
@@ -116,7 +111,7 @@ void Framebuffer::DoAsyncWork(int mode, void *params)
 	switch (mode)
 	{
 	case 0:
-		glGenFramebuffers(1, &m_FBO);
+		glCreateFramebuffers(1, &m_FBO);
 		break;
 	case 1:
 		AsyncBindParameters *p = static_cast<AsyncBindParameters*>(params);

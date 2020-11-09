@@ -28,6 +28,8 @@
     <ClCompile Include="src\NoWork\gl3w.c" />
     <ClCompile Include="src\NoWork\Transform.cpp" />
     <ClCompile Include="src\NoWork\TextureCube.cpp" />
+    <ClCompile Include="src\NoWork\ComputeShader.cpp" />
+    <ClCompile Include="src\NoWork\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\NoWork\AnimatedSprite.h" />
@@ -61,5 +63,7 @@
     <ClInclude Include="include\NoWork\FileSystem.h" />
     <ClInclude Include="include\NoWork\Material.h" />
     <ClInclude Include="include\NoWork\TextureCube.h" />
+    <ClInclude Include="include\NoWork\ComputeShader.h" />
+    <ClInclude Include="include\NoWork\utils.h" />
   </ItemGroup>
 </Project>
