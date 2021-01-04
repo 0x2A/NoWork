@@ -66,4 +66,32 @@
     <ClInclude Include="include\NoWork\ComputeShader.h" />
     <ClInclude Include="include\NoWork\utils.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{cd0f5423-bb69-4922-b3c8-74f1ef1ca668}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\NoWork\Shaders\defaultUnlit.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\NoWork\Shaders\defaultUnlit.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\NoWork\Shaders\defaultUnlitTextured.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\NoWork\Shaders\defaultBlinPhong.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\NoWork\Shaders\screenAligned.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\NoWork\Shaders\blit.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\NoWork\Shaders\blit.fs">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
 </Project>

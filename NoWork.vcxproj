@@ -182,6 +182,15 @@
     <ClInclude Include="include\NoWork\Transform.h" />
     <ClInclude Include="include\NoWork\utils.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\NoWork\Shaders\blit.fs" />
+    <None Include="src\NoWork\Shaders\blit.vs" />
+    <None Include="src\NoWork\Shaders\defaultBlinPhong.fs" />
+    <None Include="src\NoWork\Shaders\defaultUnlit.fs" />
+    <None Include="src\NoWork\Shaders\defaultUnlit.vs" />
+    <None Include="src\NoWork\Shaders\defaultUnlitTextured.fs" />
+    <None Include="src\NoWork\Shaders\screenAligned.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

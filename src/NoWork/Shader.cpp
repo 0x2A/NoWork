@@ -166,122 +166,30 @@ Shader::~Shader()
 void Shader::InitializeDefaultShaders()
 {
 	const char* defaultUnlitVertSrc =
-		"#version 130\n"
-		"in vec3 vertexPosition;\n"
-		"in vec3 vertexNormal;\n"
-		"in vec2 vertexUV;\n"
-		"in vec4 vertexColor;\n"
-		"in vec3 vertexTangent;\n"
-		"\n"
-		"uniform mat4 MVPMatrix;\n"
-		"uniform mat4 ModelViewMatrix;\n"
-		"uniform mat4 ModelMatrix;\n"
-		"\n"
-		"out vec2 texCoord;\n"
-		"out vec4 vertColor;\n"
-		"out vec3 worldNormal;\n"
-		"\n"
-		"void main( void )\n"
-		"{\n"
-		"    texCoord = vertexUV;\n"
-		"    vertColor = vertexColor;\n"
-		"    gl_Position = MVPMatrix * vec4(vertexPosition,1);\n"
-		"    worldNormal = normalize(vec3(ModelMatrix * vec4(vertexNormal,0)));"
-		"}";
+#include "Shaders/defaultUnlit.vs"
+		;
 
 	const char* defaultUnlitFragSrc =
-		"#version 130\n"
-		"uniform vec4 DiffuseColor;\n"
-		"\n"
-		"in vec2 texCoord;\n"
-		"in vec4 vertColor;\n"
-		"\n"
-		"out vec4 colorOut;\n"
-		"\n"
-		"void main( void )\n"
-		"{\n"
-		"    colorOut = DiffuseColor * vertColor;\n"
-		"}";
+#include "Shaders/defaultUnlit.fs"
+		;
 
 	const char* defaultUnlitFragTexturedSrc =
-		"#version 130\n"
-		"uniform vec4 DiffuseColor;\n"
-		"uniform sampler2D Texture;\n"
-		"\n"
-		"in vec2 texCoord;\n"
-		"in vec4 vertColor;\n"
-		"\n"
-		"out vec4 colorOut;\n"
-		"\n"
-		"void main( void )\n"
-		"{\n"
-		"	 vec4 col = texture(Texture, texCoord);\n"
-		"    colorOut = DiffuseColor * vertColor * col;\n"
-		"}";
+#include "Shaders/defaultUnlitTextured.fs"		
+		;
 
 	const char* defaultBlinPhongFragSrc = 
-		"#version 130\n"
-		"uniform vec4 DiffuseColor;\n"
-		"uniform sampler2D Texture;\n"
-		"uniform vec3 LightPos;\n"
-		"\n"
-		"in vec2 texCoord;\n"
-		"in vec4 vertColor;\n"
-		"in vec3 worldNormal;\n"
-		"\n"
-		"out vec4 colorOut;\n"
-		"\n"
-		"void main(void)\n"
-		"{\n"
-		"   float ndotl = clamp(dot(normalize(worldNormal), normalize(LightPos)), 0, 1);"
-		"   colorOut = DiffuseColor * vertColor * ndotl;\n"
-		"}"
+#include "Shaders/defaultBlinPhong.fs"
 		;
 	const char* screenAlignedVertSrc =
-		"#version 130\n"
-		"in vec3 vertexPosition;\n"
-		"in vec3 vertexNormal;\n"
-		"in vec2 vertexUV;\n"
-		"in vec4 vertexColor;\n"
-		"in vec3 vertexTangent;\n"
-		"\n"
-		"out vec2 texCoord;\n"
-		"out vec4 vertColor;\n"
-		"\n"
-		"void main( void )\n"
-		"{\n"
-		"    texCoord = vertexUV;\n"
-		"    vertColor = vertexColor;\n"
-		"    gl_Position = vec4(vertexPosition.xy, 0, 1);\n"
-		"}";
+#include "Shaders/screenAligned.vs"
+		;
 
-	const char* BlitScreenShaderVertSrc = R"(
-
-		#version 130
-		in vec4 vertexPosition;
-		in vec2 vertexUV;
-
-		out vec2 texCoord;
-
-		void main(void)
-		{
-			texCoord = vertexUV;
-			gl_Position = vertexPosition;
-		};
-		)";
-	const char* BlitScreenShaderFragSrc = R"(
-
-		#version 130
-		uniform sampler2D texture0;
-
-		in vec2 texCoord;
-		out vec4 colorOut;
-
-		void main(void)
-		{
-			colorOut = vec4(texture(texture0,texCoord).xyz, 1);
-		};
-		)";
+	const char* BlitScreenShaderVertSrc = 
+#include "Shaders/blit.vs"
+		;
+	const char* BlitScreenShaderFragSrc = 
+#include "Shaders/blit.fs"
+		;
 
 	DefaultUnlit = Shader::Create("defaultUnlit", defaultUnlitVertSrc, defaultUnlitFragSrc);
 	DefaultUnlitTextured = Shader::Create("defaultUnlitTextured", defaultUnlitVertSrc, defaultUnlitFragTexturedSrc);
