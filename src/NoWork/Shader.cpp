@@ -364,9 +364,6 @@ bool Shader::CompileShaders(const std::string& vs, const std::string& fs)
 		return false;
 	}
 
-	glBindAttribLocation(m_ShaderObject, MODEL_VERTEX_LOCATION, "vertexPosition");
-	glBindAttribLocation(m_ShaderObject, MODEL_NORMAL_LOCATION, "vertexNormal");
-	glBindAttribLocation(m_ShaderObject, MODEL_TEXCOORD_LOCATION, "vertexUV");
 
 	return true;
 }

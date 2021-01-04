@@ -125,7 +125,7 @@ NOWORK_API void Camera::ClearScreen(ClearFlags clearFlag)
 		break;
 	}
 
-	glClear(clearbf);
+	m_Renderer->ClearScreen(clearbf);
 }
 
 NOWORK_API void Camera::SetColorMask(bool r, bool g, bool b, bool a)

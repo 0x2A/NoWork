@@ -15,6 +15,8 @@ void Texture::Init(NoWork* framework, Renderer* renderer)
 
 	//check if extensions are available
 	m_UseDSA = framework->ExtensionAvailable("GL_EXT_direct_state_access"); //looks like some drivers still have problems with this since its very new
+	assert(m_UseDSA || "Need GL_EXT_direct_state_access. Please update drivers");
+
 	m_UseTexStorage = framework->ExtensionAvailable("GL_ARB_texture_storage"); 
 	m_UseInternalFormat = framework->ExtensionAvailable("GL_ARB_internalformat_query2");
 
@@ -30,66 +32,28 @@ Texture::Texture(GLuint textType, GLenum texBindingType)
 
 void Texture::SetParameteri(GLenum pName, GLint param)
 {
-	if (m_UseDSA) //more performance, if available
-	{
+
 		glTextureParameteri(m_TextureId, pName, param);
-	}
-	else //No direct state access available, use slower method
-	{
-		GLuint boundTexture = 0;
-		glGetIntegerv(m_TextureBindingType, (GLint*)&boundTexture); //get currently bound texture
-		glBindTexture(m_TextureType, m_TextureId); //bind to this texture, so we can change state
-		glTexParameteri(m_TextureType, pName, param); //change state for this texture
-		if(boundTexture != m_TextureId) glBindTexture(m_TextureType, boundTexture); //rebind to old texture again
-	}
+
 }
 
 void Texture::SetParameterf(GLenum pName, GLfloat param)
 {
-	if (m_UseDSA) //more performance, if available
-	{
+
 		glTextureParameterf(m_TextureId, pName, param);
-	}
-	else //No direct state access available, use slower method
-	{
-		GLuint boundTexture = 0;
-		glGetIntegerv(m_TextureBindingType, (GLint*)&boundTexture); //get currently bound texture
-		glBindTexture(m_TextureType, m_TextureId); //bind to this texture, so we can change state
-		glTexParameterf(m_TextureType, pName, param); //change state for this texture
-		if (boundTexture != m_TextureId) glBindTexture(m_TextureType, boundTexture); //rebind to old texture again
-	}
+
 }
 
 void Texture::SetParameteriv(GLenum pName, const GLint *param)
 {
-	if (m_UseDSA) //more performance, if available
-	{
 		glTextureParameteriv(m_TextureId, pName, param);
-	}
-	else //No direct state access available, use slower method
-	{
-		GLuint boundTexture = 0;
-		glGetIntegerv(m_TextureBindingType, (GLint*)&boundTexture); //get currently bound texture
-		glBindTexture(m_TextureType, m_TextureId); //bind to this texture, so we can change state
-		glTexParameteriv(m_TextureType, pName, param); //change state for this texture
-		if (boundTexture != m_TextureId) glBindTexture(m_TextureType, boundTexture); //rebind to old texture again
-	}
 }
 
 void Texture::SetParameterfv(GLenum pName, const GLfloat *param)
 {
-	if (m_UseDSA) //more performance, if available
-	{
+
 		glTextureParameterfv(m_TextureId, pName, param);
-	}
-	else //No direct state access available, use slower method
-	{
-		GLuint boundTexture = 0;
-		glGetIntegerv(m_TextureBindingType, (GLint*)&boundTexture); //get currently bound texture
-		glBindTexture(m_TextureType, m_TextureId); //bind to this texture, so we can change state
-		glTexParameterfv(m_TextureType, pName, param); //change state for this texture
-		if (boundTexture != m_TextureId) glBindTexture(m_TextureType, boundTexture); //rebind to old texture again
-	}
+
 }
 
 void Texture::GenerateTexture()
@@ -220,7 +184,7 @@ NOWORK_API void Texture::SetLinearTextureFilter(bool state)
 		float aniFilter = m_Renderer->GetAnisotropicFilterValue();
 		if (aniFilter > 0.0f)
 		{
-			glTextureParameterf(m_TextureId, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniFilter);
+			SetParameterf(GL_TEXTURE_MAX_ANISOTROPY_EXT, aniFilter);
 		}
 		else
 		{

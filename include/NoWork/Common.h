@@ -1,7 +1,7 @@
 #pragma once
 
 
-#define NOWORK_VERSION	"1.7"
+#define NOWORK_VERSION	"2.0"
 
 //Either export or import dll functions
 #ifdef NOWORK_DLL

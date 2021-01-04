@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	MyGame game;
 
 	//Lets try to get the latest opengl version
-	framework.SetOpenGLVersion(4, 5);
+	framework.SetOpenGLVersion(4, 6);
 
 	//now create a window (with debug context)
 	if (!framework.CreateNewWindow("Test", 1280, 720, 40, 40, Window::Flags::WINDOW_SHOWED | Window::Flags::WINDOW_OPENGL_DEBUG_CONTEXT))

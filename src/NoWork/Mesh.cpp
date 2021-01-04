@@ -18,6 +18,7 @@ Mesh::~Mesh()
 	m_Faces.clear();
 
 	unsigned int buffers[] = { m_IndexBuffer, m_VertexBuffer, m_NormalBuffer, m_TexCoordBuffer };
+	
 	glDeleteBuffers(4, buffers);
 	glDeleteVertexArrays(1, &m_VertexArrayObject);
 }
@@ -34,7 +35,6 @@ MeshPtr Mesh::Create(const Vertex *vertices, int numVertices, const Face *faces,
 	mesh->m_NumIndices = (unsigned int)numFaces * 3;
 	mesh->m_NumVertices = (unsigned int)numVertices;
 
-	//if (mesh->m_Faces.size() == 0 && calculateNormals || mesh->m_Faces.size() > 0)
 	if (calculateNormals)
 		mesh->CalculateNormals();
 
@@ -86,10 +86,6 @@ bool Mesh::CreateVBO()
 		LOG_ERROR("No vertices defined. Please add some vertices",__FUNCTION__);
 		return false;
 	}
-	if (m_NumIndices == 0)
-	{
-		//LOG_WARNING("No indices defined. Rendering in array mode (slower)", __FUNCTION__);
-	}
 	
 	if (!NoWork::IsMainThread())
 	{
@@ -97,52 +93,49 @@ bool Mesh::CreateVBO()
 		return true;
 	}
 
-	//generate vertex buffer object
-	glGenVertexArrays(1, &m_VertexArrayObject);
-	glBindVertexArray(m_VertexArrayObject);
-
 	// buffer for indices
 	if (m_NumIndices > 0 || (m_DataUsage == DYNAMIC_COPY || m_DataUsage == DYNAMIC_DRAW || m_DataUsage == DYNAMIC_READ))
 	{
-		glGenBuffers(1, &m_IndexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+		glCreateBuffers(1, &m_IndexBuffer);
+		
 		if (m_Faces.size() != 0)
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Face) * m_Faces.size(), &m_Faces[0], m_DataUsage);
+			glNamedBufferData(m_IndexBuffer, sizeof(Face) * m_Faces.size(), &m_Faces[0], m_DataUsage);
 	}
 
 	//buffer for vertices
-	glGenBuffers(1, &m_VertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+	glCreateBuffers(1, &m_VertexBuffer);
 	if (m_Vertices.size() != 0)
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0], m_DataUsage);
+		glNamedBufferData(m_VertexBuffer, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0], m_DataUsage);
 
-	
+
+	//generate vertex buffer object
+	glCreateVertexArrays(1, &m_VertexArrayObject);
+
+	//assign buffers to vertex array object
+	glVertexArrayVertexBuffer(m_VertexArrayObject, 0, m_VertexBuffer, 0, sizeof(Vertex));
+	glVertexArrayElementBuffer(m_VertexArrayObject, m_IndexBuffer);
+
 	//setup data locations
 
 	// Positions (location = 0)
-	glEnableVertexAttribArray(MODEL_VERTEX_LOCATION);
-	glVertexAttribPointer(MODEL_VERTEX_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glEnableVertexArrayAttrib(m_VertexArrayObject, MODEL_VERTEX_LOCATION);
+	glVertexArrayAttribFormat(m_VertexArrayObject, MODEL_VERTEX_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex));
 
 	//Normals (location = 1)
-	glEnableVertexAttribArray(MODEL_NORMAL_LOCATION);
-	glVertexAttribPointer(MODEL_NORMAL_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(glm::vec3));
+	glEnableVertexArrayAttrib(m_VertexArrayObject, MODEL_NORMAL_LOCATION);
+	glVertexArrayAttribFormat(m_VertexArrayObject, MODEL_NORMAL_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3));
 
 	//texcoords (location = 2)
-	glEnableVertexAttribArray(MODEL_TEXCOORD_LOCATION);
-	glVertexAttribPointer(MODEL_TEXCOORD_LOCATION, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2));
+	glEnableVertexArrayAttrib(m_VertexArrayObject, MODEL_TEXCOORD_LOCATION);
+	glVertexArrayAttribFormat(m_VertexArrayObject, MODEL_TEXCOORD_LOCATION, 2, GL_FLOAT, GL_FALSE, (sizeof(glm::vec3) * 2));
 
 	//vertexColor (location = 3)
-	glEnableVertexAttribArray(MODEL_VERTEX_COLOR_LOCATION);
-	glVertexAttribPointer(MODEL_VERTEX_COLOR_LOCATION, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2 + sizeof(glm::vec2)));
+	glEnableVertexArrayAttrib(m_VertexArrayObject, MODEL_VERTEX_COLOR_LOCATION);
+	glVertexArrayAttribFormat(m_VertexArrayObject, MODEL_VERTEX_COLOR_LOCATION, 4, GL_FLOAT, GL_FALSE, (sizeof(glm::vec3) * 2 + sizeof(glm::vec2)));
 
-	glEnableVertexAttribArray(MODEL_TANGENT_LOCATION);
-	glVertexAttribPointer(MODEL_TANGENT_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3) * 2 + sizeof(glm::vec2) + sizeof(glm::vec4)));
-
-	// unbind buffers
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+	glEnableVertexArrayAttrib(m_VertexArrayObject, MODEL_TANGENT_LOCATION);
+	glVertexArrayAttribFormat(m_VertexArrayObject, MODEL_TANGENT_LOCATION, 3, GL_FLOAT, GL_FALSE, (sizeof(glm::vec3) * 2 + sizeof(glm::vec2) + sizeof(glm::vec4)));
+	
 
 	//clear buffer on static draw since we dont need it in system memory anymore
 	if (m_DataUsage == STATIC_DRAW)
@@ -193,7 +186,6 @@ NOWORK_API void Mesh::Render(ShaderPtr shader, RenderMode mode /*= TRIANGLES*/)
 	else
 		glDrawArrays(mode, 0, m_NumVertices);
 
-	//glBindVertexArray(0);	
 	Renderer::DrawCalls++;
 }
 
@@ -233,22 +225,18 @@ void Mesh::UpdateBufferData(bool reallocate)
 	m_NumIndices = m_Faces.size()*3;
 	m_NumVertices = m_Vertices.size();
 
-	glBindVertexArray(m_VertexArrayObject);
 	if (m_NumIndices > 0)
-	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+	{		
 		if (reallocate)
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Face) * m_Faces.size(), &m_Faces[0], m_DataUsage);
+			glNamedBufferData(m_IndexBuffer, sizeof(Face) * m_Faces.size(), &m_Faces[0], m_DataUsage);
 		else
-			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(Face) * m_Faces.size(), &m_Faces[0]);
+			glNamedBufferSubData(m_IndexBuffer, 0, sizeof(Face) * m_Faces.size(), &m_Faces[0]);
 	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-
+	
 	if (reallocate)
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0], m_DataUsage);
+		glNamedBufferData(m_VertexBuffer, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0], m_DataUsage);
 	else
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0]);
+		glNamedBufferSubData(m_VertexBuffer, 0, sizeof(Vertex) * m_Vertices.size(), &m_Vertices[0]);
 
 	
 }

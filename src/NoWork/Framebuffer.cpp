@@ -45,8 +45,8 @@ bool Framebuffer::BindTexture(RenderTexturePtr renderTexture, AttachmentType tar
 	if (renderTexture->GetSize() != m_Size)
 		LOG_WARNING("Bound render texture does not match framebuffer size! TextureId:" << renderTexture->GetTextureId() << " FramebufferId:" << m_FBO);
 
-	//glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-
+	
+	//multisample and depth/stencil textures need RBO (render buffer object)
 	if(m_Samples > 0 || targetAttachmentType == Renderer::DEPTH_ATTACHMENT || targetAttachmentType == Renderer::DEPTH_STENCIL_ATTACHMENT || targetAttachmentType == Renderer::STENCIL_ATTACHMENT)
 	{
 		glNamedFramebufferRenderbuffer(m_FBO, targetAttachmentType, GL_RENDERBUFFER, renderTexture->GetTextureId());
@@ -81,7 +81,7 @@ void Framebuffer::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 	if (m_BoundAttachmentTypes.size() > 0)
-		glDrawBuffers(m_BoundAttachmentTypes.size(), (GLenum*)&m_BoundAttachmentTypes[0]);
+		glNamedFramebufferDrawBuffers(m_FBO, m_BoundAttachmentTypes.size(), (GLenum*)&m_BoundAttachmentTypes[0]);
 	glViewport(0, 0, m_Size.x, m_Size.y);
 }
 
@@ -100,6 +100,7 @@ RenderTexturePtr Framebuffer::CreateAndAttachTexture(AttachmentType targetAttach
 	}
 	return tex;
 }
+
 
 RenderTexturePtr Framebuffer::GetAttachedTexture(AttachmentType at)
 {
@@ -125,7 +126,7 @@ NOWORK_API void Framebuffer::BindWrite()
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
 	if (m_BoundAttachmentTypes.size() > 0)
-		glDrawBuffers(m_BoundAttachmentTypes.size(), (GLenum*)&m_BoundAttachmentTypes[0]);
+		glNamedFramebufferDrawBuffers(m_FBO, m_BoundAttachmentTypes.size(), (GLenum*)&m_BoundAttachmentTypes[0]);
 	glViewport(0, 0, m_Size.x, m_Size.y);
 }
 

@@ -148,9 +148,7 @@ void Texture2D::Update(const unsigned char* pixels, int width, int height)
 		return;
 	}
 
-	//glBindTexture(GL_TEXTURE_2D, m_TextureId);
 	glTextureSubImage2D(m_TextureId, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels);
-	//glTexImage2D(GL_TEXTURE_2D, 0, m_Format, width, height, 0, m_InternalFormat, m_Type, pixels);
 }
 
 void Texture2D::GenerateMipMaps()
@@ -161,11 +159,9 @@ void Texture2D::GenerateMipMaps()
 		return;
 	}
 
-	//glBindTexture(GL_TEXTURE_2D, m_TextureId);
-	glTextureParameteri(m_TextureId, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	SetParameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glGenerateTextureMipmap(m_TextureId);
 
-	//glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture2D::DoAsyncWork(int mode, void *params)
@@ -208,15 +204,13 @@ void Texture2D::LoadHDRInternal(const char* path)
 
 	glTextureStorage2D(m_TextureId, m_MipMapLevels, GL_RGB16F, width, height);
 
-	glTextureParameterf(m_TextureId, GL_TEXTURE_MIN_FILTER, m_MipMapLevels > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-	glTextureParameterf(m_TextureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	SetParameterf(GL_TEXTURE_MIN_FILTER, m_MipMapLevels > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+	SetParameterf(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	//glTextureStorage2D(m_TextureId, 0, GL_RGB16F, width, height);
-	//glTextureSubImage2D(m_TextureId, 0, 0, 0, width, height, GL_RGB16F, GL_FLOAT, data);
 	glTextureSubImage2D(m_TextureId, 0, 0, 0, width, height, GL_RGB, GL_FLOAT, data);
 
-	glTextureParameteri(m_TextureId, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTextureParameteri(m_TextureId, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	SetParameteri(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	SetParameteri(GL_TEXTURE_WRAP_T, GL_REPEAT);
 	
 	if (m_MipMapLevels > 1) {
 		glGenerateTextureMipmap(m_TextureId);
@@ -240,24 +234,13 @@ void Texture2D::CopyPixelData()
 
 	//glBindTexture(GL_TEXTURE_2D, m_TextureId);
 
-	if (m_UseTexStorage /*&& !m_Constant && !m_srgb*/) //static and extension available? Use faster method
-	{
-		glTextureStorage2D(m_TextureId, m_MipMapLevels, m_Format, m_Width, m_Height);
-		if(m_Pixels != nullptr)
-			glTextureSubImage2D(m_TextureId, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels);
-	}
-	else
-	{
+	glTextureStorage2D(m_TextureId, m_MipMapLevels, m_Format, m_Width, m_Height);
+	if (m_Pixels != nullptr)
+		glTextureSubImage2D(m_TextureId, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels);
 
-		if(m_Pixels != nullptr)
-		{
-			glBindTexture(GL_TEXTURE_2D, m_TextureId);
-			glTexImage2D(GL_TEXTURE_2D, 0, m_Format, m_Width, m_Height, 0, m_InternalFormat, m_Type, m_Pixels);
-		}
-	}
 
-	glTextureParameteri(m_TextureId, GL_TEXTURE_BASE_LEVEL, 0);
-	glTextureParameteri(m_TextureId, GL_TEXTURE_MAX_LEVEL, m_MipMapLevels);
+	SetParameteri( GL_TEXTURE_BASE_LEVEL, 0);
+	SetParameteri( GL_TEXTURE_MAX_LEVEL, m_MipMapLevels);
 
 	SetLinearTextureFilter(true); //Set texture filtering to linear
 
