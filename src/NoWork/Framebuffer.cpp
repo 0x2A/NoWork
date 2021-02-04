@@ -1,6 +1,9 @@
 #include "NoWork/Framebuffer.h"
 #include "NoWork/Log.h"
 #include "NoWork/Framework.h"
+#include "NoWork/RenderBuffer.h"
+
+#include <type_traits>
 
 Framebuffer::Framebuffer()
 {
@@ -28,33 +31,39 @@ FramebufferPtr Framebuffer::Create(int width, int height, int samples)
 	return fb;
 }
 
-bool Framebuffer::BindTexture(RenderTexturePtr renderTexture, AttachmentType targetAttachmentType)
+bool Framebuffer::AttachRenderTarget(RenderTargetPtr renderTarget, AttachmentType targetAttachmentType)
 {
-	if (!renderTexture)
+	if (!renderTarget)
 		return false;
 
 	if (!NoWork::IsMainThread())
 	{
-		AsyncBindParameters *params = new AsyncBindParameters;
-		params->renderTexture = renderTexture;
+		AsyncAttachParameters *params = new AsyncAttachParameters;
+		params->renderTexture = renderTarget;
 		params->targetAttachmentType = targetAttachmentType;
 		AddToGLQueue(1, params);
 		return true;
 	}
 
-	if (renderTexture->GetSize() != m_Size)
-		LOG_WARNING("Bound render texture does not match framebuffer size! TextureId:" << renderTexture->GetTextureId() << " FramebufferId:" << m_FBO);
+	if (renderTarget->GetSize() != m_Size)
+		LOG_WARNING("Bound render target does not match framebuffer size! ObjectID:" << renderTarget->GetObjectId() << " FramebufferId:" << m_FBO);
 
 	
+	renderTarget->AttachToFBO(m_FBO, targetAttachmentType);
+
 	//multisample and depth/stencil textures need RBO (render buffer object)
-	if(m_Samples > 0 || targetAttachmentType == Renderer::DEPTH_ATTACHMENT || targetAttachmentType == Renderer::DEPTH_STENCIL_ATTACHMENT || targetAttachmentType == Renderer::STENCIL_ATTACHMENT)
+
+////////////////////////
+	/*if(dynamic_cast<RenderTexture*>(renderTarget.get()) == nullptr)
 	{
-		glNamedFramebufferRenderbuffer(m_FBO, targetAttachmentType, GL_RENDERBUFFER, renderTexture->GetTextureId());
+		glNamedFramebufferRenderbuffer(m_FBO, targetAttachmentType, GL_RENDERBUFFER, renderTarget->GetObjectId());
 	}
 	else
 	{
-		glNamedFramebufferTexture(m_FBO, targetAttachmentType, renderTexture->GetTextureId(), 0);
-	}
+		glNamedFramebufferTexture(m_FBO, targetAttachmentType, renderTarget->GetObjectId(), 0);
+	}*/
+
+
 	// check FBO status
 	GLenum FBOstatus = glCheckNamedFramebufferStatus(m_FBO, GL_FRAMEBUFFER);
 	if (FBOstatus != GL_FRAMEBUFFER_COMPLETE)
@@ -63,7 +72,7 @@ bool Framebuffer::BindTexture(RenderTexturePtr renderTexture, AttachmentType tar
 		return false;
 	}
 
-	m_BoundTextures[targetAttachmentType] = renderTexture;
+	m_BoundTextures[targetAttachmentType] = renderTarget;
 	m_BoundAttachmentTypes.clear();
 	for (auto &rt : m_BoundTextures)
 	{
@@ -90,19 +99,28 @@ void Framebuffer::Unbind()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-RenderTexturePtr Framebuffer::CreateAndAttachTexture(AttachmentType targetAttachmentType,
+RenderTexturePtr Framebuffer::CreateAndAttachRenderTexture(AttachmentType targetAttachmentType,
 	RenderTexture::Type type, Texture::Format textureFormat, bool compressed /*= false*/)
 {
-	RenderTexturePtr tex = RenderTexture::Create(m_Size.x, m_Size.y, type, textureFormat, m_Samples, compressed);
-	if (!BindTexture(tex, targetAttachmentType))
+	RenderTexturePtr tex = RenderTexture::Create(m_Size.x, m_Size.y, type, textureFormat, compressed);
+	if (!AttachRenderTarget(std::static_pointer_cast<RenderTarget>(tex), targetAttachmentType))
 	{
 		LOG_ERROR("Failed to attach texture to Framebuffer: " << targetAttachmentType);
 	}
 	return tex;
 }
 
+NOWORK_API RenderBufferPtr Framebuffer::CreateAndAttachRenderBuffer(AttachmentType targetAttachmentType, RenderBuffer::Format bufferFormat, int samples /*= 0*/)
+{
+	RenderBufferPtr buf = RenderBuffer::Create(m_Size.x, m_Size.y, bufferFormat, samples);
+	if (!AttachRenderTarget(std::static_pointer_cast<RenderTarget>(buf), targetAttachmentType))
+	{
+		LOG_ERROR("Failed to attach buffer to Framebuffer: " << targetAttachmentType);
+	}
+	return buf;
+}
 
-RenderTexturePtr Framebuffer::GetAttachedTexture(AttachmentType at)
+RenderTargetPtr Framebuffer::GetAttachedRendertarget(AttachmentType at)
 {
 	return m_BoundTextures[at];
 }
@@ -115,8 +133,8 @@ void Framebuffer::DoAsyncWork(int mode, void *params)
 		glCreateFramebuffers(1, &m_FBO);
 		break;
 	case 1:
-		AsyncBindParameters *p = static_cast<AsyncBindParameters*>(params);
-		BindTexture(p->renderTexture, p->targetAttachmentType);
+		AsyncAttachParameters *p = static_cast<AsyncAttachParameters*>(params);
+		AttachRenderTarget(p->renderTexture, p->targetAttachmentType);
 		DelPtr(p);
 		break;
 	}

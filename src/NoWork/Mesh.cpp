@@ -119,7 +119,7 @@ bool Mesh::CreateVBO()
 
 	// Positions (location = 0)
 	glEnableVertexArrayAttrib(m_VertexArrayObject, MODEL_VERTEX_LOCATION);
-	glVertexArrayAttribFormat(m_VertexArrayObject, MODEL_VERTEX_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex));
+	glVertexArrayAttribFormat(m_VertexArrayObject, MODEL_VERTEX_LOCATION, 3, GL_FLOAT, GL_FALSE, 0);
 
 	//Normals (location = 1)
 	glEnableVertexArrayAttrib(m_VertexArrayObject, MODEL_NORMAL_LOCATION);
@@ -136,6 +136,12 @@ bool Mesh::CreateVBO()
 	glEnableVertexArrayAttrib(m_VertexArrayObject, MODEL_TANGENT_LOCATION);
 	glVertexArrayAttribFormat(m_VertexArrayObject, MODEL_TANGENT_LOCATION, 3, GL_FLOAT, GL_FALSE, (sizeof(glm::vec3) * 2 + sizeof(glm::vec2) + sizeof(glm::vec4)));
 	
+	//Tell OpenGL to use first buffer for every attribute
+	glVertexArrayAttribBinding(m_VertexArrayObject, MODEL_VERTEX_LOCATION, 0);
+	glVertexArrayAttribBinding(m_VertexArrayObject, MODEL_NORMAL_LOCATION, 0);
+	glVertexArrayAttribBinding(m_VertexArrayObject, MODEL_TEXCOORD_LOCATION, 0);
+	glVertexArrayAttribBinding(m_VertexArrayObject, MODEL_VERTEX_COLOR_LOCATION, 0);
+	glVertexArrayAttribBinding(m_VertexArrayObject, MODEL_TANGENT_LOCATION, 0);
 
 	//clear buffer on static draw since we dont need it in system memory anymore
 	if (m_DataUsage == STATIC_DRAW)

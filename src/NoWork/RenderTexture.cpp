@@ -3,7 +3,7 @@
 #include "NoWork/Framework.h"
 
 
-RenderTexturePtr RenderTexture::Create(int width, int height, Type type, Texture::Format textureFormat, int samples, bool compressed /*= false*/)
+RenderTexturePtr RenderTexture::Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed /*= false*/)
 {
 	unsigned int tType = type;
 	if (textureFormat == GL_DEPTH_COMPONENT || textureFormat == GL_DEPTH_STENCIL)
@@ -32,13 +32,22 @@ RenderTexturePtr RenderTexture::Create(int width, int height, Type type, Texture
 	tex->m_Width = width;
 	tex->m_Height = height;
 	tex->m_Format = textureFormat;
-	tex->m_Samples = samples;
 
 	if (!NoWork::IsMainThread())
 		tex->AddToGLQueue(0, nullptr);
 	else
 		tex->Generate();
 	return tex;
+}
+
+unsigned int RenderTexture::GetObjectId()
+{
+	return m_TextureId;
+}
+
+glm::ivec2 RenderTexture::GetSize()
+{
+	return Texture::GetSize();
 }
 
 RenderTexture::RenderTexture(unsigned int texType, unsigned int texBindingType) : Texture(texType, texBindingType)
@@ -55,16 +64,23 @@ void RenderTexture::DoAsyncWork(int mode, void *params)
 	}
 }
 
+void RenderTexture::AttachToFBO(unsigned int target, unsigned int type)
+{
+	glNamedFramebufferTexture(target, type, m_TextureId, 0);
+}
+
 void RenderTexture::Generate()
 {
 
-	if(m_Samples == 0 && !(m_Format == GL_DEPTH_COMPONENT || m_Format == GL_DEPTH_STENCIL))
+	//if(m_Samples == 0 && !(m_Format == GL_DEPTH_COMPONENT || m_Format == GL_DEPTH_STENCIL))
 	{
 		glCreateTextures(m_TextureType, 1, &m_TextureId);
 
+		//default to linear sampling
 		glTextureParameteri(m_TextureId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(m_TextureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+		//GL_CLAMP_TO_EDGE                  
 		glTextureParameterf(m_TextureId, GL_TEXTURE_WRAP_S, 0x812F);
 		glTextureParameterf(m_TextureId, GL_TEXTURE_WRAP_T, 0x812F);
 
@@ -73,7 +89,7 @@ void RenderTexture::Generate()
 		glTextureStorage2D(m_TextureId, 1, m_Format, m_Width, m_Height);
 		m_InternalFormat = texIntFrmt;
 	}
-	else
+	/*else
 	{
 		glCreateRenderbuffers(1, &m_TextureId);
 
@@ -81,6 +97,6 @@ void RenderTexture::Generate()
 			glNamedRenderbufferStorageMultisample(m_TextureId, m_Samples, m_Format, m_Width, m_Height);
 		else
 			glNamedRenderbufferStorage(m_TextureId, m_Format, m_Width, m_Height);
-	}
+	}*/
 }
 

@@ -30,6 +30,8 @@
     <ClCompile Include="src\NoWork\TextureCube.cpp" />
     <ClCompile Include="src\NoWork\ComputeShader.cpp" />
     <ClCompile Include="src\NoWork\utils.cpp" />
+    <ClCompile Include="src\NoWork\RenderBuffer.cpp" />
+    <ClCompile Include="src\NoWork\BufferObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\NoWork\AnimatedSprite.h" />
@@ -65,6 +67,9 @@
     <ClInclude Include="include\NoWork\TextureCube.h" />
     <ClInclude Include="include\NoWork\ComputeShader.h" />
     <ClInclude Include="include\NoWork\utils.h" />
+    <ClInclude Include="include\NoWork\RenderTarget.h" />
+    <ClInclude Include="include\NoWork\RenderBuffer.h" />
+    <ClInclude Include="include\NoWork\BufferObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

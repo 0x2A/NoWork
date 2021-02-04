@@ -46,7 +46,7 @@
     <LibraryPath>$(SolutionDir)dep\assimp-3.1.1\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -135,6 +135,7 @@
     <ClCompile Include="src\NoWork\Mesh.cpp" />
     <ClCompile Include="src\NoWork\Model.cpp" />
     <ClCompile Include="src\NoWork\Quaternion.cpp" />
+    <ClCompile Include="src\NoWork\RenderBuffer.cpp" />
     <ClCompile Include="src\NoWork\Renderer.cpp" />
     <ClCompile Include="src\NoWork\RenderTexture.cpp" />
     <ClCompile Include="src\NoWork\Shader.cpp" />
@@ -145,6 +146,7 @@
     <ClCompile Include="src\NoWork\Texture2D.cpp" />
     <ClCompile Include="src\NoWork\TextureCube.cpp" />
     <ClCompile Include="src\NoWork\Transform.cpp" />
+    <ClCompile Include="src\NoWork\BufferObject.cpp" />
     <ClCompile Include="src\NoWork\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,7 +171,9 @@
     <ClInclude Include="include\NoWork\Model.h" />
     <ClInclude Include="include\NoWork\NoWork.h" />
     <ClInclude Include="include\NoWork\Quaternion.h" />
+    <ClInclude Include="include\NoWork\RenderBuffer.h" />
     <ClInclude Include="include\NoWork\Renderer.h" />
+    <ClInclude Include="include\NoWork\RenderTarget.h" />
     <ClInclude Include="include\NoWork\RenderTexture.h" />
     <ClInclude Include="include\NoWork\SceneObject.h" />
     <ClInclude Include="include\NoWork\Shader.h" />
@@ -180,6 +184,7 @@
     <ClInclude Include="include\NoWork\Texture2D.h" />
     <ClInclude Include="include\NoWork\TextureCube.h" />
     <ClInclude Include="include\NoWork\Transform.h" />
+    <ClInclude Include="include\NoWork\BufferObject.h" />
     <ClInclude Include="include\NoWork\utils.h" />
   </ItemGroup>
   <ItemGroup>

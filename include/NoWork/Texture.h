@@ -81,11 +81,23 @@ public:
 		RGBA16_SNORM = 0x8F9B,
 		RGB10_A2UI = 0x906F,
 		DEPTH = 0x1902,
+		DEPTH_COMPONENT16 = 0x81A5,
+		DEPTH_COMPONENT24 = 0x81A6,
+		DEPTH_COMPONENT32 = 0x81A7,
+		DEPTH_COMPONENT32F = 0x8CAC,
 		DEPTH_STENCIL = 0x84F9,
+		DEPTH24_STENCIL8 = 0x88F0,
+		DEPTH32F_STENCIL8 = 0x8CAD,
 		COMPRESSED_RED = 0x8225,
-		COMPRESSED_RG = 0x8226,
+		COMPRESSED_RG = 0x8DBD /*0x8226*/, //check if this is correct
 		COMPRESSED_RGB = 0x84ED,
-		COMPRESSED_RGBA = 0x84EE
+		COMPRESSED_RGB8_ETC2 = 0x9274,
+		COMPRESSED_RGBA = 0x84EE,
+		COMPRESSED_SRGB8_ETC2 = 0x9275,
+		COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2 = 0x9276,
+		COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2 = 0x9277,
+		COMPRESSED_RGBA8_ETC2_EAC = 0x9278,
+		COMPRESSED_SRGB8_ALPHA8_ETC2_EAC = 0x9279,
 	};
 
 	enum AsyncMode_t : int
@@ -93,6 +105,7 @@ public:
 		AM_GenerateTexture = 0,
 		AM_SetLinearTextureFilter,
 		AM_SetTextureComparison,
+		AM_GenMipMaps,
 		AM_OFFSET
 	};
 
@@ -119,6 +132,12 @@ public:
 	NOWORK_API Texture::Format GetFormat() { return m_Format; }
 
 	NOWORK_API uint GetMipMapLevels() { return m_MipMapLevels;}
+
+
+	//Copy pixel data from one texture to another using src and dest position (0,0,0) and MipMap level defined by srcDepth
+	NOWORK_API static void CopyPixelData(TexturePtr src, TexturePtr dest, unsigned int srcDepth = 0);
+
+	NOWORK_API void GenerateMipMaps();
 protected:
 
 	Texture(unsigned int texType = GL_TEXTURE_2D, unsigned int texBindingType = GL_TEXTURE_BINDING_2D); //values for GL_TEXTURE_2D and GL_TEXTURE_BINDING_2D, maybe we should include opengl headers

@@ -36,6 +36,13 @@ public:
 	NOWORK_API glm::mat4 GetViewMatrix() const { return m_ViewMatrix; }
 	NOWORK_API void SetViewMatrix(glm::mat4 val) { m_ViewMatrix = val; }
 
+	//useful for skybox rendering, contains only camera rotation, not position
+	NOWORK_API glm::mat4 GetCameraRotationMatrix() const { 
+		glm::mat4 camRotMat = m_ViewMatrix;
+		camRotMat[3] = glm::vec4(0, 0, 0, 1);
+		return camRotMat;
+	}
+
 	NOWORK_API inline void UpdateViewProjectionMatrix()
 	{
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;

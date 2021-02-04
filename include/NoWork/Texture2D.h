@@ -14,7 +14,6 @@ public:
 	{
 		AM_CopyPixData = Texture::AM_OFFSET,
 		AM_LoadHDR,
-		AM_GenMipMaps,
 	};
 
 	NOWORK_API static Texture2DPtr Create(unsigned int width, unsigned int height, Texture::Format format, unsigned char *pixels, bool constant = true);
@@ -30,7 +29,6 @@ public:
 	NOWORK_API void Update(const unsigned char* pixels);
 	NOWORK_API void Update(const unsigned char* pixels, int width, int height);
 
-	NOWORK_API void GenerateMipMaps();
 protected:
 
 	Texture2D();

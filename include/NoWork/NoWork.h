@@ -19,3 +19,4 @@
 #include "NoWork/Font.h"
 #include "NoWork/utils.h"
 #include "NoWork/ComputeShader.h"
+#include "NoWork/BufferObject.h"

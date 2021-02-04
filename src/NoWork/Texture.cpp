@@ -199,6 +199,27 @@ NOWORK_API void Texture::SetLinearTextureFilter(bool state)
 	}
 }
 
+NOWORK_API void Texture::CopyPixelData(TexturePtr src, TexturePtr dest, unsigned int srcDepth /*= 0*/)
+{
+	assert(src && dest);
+	glCopyImageSubData(src->m_TextureId, src->m_TextureType, 0, 0, 0, 0,
+		dest->m_TextureId, dest->m_TextureType, 0, 0, 0, 0,
+		dest->m_Width, dest->m_Height, srcDepth);
+}
+
+void Texture::GenerateMipMaps()
+{
+	if (!NoWork::IsMainThread())
+	{
+		AddToGLQueue(AsyncMode_t::AM_GenMipMaps);
+		return;
+	}
+
+	SetParameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glGenerateTextureMipmap(m_TextureId);
+
+}
+
 NOWORK_API void Texture::SetTextureComparison(unsigned int compareMode, unsigned int compareFunc)
 {
 	if (!NoWork::IsMainThread())
@@ -234,6 +255,8 @@ void Texture::DoAsyncWork(int mode, void *params)
 		unsigned int* arr = static_cast<unsigned int*>(params);
 		SetTextureComparison(arr[0], arr[1]);
 	}
+	case AsyncMode_t::AM_GenMipMaps:
+		GenerateMipMaps();
 		break;
 	default:
 		break;

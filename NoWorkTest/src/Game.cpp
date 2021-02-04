@@ -5,6 +5,15 @@
 const float moveSpeed = 45.f;
 bool useWireframe;
 
+struct TransformUB
+{
+	glm::mat4 viewProjectionMatrix;
+	glm::mat4 skyProjectionMatrix;
+	glm::mat4 sceneRotationMatrix;
+};
+
+UniformbufferPtr m_transformUB;
+
 // This function is for preinitializing resources needed 
 // while loading content or while loading screen
 // Its running on the main thread so don't run too time 
@@ -58,6 +67,10 @@ void MyGame::OnLoadContent()
 	//create a framebuffer object for testing
 	m_FBO = Framebuffer::Create(1280, 720);
 
+
+	//create uniform buffer object for testing
+	m_transformUB = Uniformbuffer::Create<TransformUB>();
+
 }
 
 //update function
@@ -95,6 +108,13 @@ void MyGame::OnUpdate(double deltaTime)
 
 	//update the animated sprite
 	if(m_AnimatedSprite) m_AnimatedSprite->Update(deltaTime);
+
+
+	TransformUB transformUB;
+	transformUB.viewProjectionMatrix = glm::mat4(1);
+	transformUB.sceneRotationMatrix = glm::rotate(90.0f, glm::vec3(1, 0, 0));
+	transformUB.skyProjectionMatrix = glm::mat4(1);
+	m_transformUB->Update(&transformUB);
 }
 
 void MyGame::OnLoadRender()
@@ -105,6 +125,8 @@ void MyGame::OnLoadRender()
 //main render function
 void MyGame::OnRender()
 {
+	m_transformUB->Bind(0);
+
 	//render a sprite
 	if (m_AnimatedSprite)
 		m_AnimatedSprite->Render();

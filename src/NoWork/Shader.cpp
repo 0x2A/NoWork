@@ -218,44 +218,44 @@ Shader inline implementation:
 
 void Shader::SetParameterf(const char* name, float val)
 {
-	glUniform1f(GetAttributeLocation(name), val);
+	glProgramUniform1f(m_ShaderObject, GetAttributeLocation(name), val);
 }
 
 NOWORK_API void Shader::SetParameterfv(const char* name, int num, float *val)
 {
-	glUniform1fv(GetAttributeLocation(name), num, val);
+	glProgramUniform1fv(m_ShaderObject, GetAttributeLocation(name), num, val);
 }
 
 void Shader::SetParameteri(const char* name, int val)
 {
-	glUniform1i(GetAttributeLocation(name), val);
+	glProgramUniform1i(m_ShaderObject, GetAttributeLocation(name), val);
 }
 void Shader::SetParameterVec2(const char* name, glm::vec2 val)
 {
-	glUniform2f(GetAttributeLocation(name), val.x, val.y);
+	glProgramUniform2f(m_ShaderObject, GetAttributeLocation(name), val.x, val.y);
 }
 void Shader::SetParameterVec3(const char* name, glm::vec3 val)
 {
-	glUniform3f(GetAttributeLocation(name), val.x, val.y, val.z);
+	glProgramUniform3f(m_ShaderObject, GetAttributeLocation(name), val.x, val.y, val.z);
 }
 
 void Shader::SetParameterVec4(const char* name, glm::vec4 val)
 {
-	glUniform4f(GetAttributeLocation(name), val.x, val.y, val.z, val.w);
+	glProgramUniform4f(m_ShaderObject, GetAttributeLocation(name), val.x, val.y, val.z, val.w);
 }
 
 void Shader::SetParameterMat3(const char* name, glm::mat3 val)
 {
-	glUniformMatrix3fv(GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
+	glProgramUniformMatrix3fv(m_ShaderObject, GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
 }
 
 void Shader::SetParameterMat4(const char* name, glm::mat4 val)
 {
-	glUniformMatrix4fv(GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
+	glProgramUniformMatrix4fv(m_ShaderObject, GetAttributeLocation(name), 1, GL_FALSE, glm::value_ptr(val));
 }
 NOWORK_API void Shader::SetParameterMat4v(const char* name, int num, glm::mat4* val)
 {
-	glUniformMatrix4fv(GetAttributeLocation(name), num, GL_FALSE, glm::value_ptr(val[0]));
+	glProgramUniformMatrix4fv(m_ShaderObject, GetAttributeLocation(name), num, GL_FALSE, glm::value_ptr(val[0]));
 }
 
 void Shader::SetDiffuseColor(glm::vec4 val)
@@ -273,7 +273,7 @@ void Shader::SetParameterTexture(const char* name, TexturePtr tex, uint32_t slot
 	if (!tex) return;
 	tex->Bind(slot);
 	
-	glUniform1i(GetAttributeLocation(name), slot);
+	glProgramUniform1i(m_ShaderObject, GetAttributeLocation(name), slot);
 
 }
 
@@ -283,7 +283,7 @@ void Shader::SetParameterTexturev(const char* name, int num, TexturePtr *tex, ui
 	for (int i = 0; i < num; i++)
 		tex[i]->Bind(slots[i]);
 
-	glUniform1iv(GetAttributeLocation(name), num, (GLint*)slots);
+	glProgramUniform1iv(m_ShaderObject, GetAttributeLocation(name), num, (GLint*)slots);
 }
 
 void Shader::SetParameterTexturev(const char* name, int num, RenderTexturePtr *tex, uint32_t *slots)
@@ -292,7 +292,7 @@ void Shader::SetParameterTexturev(const char* name, int num, RenderTexturePtr *t
 	for (int i = 0; i < num; i++)
 		tex[i]->Bind(slots[i]);
 
-	glUniform1iv(GetAttributeLocation(name), num, (GLint*)slots);
+	glProgramUniform1iv(m_ShaderObject, GetAttributeLocation(name), num, (GLint*)slots);
 }
 
 void Shader::SetTexture(TexturePtr tex)
@@ -326,6 +326,7 @@ void Shader::DoAsyncWork(int mode, void *params)
 {
 	std::string* arr = static_cast<std::string*>(params);
 	CompileShaders(arr[0], arr[1]);
+	delete[] arr;
 }
 
 bool Shader::CompileShaders(const std::string& vs, const std::string& fs)

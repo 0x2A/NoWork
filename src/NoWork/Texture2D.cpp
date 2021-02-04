@@ -151,18 +151,6 @@ void Texture2D::Update(const unsigned char* pixels, int width, int height)
 	glTextureSubImage2D(m_TextureId, 0, 0, 0, m_Width, m_Height, m_InternalFormat, m_Type, m_Pixels);
 }
 
-void Texture2D::GenerateMipMaps()
-{
-	if (!NoWork::IsMainThread())
-	{
-		AddToGLQueue(AsyncMode_t::AM_GenMipMaps);
-		return;
-	}
-
-	SetParameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glGenerateTextureMipmap(m_TextureId);
-
-}
 
 void Texture2D::DoAsyncWork(int mode, void *params)
 {
@@ -175,9 +163,6 @@ void Texture2D::DoAsyncWork(int mode, void *params)
 		break;
 	case Texture2D::AM_LoadHDR:
 		LoadHDRInternal((const char*)params);
-		break;
-	case Texture2D::AM_GenMipMaps:
-		GenerateMipMaps();
 		break;
 	}
 }
