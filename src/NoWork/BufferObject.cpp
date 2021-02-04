@@ -34,10 +34,6 @@ BufferObject::BufferObject()
 	 return ub;
 }
 
-void BufferObject::CreateBuffer(const void* data, size_t size)
-{
-	
-}
 
 void BufferObject::DoAsyncWork(int mode, void *params)
 {

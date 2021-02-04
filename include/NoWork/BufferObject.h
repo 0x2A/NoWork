@@ -46,7 +46,6 @@ protected:
 
 private:
 	NOWORK_API static UniformbufferPtr Create(const void* data, size_t size);
-	void CreateBuffer(const void* data, size_t size);
 
 	GLuint m_UBO;
 };
