@@ -15,6 +15,8 @@ public:
 	virtual void OnRender() = 0; //called while rendering process
 	virtual void OnShutdown() = 0; //called when framework is shutting down
 
+	virtual void OnWindowResize(int newWidth, int newHeight) = 0;
+
 protected:
 	NoWork* m_Framework;
 	Renderer* m_Renderer;

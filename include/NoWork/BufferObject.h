@@ -3,7 +3,7 @@
 #include "NoWork/AsyncGLWorker.h"
 
 class BufferObject;
-typedef std::shared_ptr<BufferObject> UniformbufferPtr;
+typedef std::shared_ptr<BufferObject> BufferObjectPtr;
 class BufferObject : public AsyncGLWorker
 {
 public:
@@ -20,7 +20,7 @@ public:
 	NOWORK_API ~BufferObject();
 
 	template<typename T>
-	NOWORK_API static UniformbufferPtr Create(const T* data = nullptr)
+	NOWORK_API static BufferObjectPtr Create(const T* data = nullptr)
 	{
 		return Create(data, sizeof(T));
 	}
@@ -45,7 +45,7 @@ protected:
 
 
 private:
-	NOWORK_API static UniformbufferPtr Create(const void* data, size_t size);
+	NOWORK_API static BufferObjectPtr Create(const void* data, size_t size);
 
 	GLuint m_UBO;
 };

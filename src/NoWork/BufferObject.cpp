@@ -18,9 +18,9 @@ BufferObject::BufferObject()
 }
 
 
- UniformbufferPtr BufferObject::Create(const void* data, size_t size)
+ BufferObjectPtr BufferObject::Create(const void* data, size_t size)
 {
-	 UniformbufferPtr ub = UniformbufferPtr(new BufferObject);
+	 BufferObjectPtr ub = BufferObjectPtr(new BufferObject);
 	 if (!NoWork::IsMainThread())
 	 {
 		 createStuct* t = new createStuct;

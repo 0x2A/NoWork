@@ -32,6 +32,8 @@
 #include <memory>
 
 #include <NoWork/GL/gl3w.h>
+#include <NoWork/imgui/imgui.h>
+
 //only include glfw3 if we are in NoWork context
 #ifdef _NOWORK_INTERNAL_
 #include <glfw/glfw3.h>

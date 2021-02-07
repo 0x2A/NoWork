@@ -42,8 +42,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)dep\glfw\include;$(solutionDir)dep\FMOD\api\lowlevel\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)dep\assimp-3.1.1\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_d</TargetName>
@@ -63,7 +63,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>OPENTHREADS_EXPORTS;GLM_ENABLE_EXPERIMENTAL;OPENALPP_EXPORTS;HAVE_STDINT_H;ALUT_BUILD_LIBRARY;HAVE_SLEEP;HAVE_WINDOWS_H;HAVE_STAT;WIN32;FREETYPE_GL_USE_VAO;_DEBUG;_CONSOLE;_LIB;_NOWORK_INTERNAL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -95,7 +95,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>OPENTHREADS_EXPORTS;GLM_ENABLE_EXPERIMENTAL;OPENALPP_EXPORTS;HAVE_STDINT_H;ALUT_BUILD_LIBRARY;HAVE_SLEEP;HAVE_WINDOWS_H;HAVE_STAT;WIN32;FREETYPE_GL_USE_VAO;NDEBUG;_CONSOLE;_LIB;_NOWORK_INTERNAL_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ext\rapidjson\include;$(SolutionDir)ext\glm\include;$(SolutionDir)ext\glfw-3.3\include;$(SolutionDir)ext\freetype-gl\include;$(SolutionDir)ext\assimp-4.1.0\include;$(SolutionDir)ext\soil\include;$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
@@ -117,6 +117,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="src\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\imgui\imgui_tables.cpp" />
+    <ClCompile Include="src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\NoWork\AnimatedSprite.cpp" />
     <ClCompile Include="src\NoWork\AsyncGLWorker.cpp" />
     <ClCompile Include="src\NoWork\AudioSource.cpp" />
@@ -164,6 +170,7 @@
     <ClInclude Include="include\NoWork\Framebuffer.h" />
     <ClInclude Include="include\NoWork\Framework.h" />
     <ClInclude Include="include\NoWork\Game.h" />
+    <ClInclude Include="include\NoWork\imgui.h" />
     <ClInclude Include="include\NoWork\Input.h" />
     <ClInclude Include="include\NoWork\Log.h" />
     <ClInclude Include="include\NoWork\Material.h" />

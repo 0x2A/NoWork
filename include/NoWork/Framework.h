@@ -55,6 +55,8 @@ public:
 	NOWORK_API GLFWwindow* GetWindow() { return m_Window; }
 	NOWORK_API glm::ivec2 ScreenSize();
 
+	NOWORK_API GameBase* GetGameHandle();
+
 private:
 
 	GLFWwindow* DetectMaxSupportedGlVersionAndCreateWindow(const char* title, int width, int height, bool fullscreen);

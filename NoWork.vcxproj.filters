@@ -32,6 +32,24 @@
     <ClCompile Include="src\NoWork\utils.cpp" />
     <ClCompile Include="src\NoWork\RenderBuffer.cpp" />
     <ClCompile Include="src\NoWork\BufferObject.cpp" />
+    <ClCompile Include="src\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_impl_glfw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_impl_opengl3.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\NoWork\AnimatedSprite.h" />
@@ -70,10 +88,16 @@
     <ClInclude Include="include\NoWork\RenderTarget.h" />
     <ClInclude Include="include\NoWork\RenderBuffer.h" />
     <ClInclude Include="include\NoWork\BufferObject.h" />
+    <ClInclude Include="include\NoWork\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
       <UniqueIdentifier>{cd0f5423-bb69-4922-b3c8-74f1ef1ca668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{503953e4-3d0d-4336-a5f0-7cced8b61848}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,9 @@
 #include <time.h>
 
 
+#include "NoWork/imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 typedef struct
 {
@@ -42,7 +45,11 @@ NoWork::NoWork()
 		LOG_ERROR("Failed to initialize glfw");
 	}
 
+
+	EventHandler::m_Framework = this;
+
 	glfwSetErrorCallback(&EventHandler::ErrorCallback);
+
 
 	m_GameHandle = NULL;
 	lastFrame = glfwGetTime();
@@ -125,9 +132,23 @@ NOWORK_API bool NoWork::CreateNewWindow(const char* title, int width, int height
 		"Hardware vendor: " << glGetString(GL_VENDOR) << "\n" <<
 		"Hardware name: " << glGetString(GL_RENDERER));
 
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+	// Setup Platform/Renderer bindings
+	const char* glsl_version = "#version 400";
+	ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	Input::Init(this);
 	glfwSetKeyCallback(m_Window, EventHandler::KeyEventCallback);
+	glfwSetWindowSizeCallback(m_Window, EventHandler::WindowSizeChangedCallback);
 
 	if (ExtensionAvailable("GL_ARB_debug_output"))
 	{
@@ -180,8 +201,15 @@ void NoWork::Run()
 
 	while (!glfwWindowShouldClose(m_Window))
 	{
+		glfwPollEvents();
+
 		Renderer::DrawCalls = 0;
 		Input::Update();
+
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
 		m_Renderer->DoAsyncGLQueue();
 		if (m_Loading)
@@ -197,13 +225,22 @@ void NoWork::Run()
 			m_GameHandle->OnRender();
 		}
 
+		// Rendering
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
 		glfwSwapBuffers(m_Window);
-		glfwPollEvents();
 
 	}
 
 	m_GameHandle->OnShutdown();
 	m_LoadingThread.join();
+
+	// Cleanup
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 #ifdef NOWORK_ENABLE_AUDIO
 	AudioSystem::Shutdown();
@@ -301,9 +338,14 @@ bool NoWork::IsMainThread()
 	return std::this_thread::get_id() == m_MainThreadId;
 }
 
-NOWORK_API glm::ivec2 NoWork::ScreenSize()
+glm::ivec2 NoWork::ScreenSize()
 {
 	int w, h;
 	m_Renderer->GetFramebufferSize(w, h);
 	return glm::ivec2(w, h);
+}
+
+GameBase* NoWork::GetGameHandle()
+{
+	return m_GameHandle;
 }
