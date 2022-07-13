@@ -47,13 +47,13 @@ public:
 	NOWORK_API void BindRead();
 	NOWORK_API void Unbind();
 	NOWORK_API RenderTargetPtr GetAttachedRendertarget(AttachmentType at);
-
+	NOWORK_API vec2 GetSize() { return m_Size; }
 
 	//Most render-targets need to have read access (in 99% of cases you are writing to a render-target with the intent of reading back the results later, often for shadow mapping or post-processing), 
 	//so most of the time you should use a texture.
 	//But when you don’t need to read the results (using a depth buffer for an off - screen render when you only need to read back the color result, not the depth result) 
 	//you should always use a renderbuffer. They are more efficient for that purpose.
-	NOWORK_API RenderTexturePtr CreateAndAttachRenderTexture(AttachmentType targetAttachmentType, RenderTexture::Type type, Texture::Format textureFormat, bool compressed = false);
+	NOWORK_API RenderTexturePtr CreateAndAttachRenderTexture(AttachmentType targetAttachmentType, RenderTexture::Type type, Texture::Format textureFormat, bool compressed = false, bool mipmaps = false);
 	
 	//Most render-targets need to have read access (in 99% of cases you are writing to a render-target with the intent of reading back the results later, often for shadow mapping or post-processing), 
 	//so most of the time you should use a texture.

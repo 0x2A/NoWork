@@ -99,10 +99,10 @@ void Framebuffer::Unbind()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-RenderTexturePtr Framebuffer::CreateAndAttachRenderTexture(AttachmentType targetAttachmentType,
-	RenderTexture::Type type, Texture::Format textureFormat, bool compressed /*= false*/)
+NOWORK_API RenderTexturePtr Framebuffer::CreateAndAttachRenderTexture(AttachmentType targetAttachmentType,
+	RenderTexture::Type type, Texture::Format textureFormat, bool compressed /*= false*/, bool mipmaps /*= false*/)
 {
-	RenderTexturePtr tex = RenderTexture::Create(m_Size.x, m_Size.y, type, textureFormat, compressed);
+	RenderTexturePtr tex = RenderTexture::Create(m_Size.x, m_Size.y, type, textureFormat, compressed, mipmaps);
 	if (!AttachRenderTarget(std::static_pointer_cast<RenderTarget>(tex), targetAttachmentType))
 	{
 		LOG_ERROR("Failed to attach texture to Framebuffer: " << targetAttachmentType);

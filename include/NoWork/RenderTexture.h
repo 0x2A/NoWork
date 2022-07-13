@@ -24,7 +24,7 @@ public:
 	//so most of the time you should use a texture.
 	//But when you don’t need to read the results (using a depth buffer for an off - screen render when you only need to read back the color result, not the depth result) 
 	//you should always use a renderbuffer. They are more efficient for that purpose.
-	NOWORK_API static RenderTexturePtr Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed = false);
+	NOWORK_API static RenderTexturePtr Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed = false, bool mipMaps = false);
 
 
 

@@ -4,6 +4,7 @@
 
 struct createStuct
 {
+	unsigned int usageType;
 	const void* data;
 	size_t size;
 };
@@ -18,19 +19,23 @@ BufferObject::BufferObject()
 }
 
 
- BufferObjectPtr BufferObject::Create(const void* data, size_t size)
+ BufferObjectPtr BufferObject::Create(unsigned int usageType, const void* data, size_t size)
 {
 	 BufferObjectPtr ub = BufferObjectPtr(new BufferObject);
+	 ub->m_DataLength = size;
+	 ub->m_Usage = usageType;
 	 if (!NoWork::IsMainThread())
 	 {
 		 createStuct* t = new createStuct;
 		 t->data = data;
 		 t->size = size;
+		 t->usageType = usageType;
 		 ub->AddToGLQueue(0, t);
 		 return ub;
 	 }
+	 
 	 glCreateBuffers(1, &ub->m_UBO);
-	 glNamedBufferStorage(ub->m_UBO, size, data, GL_DYNAMIC_STORAGE_BIT);
+	 glNamedBufferStorage(ub->m_UBO, size, data, usageType);
 	 return ub;
 }
 
@@ -41,7 +46,7 @@ void BufferObject::DoAsyncWork(int mode, void *params)
 	{
 		createStuct* t = static_cast<createStuct*>(params);
 		glCreateBuffers(1, &m_UBO);
-		glNamedBufferStorage(m_UBO, t->size, t->data, GL_DYNAMIC_STORAGE_BIT);
+		glNamedBufferStorage(m_UBO, t->size, t->data, t->usageType);
 		delete t;
 	}
 }
@@ -51,4 +56,16 @@ void BufferObject::DoAsyncWork(int mode, void *params)
 void BufferObject::Bind(uint slot, BindType bindType)
 {
 	glBindBufferBase(bindType, slot, m_UBO);
+}
+
+void BufferObject::Unmap()
+{
+	if (!m_Mapped)
+	{
+		LOG_WARNING("Tried to unmap a not mapped bufferObject.");
+		return;
+	}
+
+	glUnmapNamedBuffer(m_UBO);
+	m_Mapped = false;
 }

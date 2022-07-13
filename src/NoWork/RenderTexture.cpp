@@ -1,9 +1,10 @@
 
 #include "NoWork/RenderTexture.h"
 #include "NoWork/Framework.h"
+#include "NoWork/utils.h"
 
 
-RenderTexturePtr RenderTexture::Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed /*= false*/)
+RenderTexturePtr RenderTexture::Create(int width, int height, Type type, Texture::Format textureFormat, bool compressed /*= false*/, bool mipMaps)
 {
 	unsigned int tType = type;
 	if (textureFormat == GL_DEPTH_COMPONENT || textureFormat == GL_DEPTH_STENCIL)
@@ -32,6 +33,10 @@ RenderTexturePtr RenderTexture::Create(int width, int height, Type type, Texture
 	tex->m_Width = width;
 	tex->m_Height = height;
 	tex->m_Format = textureFormat;
+	if (mipMaps)
+		tex->m_MipMapLevels = Utility::numMipmapLevels(width, height);
+	else
+		tex->m_MipMapLevels = 1;
 
 	if (!NoWork::IsMainThread())
 		tex->AddToGLQueue(0, nullptr);
@@ -86,7 +91,7 @@ void RenderTexture::Generate()
 
 		int texIntFrmt = m_Format;
 		GetInternalFormat(m_TextureType, m_Format, &texIntFrmt, &m_Type);
-		glTextureStorage2D(m_TextureId, 1, m_Format, m_Width, m_Height);
+		glTextureStorage2D(m_TextureId, m_MipMapLevels, m_Format, m_Width, m_Height);
 		m_InternalFormat = texIntFrmt;
 	}
 	/*else
